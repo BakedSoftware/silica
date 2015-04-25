@@ -1,0 +1,564 @@
+<!DOCTYPE html><html lang="en"><head><title>src/runtime</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="src/runtime"><meta name="groc-project-path" content="src/runtime.coffee"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">src/runtime.coffee</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper">goog.provide <span class="hljs-string">'Runtime'</span>
+
+Runtime =
+  <span class="hljs-attribute">context</span>: <span class="hljs-built_in">window</span>
+  <span class="hljs-attribute">contextName</span>: <span class="hljs-string">''</span>
+  <span class="hljs-attribute">_ifs</span>: {}
+  <span class="hljs-attribute">_shws</span>: {}
+  <span class="hljs-attribute">filters</span>: {}
+  <span class="hljs-attribute">_watch</span>: {}
+  <span class="hljs-attribute">_repeat</span>: {}
+  <span class="hljs-attribute">directives</span>: {}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the root context</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-attribute">setContext</span>: <span class="hljs-function"><span class="hljs-params">(contextName)</span> -&gt;</span>
+    Runtime.context = <span class="hljs-built_in">window</span>[contextName]
+    Runtime.contextName = contextName</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Interpolate and link all Runtime directives within an element</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-attribute">compile</span>: <span class="hljs-function"><span class="hljs-params">(element, flush = <span class="hljs-literal">true</span>, context = <span class="hljs-literal">null</span>)</span> -&gt;</span>
+    Runtime.interpolate element
+    <span class="hljs-keyword">for</span> k, func <span class="hljs-keyword">of</span> Runtime.compilers
+      <span class="hljs-keyword">if</span> k[<span class="hljs-number">0</span>] != <span class="hljs-string">'_'</span>
+        func.apply element, [context]
+
+    Runtime.flush element, <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> flush
+
+    element</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Force Runtime to update the element and subelements</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-attribute">flush</span>: <span class="hljs-function"><span class="hljs-params">(element = <span class="hljs-built_in">document</span>, onlySafe = <span class="hljs-literal">false</span>, changed = {})</span> -&gt;</span>
+    <span class="hljs-keyword">if</span> Runtime.isInFlush
+      <span class="hljs-keyword">if</span> Runtime._scheduledFlush
+        <span class="hljs-keyword">return</span>
+      <span class="hljs-keyword">else</span>
+        Runtime._scheduledFlush = <span class="hljs-literal">true</span>
+    Runtime.isInFlush = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">unless</span> changed
+      <span class="hljs-keyword">for</span> k, funcs <span class="hljs-keyword">of</span> Runtime._watch
+        func[<span class="hljs-number">1</span>].apply func[<span class="hljs-number">0</span>] <span class="hljs-keyword">for</span> func <span class="hljs-keyword">in</span> funcs
+        <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">else</span>
+      <span class="hljs-keyword">for</span> k, obj <span class="hljs-keyword">of</span> changed
+        <span class="hljs-keyword">unless</span> obj == <span class="hljs-literal">true</span>
+          func[<span class="hljs-number">1</span>].apply func[<span class="hljs-number">0</span>] <span class="hljs-keyword">for</span> func <span class="hljs-keyword">in</span> changed[k]
+        <span class="hljs-keyword">else</span>
+          func[<span class="hljs-number">1</span>].apply func[<span class="hljs-number">0</span>] <span class="hljs-keyword">for</span> func <span class="hljs-keyword">in</span> Runtime._watch[k]
+
+    <span class="hljs-keyword">for</span> k, func <span class="hljs-keyword">of</span> Runtime.watchers
+      <span class="hljs-keyword">if</span> onlySafe &amp;&amp; k[<span class="hljs-number">0</span>] == <span class="hljs-string">'_'</span>
+        <span class="hljs-keyword">continue</span>
+      func.apply element
+
+    Runtime.isInFlush = <span class="hljs-literal">false</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>TODO Figure out how to schedule just one flush if it was needed
+if Runtime._scheduledFlush == true
+  window.setTimeout(Runtime.flush, 20)</p></div></div><div class="code"><div class="wrapper">    Runtime</div></div></div><div class="segment"><div class="comments doc-section"><div class="wrapper"><p>Execute code and ensure updates are called. Similar to calling
+<code>Runtime.flush</code> afterwords but determines which <strong>watchers</strong> need to be
+called by <strong>flush</strong> instead of applying all of them</p>
+<p>Parameters:</p>
+<ul>
+<li><p><strong>func must be a Function.</strong><br/>(Code to execute)</p>
+</li>
+<li><p><strong>element is optional and can be a DOMElement or a jQueryRef.</strong><br/>(Element to scope the flush to)</p>
+</li>
+</ul></div></div><div class="code"><div class="wrapper">  <span class="hljs-attribute">apply</span>: <span class="hljs-function"><span class="hljs-params">(func, element = <span class="hljs-built_in">document</span>)</span> -&gt;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If an apply is already in progress we can just execute the code</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">return</span> func.call() <span class="hljs-keyword">if</span> Runtime.isInApply</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Keep all the old values</p></div></div><div class="code"><div class="wrapper">    old_values = {}
+    <span class="hljs-keyword">for</span> k, funcs <span class="hljs-keyword">of</span> Runtime._watch
+      old_values[k] = []
+      <span class="hljs-keyword">if</span> k[<span class="hljs-number">0</span>].match <span class="hljs-regexp">/^[^A-Z]/</span>
+        <span class="hljs-keyword">for</span> assoc <span class="hljs-keyword">in</span> funcs
+          val = Runtime.getPropByString(assoc[<span class="hljs-number">0</span>], k)
+          val = val.slice(<span class="hljs-number">0</span>) <span class="hljs-keyword">if</span> Array.isArray(val)
+          old_values[k].push [assoc[<span class="hljs-number">0</span>], val]
+      <span class="hljs-keyword">else</span>
+        val = Runtime.getPropByString(<span class="hljs-built_in">window</span>, k)
+        val = val.slice(<span class="hljs-number">0</span>) <span class="hljs-keyword">if</span> Array.isArray(val)
+        old_values[k] = val</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Execute the code</p></div></div><div class="code"><div class="wrapper">    Runtime.isInApply = <span class="hljs-literal">true</span>
+    func.call()
+    Runtime.isInApply = <span class="hljs-literal">false</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Detemine what has changed</p></div></div><div class="code"><div class="wrapper">    changes = {}
+    <span class="hljs-keyword">for</span> k, funcs <span class="hljs-keyword">of</span> Runtime._watch
+      <span class="hljs-keyword">if</span> k[<span class="hljs-number">0</span>].match <span class="hljs-regexp">/^[^A-Z]/</span>
+        changes[k] = []
+        <span class="hljs-keyword">for</span> func <span class="hljs-keyword">in</span> funcs
+          <span class="hljs-keyword">if</span> k.match <span class="hljs-regexp">/\.\*$/</span>
+            changes[k].push func
+          <span class="hljs-keyword">else</span>
+            val = Runtime.getPropByString(func[<span class="hljs-number">0</span>], k)
+            oldVal = args[<span class="hljs-number">1</span>] <span class="hljs-keyword">for</span> args <span class="hljs-keyword">in</span> old_values[k] <span class="hljs-keyword">when</span> args[<span class="hljs-number">0</span>] == func[<span class="hljs-number">0</span>]
+
+            changed = val != oldVal
+            <span class="hljs-keyword">if</span> Array.isArray(val) &amp;&amp; Array.isArray(oldVal)
+              changed = <span class="hljs-keyword">if</span> oldVal &amp;&amp; val <span class="hljs-keyword">then</span> oldVal.length != val.length <span class="hljs-keyword">else</span> <span class="hljs-literal">true</span>
+              <span class="hljs-keyword">unless</span> changed
+                changed = oldVal.some <span class="hljs-function"><span class="hljs-params">(e, idx)</span> -&gt;</span> <span class="hljs-keyword">return</span> val[idx] != e
+
+            changes[k].push func <span class="hljs-keyword">if</span> changed
+      <span class="hljs-keyword">else</span>
+        val = Runtime.getPropByString(<span class="hljs-built_in">window</span>, k)
+        oldVal = old_values[k]
+        changed = val != oldVal
+        <span class="hljs-keyword">if</span> Array.isArray(val) &amp;&amp; Array.isArray(oldVal)
+          changed = <span class="hljs-keyword">if</span> oldVal &amp;&amp; val <span class="hljs-keyword">then</span> oldVal.length != val.length <span class="hljs-keyword">else</span> <span class="hljs-literal">true</span>
+          <span class="hljs-keyword">unless</span> changed
+            changed = oldVal.some <span class="hljs-function"><span class="hljs-params">(e, idx)</span> -&gt;</span> <span class="hljs-keyword">return</span> val[idx] != e
+        changes[k] = changed
+    finalChanges = {}
+    <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">of</span> changes
+      finalChanges[k] = v <span class="hljs-keyword">if</span> (Array.isArray(v) &amp;&amp; v.length) || v == <span class="hljs-literal">true</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Flush the changes</p></div></div><div class="code"><div class="wrapper">    Runtime.flush element, <span class="hljs-literal">false</span>, finalChanges
+
+  <span class="hljs-attribute">getPropByString</span>: <span class="hljs-function"><span class="hljs-params">(obj, propString)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> obj <span class="hljs-keyword">unless</span> propString
+    <span class="hljs-keyword">for</span> prop <span class="hljs-keyword">in</span> propString.split <span class="hljs-string">'.'</span>
+      <span class="hljs-keyword">if</span> <span class="hljs-keyword">typeof</span> obj[prop] == <span class="hljs-string">'function'</span>
+        obj = obj[prop]()
+      <span class="hljs-keyword">else</span>
+        obj = obj[prop]
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span> <span class="hljs-keyword">if</span> obj == <span class="hljs-literal">null</span> <span class="hljs-keyword">or</span> obj == <span class="hljs-literal">undefined</span>
+    obj
+
+  <span class="hljs-attribute">getValue</span>: <span class="hljs-function"><span class="hljs-params">($elm, propString, context = <span class="hljs-literal">null</span>)</span> -&gt;</span>
+    ctx = context ? <span class="hljs-keyword">if</span> propString.match <span class="hljs-regexp">/^[A-Z]/</span> <span class="hljs-keyword">then</span> <span class="hljs-built_in">window</span> <span class="hljs-keyword">else</span> Runtime.getContext $elm
+    Runtime.getPropByString ctx, propString
+
+  <span class="hljs-attribute">setPropByString</span>: <span class="hljs-function"><span class="hljs-params">(obj, propString, value)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> obj <span class="hljs-keyword">unless</span> propString
+    paths = propString.split <span class="hljs-string">'.'</span>
+    key = paths[paths.length - <span class="hljs-number">1</span>]
+    <span class="hljs-keyword">for</span> prop <span class="hljs-keyword">in</span> paths <span class="hljs-keyword">when</span> prop != key
+      obj = obj?[prop]?() ? obj?[prop] ? <span class="hljs-string">''</span>
+    obj?[key] = value
+
+  <span class="hljs-attribute">evaluateExpression</span>: <span class="hljs-function"><span class="hljs-params">(expr, $elm, obj, ref)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">unless</span> expr</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>expr = expr.match(/{{(.*?)}}/)[1]</p></div></div><div class="code"><div class="wrapper">    filter = <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">if</span> expr.match(<span class="hljs-string">'|'</span>)
+      expr = expr.split(<span class="hljs-string">'|'</span>)
+      filter = $.trim expr[<span class="hljs-number">1</span>]
+      expr = $.trim expr[<span class="hljs-number">0</span>]
+    ctx = {}
+    <span class="hljs-keyword">if</span> obj &amp;&amp; ref
+      <span class="hljs-keyword">if</span> expr.indexOf(ref) == <span class="hljs-number">0</span>
+        ctx[ref] = obj
+        ctx.$ctrl = Runtime.getContext($elm)
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> expr[<span class="hljs-number">0</span>].match <span class="hljs-regexp">/^[A-Z]/</span>
+      ctx = <span class="hljs-built_in">window</span>
+    <span class="hljs-keyword">else</span>
+      ctx = Runtime.getContext($elm)
+
+    value = Runtime.getPropByString(ctx, expr)
+
+    <span class="hljs-keyword">if</span> filter
+      filter = filter.split(<span class="hljs-regexp">/:(.+)/</span>)
+      filterKey = filter?[<span class="hljs-number">0</span>] || <span class="hljs-literal">null</span>
+      filterOptions = <span class="hljs-keyword">if</span> filter?.length &gt; <span class="hljs-number">1</span> <span class="hljs-keyword">then</span> eval(filter[<span class="hljs-number">1</span>]) <span class="hljs-keyword">else</span> <span class="hljs-literal">null</span>
+      filter = <span class="hljs-keyword">if</span> filterKey <span class="hljs-keyword">then</span> Runtime.filters[filterKey] <span class="hljs-keyword">else</span> <span class="hljs-literal">null</span>
+      value = <span class="hljs-keyword">if</span> filter <span class="hljs-keyword">then</span> filter(value, filterOptions, ctx) <span class="hljs-keyword">else</span> value
+
+    value</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Interpolates {{}} expressions in an element
+If the obj is present it will match all refs to that object.
+Otherwise it will use the $elm context</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-attribute">interpolate</span>: <span class="hljs-function"><span class="hljs-params">($elm)</span> -&gt;</span>
+    $(<span class="hljs-string">':containsRegex("/\{\{.*?\}\}/")'</span>, $elm).<span class="hljs-keyword">not</span>(<span class="hljs-string">'script'</span>).contents().filter(<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">this</span>.nodeType==<span class="hljs-number">3</span> &amp;&amp; (h = $(<span class="hljs-keyword">this</span>).text()) &amp;&amp; h.match(<span class="hljs-regexp">/\{\{.*?\}\}/</span>)
+    ).each<span class="hljs-function"> -&gt;</span>
+      $el = $(<span class="hljs-keyword">this</span>)
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> $el.attr(<span class="hljs-string">'type'</span>) == <span class="hljs-string">"text/x-rt-template"</span>
+      text = $el.text()
+      <span class="hljs-keyword">while</span> expr = text.match(<span class="hljs-regexp">/\{\{(.*?)\}\}/</span>)?[<span class="hljs-number">1</span>]
+        comps = expr.split <span class="hljs-string">'|'</span>
+        property = $.trim comps[<span class="hljs-number">0</span>]
+        fmt = <span class="hljs-keyword">if</span> comps.length == <span class="hljs-number">1</span>
+          <span class="hljs-string">"&lt;span data-model='<span class="hljs-subst">#{property}</span>'&gt;{{val}}&lt;/span&gt;"</span>
+        <span class="hljs-keyword">else</span>
+          filter = $.trim(comps[<span class="hljs-number">1</span>])
+          <span class="hljs-string">"&lt;span data-model='<span class="hljs-subst">#{property}</span>' data-filter='<span class="hljs-subst">#{filter}</span>'&gt;{{val}}&lt;/span&gt;"</span>
+
+        evald = fmt.replace <span class="hljs-string">'{{val}}'</span>, Runtime.evaluateExpression(expr, $el)
+        text = text.replace <span class="hljs-string">"{{<span class="hljs-subst">#{expr}</span>}}"</span>, evald
+      span = <span class="hljs-string">"&lt;span&gt;<span class="hljs-subst">#{text}</span>&lt;/span&gt;"</span>
+      node = $(span)
+      $el.replaceWith node
+      Runtime.compile(node)
+      node.children().unwrap()
+
+
+  <span class="hljs-attribute">addFilter</span>: <span class="hljs-function"><span class="hljs-params">(key, func)</span> -&gt;</span>
+    Runtime.filters[key] = func
+
+  <span class="hljs-attribute">addDirective</span>: <span class="hljs-function"><span class="hljs-params">(key, obj)</span> -&gt;</span>
+    Runtime.directives[key] = obj
+
+  <span class="hljs-attribute">getContext</span>: <span class="hljs-function"><span class="hljs-params">(element)</span> -&gt;</span>
+    $elm = <span class="hljs-keyword">if</span> element.constructor.name == <span class="hljs-string">""</span> <span class="hljs-keyword">then</span> element <span class="hljs-keyword">else</span> $(element)
+    <span class="hljs-keyword">if</span> $elm.data(<span class="hljs-string">'$ctrl'</span>)
+      $elm.data <span class="hljs-string">'$ctrl'</span>
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> $elm.<span class="hljs-keyword">is</span>($(<span class="hljs-string">'body'</span>))
+      Runtime.context
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> $elm.data <span class="hljs-string">'controller'</span>
+      constructor = eval $elm.data(<span class="hljs-string">'controller'</span>)
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Unknown Controller: <span class="hljs-subst">#{$elm.data(<span class="hljs-string">'controller'</span>)}</span>"</span> <span class="hljs-keyword">unless</span> constructor
+
+      ctrl = <span class="hljs-keyword">new</span> constructor $elm
+      $elm.data <span class="hljs-string">'rt-live'</span>, <span class="hljs-literal">true</span>
+      $elm.data <span class="hljs-string">'$ctrl'</span>, ctrl
+      <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">of</span> constructor.watchers
+        Runtime._watch[k] = [] <span class="hljs-keyword">unless</span> Runtime._watch[k]
+        Runtime._watch[k].push [ctrl, v]
+      ctrl.onLoad?()
+      ctrl
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> $elm.parent().length &gt; <span class="hljs-number">0</span>
+      Runtime.getContext($elm.parent())
+    <span class="hljs-keyword">else</span>
+      Runtime.context
+
+  <span class="hljs-attribute">_show</span>: <span class="hljs-function"><span class="hljs-params">(element, expr, negate)</span> -&gt;</span>
+    isVisible = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">if</span> expr.indexOf(Runtime.contextName) == <span class="hljs-number">0</span>
+      isVisible = Runtime.getPropByString Runtime.context, expr.substr(Runtime.contextName.length+<span class="hljs-number">1</span>)
+    <span class="hljs-keyword">else</span>
+      $elm = <span class="hljs-keyword">if</span> element.constructor.name == <span class="hljs-string">""</span> <span class="hljs-keyword">then</span> element <span class="hljs-keyword">else</span> $(element)
+      <span class="hljs-keyword">if</span> ctx = $elm.data(<span class="hljs-string">'$ctx'</span>)
+        isVisible = Runtime.getPropByString ctx, expr
+      <span class="hljs-keyword">else</span>
+        ctx = Runtime.getContext $elm
+        $elm.data(<span class="hljs-string">'$ctx'</span>, ctx)
+        isVisible = Runtime.getPropByString ctx, expr
+
+    isVisible = !isVisible <span class="hljs-keyword">if</span> negate
+
+    <span class="hljs-keyword">return</span> isVisible
+
+  <span class="hljs-attribute">compilers</span>:
+    <span class="hljs-attribute">directives</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">for</span> k, obj <span class="hljs-keyword">of</span> Runtime.directives
+        <span class="hljs-keyword">if</span> Runtime.directives.hasOwnProperty k
+          $(k, <span class="hljs-keyword">this</span>).each<span class="hljs-function"> -&gt;</span>
+            $(<span class="hljs-keyword">this</span>).replaceWith obj.template
+
+    <span class="hljs-attribute">if</span>:<span class="hljs-function"> -&gt;</span>
+      $(<span class="hljs-string">'*[data-if]'</span>, <span class="hljs-keyword">this</span>).each<span class="hljs-function"> -&gt;</span>
+        isVisible = <span class="hljs-literal">false</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        raw = val = $elm.data <span class="hljs-string">'if'</span>
+        negate = val[<span class="hljs-number">0</span>] == <span class="hljs-string">'!'</span>
+        <span class="hljs-keyword">if</span> negate
+          val = val.substr(<span class="hljs-number">1</span>)
+        Runtime._ifs[raw] = [] <span class="hljs-keyword">unless</span> Runtime._ifs[raw]
+        isVisible = Runtime._show $elm, val, negate
+        <span class="hljs-keyword">if</span> isVisible
+          Runtime._ifs[raw].push <span class="hljs-keyword">this</span>
+        <span class="hljs-keyword">else</span>
+          $(<span class="hljs-string">'*[data-show]'</span>, $elm).each<span class="hljs-function"> -&gt;</span>
+            $e = $(<span class="hljs-keyword">this</span>)
+            prop = $e.data(<span class="hljs-string">'show'</span>)
+            list = Runtime._shws[prop]
+            Runtime._shws[prop] = <span class="hljs-function"><span class="hljs-params">(list?.filter (obj) -&gt; <span class="hljs-keyword">not</span> $(obj).<span class="hljs-keyword">is</span>($e))</span> ? []
+          <span class="hljs-title">$</span><span class="hljs-params">(<span class="hljs-string">'*[data-controller]'</span>, $elm)</span>.<span class="hljs-title">each</span> -&gt;</span>
+            $e = $(<span class="hljs-keyword">this</span>)
+            ctrl = $e.data(<span class="hljs-string">'$ctrl'</span>)
+            <span class="hljs-keyword">for</span> k <span class="hljs-keyword">of</span> ctrl?.watchers
+              list = Runtime._watch[k]
+              Runtime._watch[k] = <span class="hljs-function"><span class="hljs-params">(list?.filter (obj) -&gt; obj[<span class="hljs-number">0</span>] != ctrl)</span> ? []
+          <span class="hljs-title">comment</span> = <span class="hljs-title">document</span>.<span class="hljs-title">createComment</span> <span class="hljs-title">this</span>.<span class="hljs-title">outerHTML</span>
+          <span class="hljs-title">Runtime</span>.<span class="hljs-title">_ifs</span>[<span class="hljs-title">raw</span>].<span class="hljs-title">push</span> <span class="hljs-title">comment</span>
+          <span class="hljs-title">$elm</span>.<span class="hljs-title">replaceWith</span> <span class="hljs-title">comment</span>
+          <span class="hljs-title">Runtime</span>.<span class="hljs-title">getContext</span><span class="hljs-params">($elm)</span>?.<span class="hljs-title">onLoad</span>?<span class="hljs-params">()</span>
+        <span class="hljs-title">null</span>
+
+    <span class="hljs-title">show</span>: -&gt;</span>
+      $(<span class="hljs-string">'*[data-show]'</span>, <span class="hljs-keyword">this</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        raw = val = $elm.data <span class="hljs-string">'show'</span>
+
+        negate = val[<span class="hljs-number">0</span>] == <span class="hljs-string">'!'</span>
+        <span class="hljs-keyword">if</span> negate
+          val = val.substr(<span class="hljs-number">1</span>)
+        Runtime._shws[raw] = [] <span class="hljs-keyword">unless</span> Runtime._shws[raw]
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> Runtime._shws[raw].some <span class="hljs-function"><span class="hljs-params">(obj)</span> -&gt;</span> $(obj).<span class="hljs-keyword">is</span>($elm)</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Register an on remove handler to remove the element from the list</p></div></div><div class="code"><div class="wrapper">        $elm.<span class="hljs-literal">on</span> <span class="hljs-string">'remove'</span>,<span class="hljs-function"> -&gt;</span>
+          list = Runtime._shws[raw]
+          Runtime._shws[raw] = <span class="hljs-function"><span class="hljs-params">(list?.filter (obj) -&gt; <span class="hljs-keyword">not</span> $(obj).<span class="hljs-keyword">is</span>($elm))</span> ? []
+
+        <span class="hljs-title">isVisible</span> = <span class="hljs-title">Runtime</span>.<span class="hljs-title">_show</span> <span class="hljs-title">$elm</span>, <span class="hljs-title">val</span>, <span class="hljs-title">negate</span>
+        <span class="hljs-title">Runtime</span>.<span class="hljs-title">_shws</span>[<span class="hljs-title">raw</span>].<span class="hljs-title">push</span> <span class="hljs-title">this</span>
+        <span class="hljs-title">if</span> <span class="hljs-title">isVisible</span>
+          <span class="hljs-title">$elm</span>.<span class="hljs-title">removeClass</span> '<span class="hljs-title">hidden</span>'
+        <span class="hljs-title">else</span>
+          <span class="hljs-title">$elm</span>.<span class="hljs-title">addClass</span> '<span class="hljs-title">hidden</span>'
+        <span class="hljs-title">null</span>
+</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="include">include</h2>
+<p>Async load partials by eval</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">include</span>:<span class="hljs-function"> -&gt;</span>
+      $(<span class="hljs-string">'*[data-include]'</span>, <span class="hljs-keyword">this</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        partial = eval $elm.data(<span class="hljs-string">'include'</span>)
+        $elm.removeData <span class="hljs-string">'include'</span>
+        $elm.load partial,<span class="hljs-function"> -&gt;</span>
+          Runtime.compile($elm)
+          Runtime.getContext($elm)?.onLoad?()</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="controller">controller</h2>
+<p>Specify a controller to attach to the element</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">controller</span>:<span class="hljs-function"> -&gt;</span>
+      $(<span class="hljs-string">'*[data-controller]'</span>, <span class="hljs-keyword">this</span>).filter(<span class="hljs-function">-&gt;</span> !$(<span class="hljs-keyword">this</span>).data <span class="hljs-string">'rt-live'</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        constructor = eval $elm.data(<span class="hljs-string">'controller'</span>)
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Unknown Controller: <span class="hljs-subst">#{$elm.data(<span class="hljs-string">'controller'</span>)}</span>"</span> <span class="hljs-keyword">unless</span> constructor
+        ctrl = <span class="hljs-keyword">new</span> constructor $elm
+        $elm.data <span class="hljs-string">'rt-live'</span>, <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">of</span> constructor.watchers
+          Runtime._watch[k] = [] <span class="hljs-keyword">unless</span> Runtime._watch[k]
+          Runtime._watch[k].push [ctrl, v]
+        ctrl.onLoad?()
+        <span class="hljs-literal">null</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="click">click</h2>
+<p>Execute the expression within an apply cycle</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">click</span>:<span class="hljs-function"> -&gt;</span>
+      $(<span class="hljs-string">'*[data-click]'</span>, <span class="hljs-keyword">this</span>).filter(<span class="hljs-function">-&gt;</span> !$(<span class="hljs-keyword">this</span>).data <span class="hljs-string">'rt-live'</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        $elm.data <span class="hljs-string">'rt-live'</span>, <span class="hljs-literal">true</span>
+        $elm.<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function"><span class="hljs-params">(evt)</span> -&gt;</span>
+          evt.preventDefault()
+          Runtime.apply<span class="hljs-function"> -&gt;</span>
+            ctx = Runtime.getContext($elm)
+            action = $elm.data(<span class="hljs-string">'click'</span>)
+            <span class="hljs-keyword">if</span> ctx.hasOwnProperty action
+              ctx[action].apply ctx, [$elm]
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> Runtime.context[action]?
+              Runtime.context[action].apply Runtime.ctx, [$elm]
+            <span class="hljs-keyword">else</span>
+              <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Unknown action '<span class="hljs-subst">#{action}</span>' for <span class="hljs-subst">#{$elm[<span class="hljs-number">0</span>].outerHTML}</span> in <span class="hljs-subst">#{ctx.constructor.name}</span>"</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="double-click">double click</h2>
+<p>Execute the expression within an apply cycle</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">dblclick</span>:<span class="hljs-function"> -&gt;</span>
+      $(<span class="hljs-string">'*[data-dblclick]'</span>, <span class="hljs-keyword">this</span>).filter(<span class="hljs-function">-&gt;</span> !$(<span class="hljs-keyword">this</span>).data <span class="hljs-string">'rt-live'</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        $elm.data <span class="hljs-string">'rt-live'</span>, <span class="hljs-literal">true</span>
+        $elm.<span class="hljs-literal">on</span> <span class="hljs-string">'dblclick'</span>, <span class="hljs-function"><span class="hljs-params">(evt)</span> -&gt;</span>
+          evt.preventDefault()
+          Runtime.apply<span class="hljs-function"> -&gt;</span>
+            ctx = Runtime.getContext($elm)
+            action = $elm.data(<span class="hljs-string">'dblclick'</span>)
+            <span class="hljs-keyword">if</span> ctx.hasOwnProperty action
+              ctx[action].apply ctx, [$elm]
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> Runtime.context[action]?
+              Runtime.context[action].apply Runtime.ctx, [$elm]
+            <span class="hljs-keyword">else</span>
+              <span class="hljs-built_in">console</span>.error <span class="hljs-string">"Unknown action '<span class="hljs-subst">#{action}</span>' for <span class="hljs-subst">#{$elm[<span class="hljs-number">0</span>].outerHTML}</span> in <span class="hljs-subst">#{ctx.constructor.name}</span>"</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h2 id="tabs">Tabs</h2></div></div></div><div class="segment"><div class="code"><div class="wrapper">    <span class="hljs-attribute">tabs</span>:<span class="hljs-function"> -&gt;</span>
+      li = <span class="hljs-string">'&lt;li&gt;&lt;a href="#" data-click="open"&gt;&lt;/a&gt;&lt;/li&gt;'</span>
+      pane = <span class="hljs-string">'&lt;div class="tab-pane"&gt;&lt;/div&gt;'</span>
+      template = <span class="hljs-string">'&lt;div class="tabbable"&gt;&lt;ul class="nav nav-tabs"&gt;&lt;/ul&gt;&lt;div class="tab-content"&gt;&lt;/div&gt;&lt;/div&gt;'</span>
+
+      $(<span class="hljs-string">'*[data-tabs]'</span>, <span class="hljs-keyword">this</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        $target = $(template)
+        $target.addClass $elm.attr(<span class="hljs-string">'class'</span>)
+        tabCtrl =
+          <span class="hljs-attribute">open</span>: <span class="hljs-function"><span class="hljs-params">(el)</span> -&gt;</span>
+            $(<span class="hljs-string">'.active'</span>, $target).removeClass <span class="hljs-string">'active'</span>
+            $(el).parent().addClass <span class="hljs-string">'active'</span>
+            $(<span class="hljs-string">".tab-pane[title='<span class="hljs-subst">#{$(el).parent().attr(<span class="hljs-string">'title'</span>)}</span>']"</span>, $target).addClass <span class="hljs-string">'active'</span>
+        $target.data <span class="hljs-string">'$ctrl'</span>, tabCtrl
+        $(<span class="hljs-string">'*[data-pane]'</span>, $elm).each<span class="hljs-function"> -&gt;</span>
+          $pane = $(<span class="hljs-keyword">this</span>)
+          $link = $(li)
+          title = $pane.attr(<span class="hljs-string">'title'</span>)
+          $link.attr <span class="hljs-string">'title'</span>, title
+          $(<span class="hljs-string">'a'</span>, $link).html title
+          $(<span class="hljs-string">'ul.nav'</span>, $target).append $link
+          newPane = $(pane).append $pane.children()
+          newPane.attr <span class="hljs-string">'title'</span>, title
+          $(<span class="hljs-string">'.tab-content'</span>, $target).append newPane
+        tabCtrl.open $(<span class="hljs-string">'li:first-child &gt; a'</span>, $target)
+
+        $elm.replaceWith Runtime.compile($target)</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h3 id="special-case-of-text-fields-used-in-a-data-repeat">Special case of text fields used in a data-repeat</h3>
+<p>In this situation, the
+field will lose focus after each keypress as the field is being removed
+and created when the list updates. When repeats can update in place this
+will no longer be an issue.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">model</span>: <span class="hljs-function"><span class="hljs-params">(context = <span class="hljs-literal">null</span>)</span> -&gt;</span>
+      $(<span class="hljs-string">'input[data-model], select[data-model], textarea[data-model]'</span>, <span class="hljs-keyword">this</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        ctx = context ? Runtime.getContext $elm
+        model = $elm.data <span class="hljs-string">'model'</span>
+        <span class="hljs-keyword">if</span> $elm.attr(<span class="hljs-string">'type'</span>) == <span class="hljs-string">'text'</span> || $elm.attr(<span class="hljs-string">'type'</span>) == <span class="hljs-string">'file'</span>
+          $elm.val Runtime.getValue($elm, model, ctx)
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> $elm.attr(<span class="hljs-string">'type'</span>) == <span class="hljs-string">'radio'</span>
+          val = $elm.val()
+          val = parseInt(val) <span class="hljs-keyword">if</span> val[<span class="hljs-number">0</span>].match <span class="hljs-regexp">/[0-9]/</span>
+          $elm.prop <span class="hljs-string">'checked'</span>, Runtime.getValue($elm, modelm, ctx) == val
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> $elm.attr(<span class="hljs-string">'type'</span>) == <span class="hljs-string">'checkbox'</span>
+          $elm.prop <span class="hljs-string">'checked'</span>, Runtime.getValue($elm, model, ctx)
+
+        <span class="hljs-function"><span class="hljs-title">change</span> = -&gt;</span>
+          val = $elm.val()
+          <span class="hljs-keyword">if</span> $elm.attr(<span class="hljs-string">'type'</span>) == <span class="hljs-string">'radio'</span>
+            val = parseInt(val) <span class="hljs-keyword">if</span> val[<span class="hljs-number">0</span>].match <span class="hljs-regexp">/[0-9]/</span>
+          <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> $elm.attr(<span class="hljs-string">'type'</span>) == <span class="hljs-string">'checkbox'</span>
+            val = $elm.prop <span class="hljs-string">'checked'</span>
+          <span class="hljs-keyword">if</span> Runtime.isInApply
+            obj = $elm.data(<span class="hljs-string">'rt-model'</span>) ? ctx
+            Runtime.setPropByString obj, model, val
+          <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> $elm.data(<span class="hljs-string">'trap'</span>)
+            obj = $elm.data(<span class="hljs-string">'rt-model'</span>) ? ctx
+            Runtime.apply<span class="hljs-function"> -&gt;</span>
+              Runtime.setPropByString obj, model, val
+            , ctx.$el
+
+          <span class="hljs-keyword">else</span>
+            obj = $elm.data(<span class="hljs-string">'rt-model'</span>) ? ctx
+            Runtime.apply<span class="hljs-function"> -&gt;</span>
+              Runtime.setPropByString obj, model, val
+          <span class="hljs-literal">null</span>
+
+        $elm.<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>, change
+        $elm.<span class="hljs-literal">on</span> <span class="hljs-string">'keyup'</span>, change
+        $elm.<span class="hljs-literal">on</span> <span class="hljs-string">'search'</span>, change
+        $elm.<span class="hljs-literal">on</span> <span class="hljs-string">'webkitspeechchange'</span>, change <span class="hljs-keyword">if</span> $elm.attr <span class="hljs-string">'x-webkit-speech'</span>
+
+    <span class="hljs-attribute">submit</span>:<span class="hljs-function"> -&gt;</span>
+      $(<span class="hljs-string">'*[data-submit]'</span>, <span class="hljs-keyword">this</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        $elm.<span class="hljs-literal">on</span> <span class="hljs-string">'submit'</span>, <span class="hljs-function"><span class="hljs-params">(evt)</span> -&gt;</span>
+          evt.stopPropagation()
+          evt.preventDefault()
+          Runtime.apply<span class="hljs-function"> -&gt;</span>
+            ctx = Runtime.getContext($elm)
+            ctx[$elm.data(<span class="hljs-string">'submit'</span>)].apply ctx, [$elm]
+
+    <span class="hljs-attribute">repeat</span>:<span class="hljs-function"> -&gt;</span>
+      $(<span class="hljs-string">'*[data-repeat]'</span>, <span class="hljs-keyword">this</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        repeat = $elm.data <span class="hljs-string">'repeat'</span>
+        repeat = repeat.split(<span class="hljs-string">' in '</span>)
+        list = repeat[<span class="hljs-number">1</span>]
+        model = repeat[<span class="hljs-number">0</span>]
+        ctx = Runtime.getContext($elm)
+        list = Runtime.getPropByString ctx, list
+        $elm.data <span class="hljs-string">'rt-repeat-list'</span>, JSON.parse(JSON.stringify(list))
+        template = $elm.data(<span class="hljs-string">'template'</span>)
+        <span class="hljs-keyword">if</span> list
+          children = <span class="hljs-keyword">for</span> obj <span class="hljs-keyword">in</span> list
+            html = template
+            obj.$ctrl = ctx
+            <span class="hljs-keyword">while</span> expr = html.match(<span class="hljs-regexp">/\{\{(.*?)\}\}/</span>)?[<span class="hljs-number">1</span>]
+              html = html.replace <span class="hljs-string">"{{<span class="hljs-subst">#{expr}</span>}}"</span>, Runtime.evaluateExpression(expr, $elm, obj, model)
+            obj.$ctrl = <span class="hljs-literal">null</span>
+            child = Runtime.compile($(html))
+            child.data(<span class="hljs-string">'rt-model'</span>, obj)
+            child
+          $elm.append children
+
+    <span class="hljs-attribute">src</span>:<span class="hljs-function"> -&gt;</span>
+      $(<span class="hljs-string">'img[data-src]'</span>, <span class="hljs-keyword">this</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        $elm.attr <span class="hljs-string">'src'</span>, Runtime.getValue($elm, $elm.data(<span class="hljs-string">'src'</span>))</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><h1 id="watchers">Watchers</h1>
+<p>Functions which manipulate the DOM based on data attributes</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-attribute">watchers</span>:</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Not a data attribute. Used to restore or remove ifs</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-attribute">_updateIf</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-keyword">for</span> k, elements <span class="hljs-keyword">of</span> Runtime._ifs
+        <span class="hljs-keyword">if</span> Runtime._ifs.hasOwnProperty k
+          raw = k
+          negate = k[<span class="hljs-number">0</span>] == <span class="hljs-string">'!'</span>
+          <span class="hljs-keyword">if</span> negate
+            k = k.substr(<span class="hljs-number">1</span>)
+          <span class="hljs-keyword">for</span> element, i <span class="hljs-keyword">in</span> elements
+            isVisible = Runtime._show $(element), k, negate
+            <span class="hljs-comment">#turn on element if it is a comment</span>
+            <span class="hljs-keyword">if</span> isVisible
+              <span class="hljs-keyword">if</span> element.nodeType == <span class="hljs-number">8</span> <span class="hljs-comment">#is a comment node</span>
+                compiled = Runtime.compile $(element.nodeValue), <span class="hljs-literal">false</span>
+                $(element).replaceWith compiled
+                Runtime._ifs[raw][i] = compiled
+            <span class="hljs-keyword">else</span>
+              <span class="hljs-comment">#disable if not a comment</span>
+              <span class="hljs-keyword">if</span> element.nodeType != <span class="hljs-number">8</span> <span class="hljs-comment">##not a comment node</span>
+                $(<span class="hljs-string">'*[data-show]'</span>, element).each<span class="hljs-function"> -&gt;</span>
+                  $e = $(<span class="hljs-keyword">this</span>)
+                  prop = $e.data(<span class="hljs-string">'show'</span>)
+                  list = Runtime._shws[prop]
+                  <span class="hljs-comment">#Remove the elements bound to a show</span>
+                  Runtime._shws[prop] = <span class="hljs-function"><span class="hljs-params">(list?.filter (obj) -&gt; <span class="hljs-keyword">not</span> $(obj).<span class="hljs-keyword">is</span>($e))</span> ? []
+                <span class="hljs-title">$</span><span class="hljs-params">(<span class="hljs-string">'*[data-controller]'</span>, element)</span>.<span class="hljs-title">each</span> -&gt;</span>
+                  $e = $(<span class="hljs-keyword">this</span>)
+                  ctrl = $e.data(<span class="hljs-string">'$ctrl'</span>)
+                  <span class="hljs-keyword">for</span> k <span class="hljs-keyword">of</span> ctrl?.watchers
+                    list = Runtime._watch[k]
+                    Runtime._watch[k] = <span class="hljs-function"><span class="hljs-params">(list?.filter (obj) -&gt; obj[<span class="hljs-number">0</span>] != ctrl)</span> ? []
+                <span class="hljs-title">comment</span> = <span class="hljs-title">document</span>.<span class="hljs-title">createComment</span> <span class="hljs-params">($(element)[<span class="hljs-number">0</span>])</span>.<span class="hljs-title">outerHTML</span>
+                <span class="hljs-title">Runtime</span>.<span class="hljs-title">_ifs</span>[<span class="hljs-title">raw</span>][<span class="hljs-title">i</span>] = <span class="hljs-title">comment</span>;
+                <span class="hljs-title">$</span><span class="hljs-params">(element)</span>.<span class="hljs-title">replaceWith</span> <span class="hljs-title">comment</span>
+              <span class="hljs-title">null</span>
+      <span class="hljs-title">null</span>
+
+    <span class="hljs-title">updateShow</span>: -&gt;</span>
+      <span class="hljs-keyword">for</span> k, elements <span class="hljs-keyword">of</span> Runtime._shws
+        <span class="hljs-keyword">if</span> Runtime._shws.hasOwnProperty k
+          raw = k
+          negate = k[<span class="hljs-number">0</span>] == <span class="hljs-string">'!'</span>
+          <span class="hljs-keyword">if</span> negate
+            k = k.substr(<span class="hljs-number">1</span>)
+          <span class="hljs-keyword">for</span> element, i <span class="hljs-keyword">in</span> elements
+            isVisible = Runtime._show $(element), k, negate
+            <span class="hljs-keyword">if</span> isVisible &amp;&amp; element.classList.contains(<span class="hljs-string">'hidden'</span>)
+              element.classList.remove <span class="hljs-string">'hidden'</span>
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> !isVisible &amp;&amp; !element.classList.contains(<span class="hljs-string">'hidden'</span>)
+              element.classList.add <span class="hljs-string">'hidden'</span>
+            <span class="hljs-literal">null</span>
+      <span class="hljs-literal">null</span>
+
+    <span class="hljs-attribute">updateModel</span>:<span class="hljs-function"> -&gt;</span>
+      <span class="hljs-function"><span class="hljs-title">getVal</span> = <span class="hljs-params">($elm)</span> -&gt;</span>
+        filter = $elm.data(<span class="hljs-string">'filter'</span>)?.split(<span class="hljs-regexp">/:(.+)/</span>)
+        filterKey = filter?[<span class="hljs-number">0</span>] || <span class="hljs-literal">null</span>
+        <span class="hljs-keyword">if</span> filterKey &amp;&amp; !Runtime.filters[filterKey]
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Unknown filter: '<span class="hljs-subst">#{filterKey}</span>' for element: <span class="hljs-subst">#{$elm[<span class="hljs-number">0</span>].outerHTML}</span>"</span>)
+        filterOptions = <span class="hljs-keyword">if</span> filter?.length &gt; <span class="hljs-number">1</span> <span class="hljs-keyword">then</span> eval(filter[<span class="hljs-number">1</span>]) <span class="hljs-keyword">else</span> <span class="hljs-literal">null</span>
+        filter = <span class="hljs-keyword">if</span> filterKey <span class="hljs-keyword">then</span> Runtime.filters[filterKey] <span class="hljs-keyword">else</span> <span class="hljs-literal">null</span>
+        value = Runtime.getValue $elm, $elm.data(<span class="hljs-string">'model'</span>)
+        <span class="hljs-keyword">if</span> filter &amp;&amp; value != <span class="hljs-literal">null</span> <span class="hljs-keyword">then</span> filter(value, filterOptions) <span class="hljs-keyword">else</span> value
+
+      $(<span class="hljs-string">':text[data-model]'</span>, $(<span class="hljs-keyword">this</span>)).<span class="hljs-keyword">not</span>(<span class="hljs-string">":focus"</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        newVal = getVal $elm
+        $elm.val newVal <span class="hljs-keyword">if</span> $elm.val() != newVal
+
+      $(<span class="hljs-string">':radio[data-model]'</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        val = $elm.val()
+        val = parseInt(val) <span class="hljs-keyword">if</span> val[<span class="hljs-number">0</span>].match <span class="hljs-regexp">/[0-9]/</span>
+        $elm.prop <span class="hljs-string">'checked'</span>, Runtime.getValue($elm, $elm.data(<span class="hljs-string">'model'</span>)) == val
+
+      $(<span class="hljs-string">'span[data-model]'</span>, $(<span class="hljs-keyword">this</span>)).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        $elm.html getVal($elm)
+      <span class="hljs-literal">null</span>
+
+    <span class="hljs-attribute">updateSrc</span>:<span class="hljs-function"> -&gt;</span>
+      $(<span class="hljs-string">'img[data-src]'</span>, $(<span class="hljs-keyword">this</span>)).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        newSrc = Runtime.getValue($elm, $elm.data(<span class="hljs-string">'src'</span>))
+        $elm.attr(<span class="hljs-string">'src'</span>, newSrc) <span class="hljs-keyword">if</span> $elm.attr(<span class="hljs-string">'src'</span>) != newSrc
+
+    <span class="hljs-attribute">updateRepeat</span>:<span class="hljs-function"> -&gt;</span>
+      $(<span class="hljs-string">'*[data-repeat]'</span>, <span class="hljs-keyword">this</span>).each<span class="hljs-function"> -&gt;</span>
+        $elm = $(<span class="hljs-keyword">this</span>)
+        repeat = $elm.data <span class="hljs-string">'repeat'</span>
+        repeat = repeat.split(<span class="hljs-string">' in '</span>)
+        list = repeat[<span class="hljs-number">1</span>]
+        model = repeat[<span class="hljs-number">0</span>]
+        ctx = Runtime.getContext($elm)
+        newList = Runtime.getPropByString ctx, list
+        oldList = $elm.data <span class="hljs-string">'rt-repeat-list'</span>
+        changed = <span class="hljs-keyword">if</span> oldList &amp;&amp; newList <span class="hljs-keyword">then</span> oldList.length != newList.length <span class="hljs-keyword">else</span> <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">unless</span> changed
+          changed = oldList.some <span class="hljs-function"><span class="hljs-params">(e, idx)</span> -&gt;</span>
+            newObj = newList[idx]
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">typeof</span> e == <span class="hljs-string">'object'</span>
+              <span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">of</span> newObj <span class="hljs-keyword">when</span> newObj.hasOwnProperty k
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> v != e[k]
+            <span class="hljs-keyword">else</span>
+              newObj != e
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> !changed
+
+        <span class="hljs-keyword">if</span> newList
+          $elm.data <span class="hljs-string">'rt-repeat-list'</span>, JSON.parse(JSON.stringify(newList))
+        <span class="hljs-keyword">else</span>
+          $elm.removeData <span class="hljs-string">'rt-repeat-list'</span>
+        $elm.empty()
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">unless</span> newList
+        template = $elm.data(<span class="hljs-string">'template'</span>)
+        container = $(<span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'div'</span>))
+        <span class="hljs-keyword">if</span> newList
+          <span class="hljs-keyword">for</span> obj <span class="hljs-keyword">in</span> newList
+            html = template
+            obj.$ctrl = ctx
+            <span class="hljs-keyword">while</span> expr = html.match(<span class="hljs-regexp">/\{\{(.*?)\}\}/</span>)?[<span class="hljs-number">1</span>]
+              html = html.replace <span class="hljs-string">"{{<span class="hljs-subst">#{expr}</span>}}"</span>, Runtime.evaluateExpression(expr, $elm, obj, model)
+            context = {}
+            context[model] = obj
+            child = Runtime.compile($(html), <span class="hljs-literal">false</span>, context)
+            obj.$ctrl = <span class="hljs-literal">null</span>
+            rt_model = {}
+            rt_model[model] = obj
+            child.data(<span class="hljs-string">'rt-model'</span>, rt_model)
+            container.append child
+          $elm.append container.children()
+          $elm.trigger <span class="hljs-string">'contentchanged'</span></div></div></div></div></body></html>

@@ -9,6 +9,7 @@ directory 'build'
 directory File.join('build', 'js')
 
 @keep_cache = false
+@production = true
 
 desc "Remove previous build"
 task :clean do
@@ -63,6 +64,28 @@ task :coffee, [:cf] => ["build", "build/js"] do |t, args|
     puts "done"
   end
 
+end
+
+desc "ES6 Closure Compiler"
+task :es6 => [:clean, "build", "build/js"] do
+  cache_path = File.join("build", "es6_cache")
+  FileUtils.mkdir cache_path unless File.exists? cache_path
+  system("babel src --out-dir compiled")
+  system("cp src/spark-md5.js #{cache_path}/spark-md5.js")
+  system("cp src/containsRegex.jquery.js #{cache_path}/containsRegex.jquery.js")
+  system("browserify ./compiled/runtime.js -o #{cache_path}/bundle.js")
+  js_files = Dir.glob(File.join(cache_path, '**', '*.js'))
+  app_path = bust_cache(:runtime, File.join('build', 'js', 'runtime.js'))
+  flags = { :compilation_level => 'SIMPLE_OPTIMIZATIONS' }
+  flags.merge!({ :debug => true, :formatting => 'pretty_print' }) unless @production
+  File.open(app_path, 'w') do |f|
+    f.write Closure::Compiler.new(flags).compile_files(js_files)
+  end
+  unless @keep_cache
+    print "removing temp files...."
+    FileUtils.rm_rf cache_path
+    puts "done"
+  end
 end
 
 def bust_cache(key, file = nil)

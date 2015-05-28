@@ -1,5 +1,3 @@
-goog.provide 'Runtime'
-
 Runtime =
   context: window
   contextName: ''

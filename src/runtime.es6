@@ -1,16 +1,17 @@
 import Controllers from './controllers/controllers';
 
 var Runtime = {
-  context      :  window,
-  contextName  :  '',
-  directives   :  {},
-  filters      :  {},
-  router       :  {},
-  _ifs         :  {}, // Stores the registered ifs
-  _shws        :  {}, // Stores the registered shows
-  _klass       :  {}, // Stores the registered css class
-  _watch       :  {}, // Stores the registered watchers
-  interpolationPattern: /\{\{(.*?)\}\}/,
+  context               :  window,
+  contextName           :  '',
+  directives            :  {},
+  filters               :  {},
+  router                :  {},
+  _ifs                  :  {}, // Stores the registered ifs
+  _shws                 :  {}, // Stores the registered shows
+  _klass                :  {}, // Stores the registered css class
+  _watch                :  {}, // Stores the registered watchers
+  _repeat_templates     :  {}, // Stores a map between repeats and their templates
+  interpolationPattern  :  /\{\{(.*?)\}\}/,
 
   // Set the root context
   setContext(contextName)
@@ -63,13 +64,16 @@ var Runtime = {
   {
     let nodes = element.querySelectorAll('[data-repeat]');
     let node;
+    let hash;
     for (let i = nodes.length - 1; i >= 0; --i)
     {
       node = nodes[i];
-      if (!node._rt_repeat_template)
+      if (!node.dataset._rt_repeat_template)
       {
-        node._rt_repeat_template = node.innerHTML;
-        node.innerHTML = "";
+        hash                              =  SparkMD5.hash(node.innerHTML);
+        Runtime._repeat_templates[hash]   =  node.firstElementChild;
+        node.dataset._rt_repeat_template  =  hash;
+        node.innerHTML                    =  "";
       }
     }
   },
@@ -237,7 +241,7 @@ var Runtime = {
   // Walk through an object to get the specified property.
   // Nested properties are specified using '.' syntax
   // Function properties will be called and the result will be walked as well
-  getPropByString(obj, propString)
+  getPropByString(obj, propString, params)
   {
     if (!propString)
     {
@@ -268,7 +272,7 @@ var Runtime = {
       obj = obj[property];
       if (typeof obj === 'function')
       {
-        obj = obj.call(context);
+        obj = obj.call(context, params);
       }
       if (obj === null || obj === void 0)
       {
@@ -278,11 +282,11 @@ var Runtime = {
     return obj;
   },
 
-  getValue(raw, propString, context = null) {
+  getValue(raw, propString, context = null, params = null) {
     var ctx;
     ctx = context ? context : propString.match(/^[A-Z]/) ? window : Runtime.getContext(raw);
     raw._rt_ctx = ctx;
-    return Runtime.getPropByString(ctx, propString);
+    return Runtime.getPropByString(ctx, propString, params);
   },
   setPropByString(obj, propString, value) {
     var key, paths, prop, _i, _len, _ref, _ref1, ctx;
@@ -888,20 +892,33 @@ var Runtime = {
         };
       });
     },
-    repeat() {
+    repeat(context = null) {
       var elements = (this instanceof jQuery ? this[0] : this).querySelectorAll('[data-repeat]');
       let element;
-      var $elm, child, children, ctx, expr, html, list, model, obj, repeat, template;
+      var $elm, child, children, ctx, expr, html, list, model, obj, repeat, template, raw, _ref;
       let fragment;
       for (var i = elements.length - 1; i >= 0; i--)
       {
         raw = elements[i];
-        repeat = raw.dataset.repeat.split(' in ');
+        repeat = raw.dataset.repeat.split(/\s+in\s+/);
         list = repeat[1];
         model = repeat[0];
         ctx = Runtime.getContext(raw);
 
-        list = Runtime.getPropByString(ctx, list);
+        //Check if we are calling a function with a param
+        if (typeof (_ref = list.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
+        {
+          let funcName = _ref[1];
+          let param = _ref[2];
+          param = Runtime.getValue(raw.parentNode, param);
+
+          list = Runtime.getValue(raw,  _ref[1], null, param);
+        }
+        else
+        {
+          list = Runtime.getPropByString(ctx, list);
+        }
+
         listHash = SparkMD5.hash(JSON.stringify(list, function(key, value){
           if (key == '__elm' || key == '$ctrl')
           {
@@ -912,9 +929,12 @@ var Runtime = {
         raw._rt_ctrl = ctx;
         raw._rt_repeat_list = listHash;
 
-        template = raw._rt_repeat_template;
-        template = Runtime.compile($(template), false, {})[0];
-        raw._rt_repeat_template = template;
+        // Get the template
+        template = Runtime._repeat_templates[raw.dataset._rt_repeat_template];
+        // Compile it
+        template = Runtime.compile($(template), false, { $ctrl: raw._rt_ctrl })[0];
+        // Store the compiled template
+        Runtime._repeat_templates[raw.dataset._rt_repeat_template] = template;
 
         if (list)
         {
@@ -928,6 +948,7 @@ var Runtime = {
             context.$ctrl = ctx;
             node = template.cloneNode(true);
             node._rt_ctx = context;
+            Runtime.compilers.repeat.call(node);
             Runtime.compilers.click.call(node);
             Runtime.compilers.dblclick.call(node);
             Runtime.compilers.blur.call(node);
@@ -1010,12 +1031,25 @@ var Runtime = {
       for (let i = elements.length - 1; i >= 0; --i)
       {
         raw = elements[i];
-        repeat = raw.dataset.repeat.split(' in ');
+        repeat = raw.dataset.repeat.split(/\s+in\s+/);
         list = repeat[1];
         model = repeat[0];
         ctx = Runtime.getContext(raw);
 
-        newList = Runtime.getPropByString(ctx, list);
+        //Check if we are calling a function with a param
+        if (typeof (_ref = list.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
+        {
+          let funcName = _ref[1];
+          let param = _ref[2];
+          param = Runtime.getValue(raw.parentNode, param);
+
+          newList = Runtime.getValue(raw,  _ref[1], null, param);
+        }
+        else
+        {
+          newList = Runtime.getPropByString(ctx, list);
+        }
+
         newListHash = SparkMD5.hash(JSON.stringify(newList, function(key, value){
           if (key == '__elm' || key == '$ctrl')
           {
@@ -1041,7 +1075,9 @@ var Runtime = {
           continue;
         }
 
-        template = raw._rt_repeat_template;
+        // Get the template
+        template = Runtime._repeat_templates[raw.dataset._rt_repeat_template];
+
         let count_diff = raw.childElementCount - newList.length;
         let existing = raw.childNodes;
         let node;
@@ -1060,6 +1096,7 @@ var Runtime = {
           context.$ctrl = ctx;
           child = template.cloneNode(true);
           child._rt_ctx = context;
+          Runtime.compilers.repeat.call(child);
           Runtime.compilers.click.call(child);
           Runtime.compilers.dblclick.call(child);
           Runtime.compilers.blur.call(child);
@@ -1074,6 +1111,7 @@ var Runtime = {
           obj = newList[_i];
           node = existing[_i];
           node._rt_ctx[model] = obj;
+          Runtime.watchers.updateRepeat.call(node);
         }
       }
     },

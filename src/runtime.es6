@@ -87,10 +87,16 @@ var Runtime = {
       }
     }
     Runtime.isInFlush = true;
-    if (!changed) {
-      for (let funcs of Runtime._watch) {
-        for (let func in funcs) {
-          func[1].apply(func[0]);
+    if (Object.keys(changed).length > 0) {
+      let funcs;
+      let func;
+      for (let key in Runtime._watch) {
+        if (Runtime._watch.hasOwnProperty(key)) {
+          funcs = Runtime._watch[key];
+          for (let i = funcs.length - 1; i >= 0; --i) {
+            func = funcs[i];
+            func[1].apply(func[0]);
+          }
         }
       }
     } else {
@@ -138,8 +144,9 @@ var Runtime = {
       funcs = Runtime._watch[property];
       old_values[property] = [];
       //Check if we are looking at an object property (starts with a lowercase)
-      //or global property (starts with an uppercase)
-      if (property[0].match(/^[^A-Z]/))
+      //or global property (starts with an uppercase).
+      //Lowercase has charCode 97-122 inclusive
+      if (property.charCodeAt(0) >= 97)
       {
         // association is an array of length 2 where first element is the object
         // and the second is the function on the object to execute when value
@@ -184,7 +191,8 @@ var Runtime = {
     _ref1 = Runtime._watch;
     for (k in _ref1) {
       funcs = _ref1[k];
-      if (k[0].match(/^[^A-Z]/)) {
+      // Check if we are looking at Global or object property key
+      if (k.charCodeAt(0) >= 97) {
         changes[k] = [];
         for (_j = 0, _len1 = funcs.length; _j < _len1; _j++) {
           func = funcs[_j];
@@ -284,10 +292,22 @@ var Runtime = {
 
   getValue(raw, propString, context = null, params = null) {
     var ctx;
-    ctx = context ? context : propString.match(/^[A-Z]/) ? window : Runtime.getContext(raw);
+    ctx = context ? context : propString.charCodeAt(0) <= 90 ? window : Runtime.getContext(raw);
     raw._rt_ctx = ctx;
     return Runtime.getPropByString(ctx, propString, params);
   },
+
+  isInDOM(element) {
+    while (element.parentElement !== null) {
+      if (element.parentElement == document.body) {
+        return true;
+      } else {
+        element = element.parentElement;
+      }
+    }
+    return false;
+  },
+
   setPropByString(obj, propString, value) {
     var key, paths, prop, _i, _len, _ref, _ref1, ctx;
     if (!propString) {
@@ -329,10 +349,14 @@ var Runtime = {
     {
       ctx.$ctrl = Runtime.getContext($elm);
     }
-    if (expr[0].match(/^[A-Z]/)) {
+
+    //Expr refers to a global property so it must be in window context
+    if (expr.charCodeAt(0) <= 90) {
       ctx = window;
     }
+
     value = Runtime.getPropByString(ctx, expr);
+
     if (filter) {
       filter = filter.split(/:(.+)/);
       filterKey = filter ? filter[0] : null;
@@ -500,7 +524,7 @@ var Runtime = {
     evnt.preventDefault();
     Runtime.apply(function()
     {
-      var $elm, action, ctx, model, obj;
+      var $elm, action, ctx, model, obj, parameter;
       $elm = $(element);
       ctx = Runtime.getContext($elm);
       action = $elm.data(act);
@@ -517,10 +541,14 @@ var Runtime = {
       {
         ctx = ctx.$ctrl;
       }
+      if (element.dataset.parameter) {
+        parameter = element.dataset.parameter;
+      }
+
       if (ctx.hasOwnProperty(action) || typeof ctx[action] !== 'undefined') {
-        return ctx[action].apply(ctx, [$elm, obj]);
+        return ctx[action].apply(ctx, [$elm, obj, parameter]);
       } else if (Runtime.context[action] != null) {
-        return Runtime.context[action].apply(Runtime.ctx, [$elm, obj]);
+        return Runtime.context[action].apply(Runtime.ctx, [$elm, obj, parameter]);
       } else {
         return console.error("Unknown action '" + action + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
       }
@@ -542,6 +570,16 @@ var Runtime = {
     } else {
       return value;
     }
+  },
+  removeFromDOM(e) {
+    for (var i = 0; i < e.childNodes.length; ++i) {
+          var child = e.childNodes[i];
+          Runtime.removeFromDOM(child);
+          if (typeof child.onremove == 'function') {
+              child.onremove();
+          }
+      }
+      e.remove();
   },
   compilers: {
     directives() {
@@ -628,13 +666,23 @@ var Runtime = {
         })) {
       return;
         }
-        $elm.on('remove', function() {
-          var list, _ref;
+        $elm[0].onremove = function() {
+          var list, _ref = $elm[0];
           list = Runtime._shws[raw];
-          Runtime._shws[raw] = (_ref = list != null ? list.filter(function(obj) {
-            return !$(obj).is($elm);
-          }) : void 0) != null ? _ref : [];
-        });
+          console.log("Removing shw:", raw, Runtime._shws[raw]);
+          if (list !== undefined && list !== null)
+          {
+            Runtime._shws[raw] =  list.filter(function(obj)
+            {
+              return $elm[0] !== _ref;
+            });
+          }
+          else
+          {
+            Runtime._shws[raw] = [];
+          }
+          console.log("After remove shw:", raw, Runtime._shws[raw]);
+        };
         isVisible = Runtime._show($elm, val, negate);
         Runtime._shws[raw].push(this);
         if (isVisible) {
@@ -664,7 +712,7 @@ var Runtime = {
       for (let i = elements.length - 1; i >= 0; --i)
       {
         element = elements[i];
-        element.dataset._rt_hard_klass = element.className;
+        element.dataset._rt_hard_klass = element.className.split('hidden').join(" ").trim();
         klass = Runtime.getValue(element, element.dataset.class);
         if (klass)
         {
@@ -883,14 +931,18 @@ var Runtime = {
       });
     },
     submit() {
-      $('*[data-submit]', this).each(function() {
-        var $elm;
-        $elm = $(this);
-        $elm[0].onsubmit = function(evt)
-        {
-          Runtime._call(this, evt, 'submit');
-        };
-      });
+      let elements = (this instanceof jQuery ? this[0] : this).querySelectorAll('[data-submit]');
+      let element;
+      let handler = function(evt)
+      {
+        Runtime._call(this, evt, this.dataset.submit);
+        return false;
+      };
+      for (let i = elements.length - 1; i >= 0; --i)
+      {
+        element = elements[i];
+        element.onsubmit = handler;
+      }
     },
     repeat(context = null) {
       var elements = (this instanceof jQuery ? this[0] : this).querySelectorAll('[data-repeat]');
@@ -932,9 +984,13 @@ var Runtime = {
         // Get the template
         template = Runtime._repeat_templates[raw.dataset._rt_repeat_template];
         // Compile it
-        template = Runtime.compile($(template), false, { $ctrl: raw._rt_ctrl })[0];
+        context = {};
+        context.$ctrl = ctx;
+        template = Runtime.compile($(template), false, context)[0];
         // Store the compiled template
         Runtime._repeat_templates[raw.dataset._rt_repeat_template] = template;
+
+        raw.innerHTML = "";
 
         if (list)
         {
@@ -953,6 +1009,7 @@ var Runtime = {
             Runtime.compilers.dblclick.call(node);
             Runtime.compilers.blur.call(node);
             Runtime.compilers.model.call(node);
+            Runtime.compilers.show.call(node);
             obj.__elm = node;
             fragment.appendChild(node);
           }
@@ -1084,7 +1141,7 @@ var Runtime = {
 
         while (count_diff > 0)
         {
-          existing[count_diff-1].remove();
+          Runtime.removeFromDOM(existing[count_diff-1]);
           --count_diff;
         }
 
@@ -1101,6 +1158,7 @@ var Runtime = {
           Runtime.compilers.dblclick.call(child);
           Runtime.compilers.blur.call(child);
           Runtime.compilers.model.call(child);
+          Runtime.compilers.show.call(child);
           fragment.appendChild(child);
           ++count_diff;
         }
@@ -1111,7 +1169,7 @@ var Runtime = {
           obj = newList[_i];
           node = existing[_i];
           node._rt_ctx[model] = obj;
-          Runtime.watchers.updateRepeat.call(node);
+          Runtime.flush(node);
         }
       }
     },
@@ -1129,6 +1187,9 @@ var Runtime = {
           }
           for (i = _i = 0, _len = elements.length; _i < _len; i = ++_i) {
             element = elements[i];
+            if (!Runtime.isInDOM(element)) {
+              continue;
+            }
             isVisible = Runtime._show($(element), k, negate);
             if (isVisible && element.classList.contains('hidden')) {
               element.classList.remove('hidden');
@@ -1152,6 +1213,16 @@ var Runtime = {
         if (klass)
         {
           element.classList.add(klass);
+        }
+        if (element.dataset.show != null) {
+            var key = element.dataset.show;
+            var negate = key[0] == "!";
+            isVisible = Runtime._show($(element), key, negate);
+            if (isVisible && element.classList.contains('hidden')) {
+              element.classList.remove('hidden');
+            } else if (!isVisible && !element.classList.contains('hidden')) {
+              element.classList.add('hidden');
+            }
         }
       }
 
@@ -1199,6 +1270,10 @@ var Runtime = {
         else if (element.nodeName === 'SPAN')
         {
           element.innerHTML = Runtime._model_get_val(element);
+        }
+        else if (element.nodeName === 'OPTION')
+        {
+          element.value = Runtime._model_get_val(element);
         }
       }
     },

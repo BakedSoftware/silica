@@ -87,7 +87,7 @@ var Runtime = {
       }
     }
     Runtime.isInFlush = true;
-    if (Object.keys(changed).length > 0) {
+    if (Object.keys(changed).length === 0) {
       let funcs;
       let func;
       for (let key in Runtime._watch) {

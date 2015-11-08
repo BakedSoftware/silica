@@ -1,6 +1,6 @@
 import Controllers from './controllers/controllers';
 
-var Runtime = {
+var Silica = {
   context               :  window,
   contextName           :  '',
   directives            :  {},
@@ -28,7 +28,7 @@ var Runtime = {
     };
   },
 
-  // Interpolate and link all Runtime directives within an element
+  // Interpolate and link all Silica directives within an element
   compile(element, flush = true, context = null)
   {
     var func, k, _ref;
@@ -42,20 +42,20 @@ var Runtime = {
     }
     else
     {
-      context = context || Runtime.getContext(element);
+      context = context || Silica.getContext(element);
       element[0]._rt_ctx = context;
     }
-    Runtime.cacheTemplates(element[0]);
-    Runtime.interpolate(element, context, flush);
-    for (let key in Runtime.compilers)
+    Silica.cacheTemplates(element[0]);
+    Silica.interpolate(element, context, flush);
+    for (let key in Silica.compilers)
     {
       if (key[0] !== '_')
       {
-        Runtime.compilers[key].apply(element, [context]);
+        Silica.compilers[key].apply(element, [context]);
       }
     }
     if (flush) {
-      Runtime.flush(element, true);
+      Silica.flush(element, true);
     }
     return element;
   },
@@ -71,28 +71,28 @@ var Runtime = {
       if (!node.dataset._rt_repeat_template)
       {
         hash                              =  SparkMD5.hash(node.innerHTML);
-        Runtime._repeat_templates[hash]   =  node.firstElementChild;
+        Silica._repeat_templates[hash]   =  node.firstElementChild;
         node.dataset._rt_repeat_template  =  hash;
         node.innerHTML                    =  "";
       }
     }
   },
-  flush(element = document, onlySafe = false, changed = {})
+  flush(element = document, onlySafe = false, changed = null)
   {
-    if (Runtime.isInFlush) {
-      if (Runtime._scheduledFlush) {
+    if (Silica.isInFlush) {
+      if (Silica._scheduledFlush) {
         return;
       } else {
-        Runtime._scheduledFlush = true;
+        Silica._scheduledFlush = true;
       }
     }
-    Runtime.isInFlush = true;
-    if (Object.keys(changed).length === 0) {
+    Silica.isInFlush = true;
+    if (changed === null) {
       let funcs;
       let func;
-      for (let key in Runtime._watch) {
-        if (Runtime._watch.hasOwnProperty(key)) {
-          funcs = Runtime._watch[key];
+      for (let key in Silica._watch) {
+        if (Silica._watch.hasOwnProperty(key)) {
+          funcs = Silica._watch[key];
           for (let i = funcs.length - 1; i >= 0; --i) {
             func = funcs[i];
             func[1].apply(func[0]);
@@ -108,14 +108,14 @@ var Runtime = {
             func[1].apply(func[0]);
           }
         } else {
-          obj = Runtime._watch[k];
+          obj = Silica._watch[k];
           for (let func of obj) {
             func[1].apply(func[0]);
           }
         }
       }
     }
-    let watchers = Runtime.watchers;
+    let watchers = Silica.watchers;
     let func;
     for (let k in watchers) {
       if (onlySafe && k[0] === '_') {
@@ -124,24 +124,24 @@ var Runtime = {
       func = watchers[k];
       func.apply(element);
     }
-    Runtime.isInFlush = false;
-    if (Runtime._scheduledFlush === true) {
-      Runtime._scheduledFlush = false;
-      window.setTimeout(Runtime.flush, 20);
+    Silica.isInFlush = false;
+    if (Silica._scheduledFlush === true) {
+      Silica._scheduledFlush = false;
+      window.setTimeout(function(){ Silica.flush(document, false, {}); }, 20);
     }
-    return Runtime;
+    return Silica;
   },
 
   apply(func, element = document) {
     var args, assoc, changed, changes, finalChanges, funcs, k, oldVal, old_values, v, val, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
-    if (Runtime.isInApply) {
+    if (Silica.isInApply) {
       return func.call();
     }
     old_values = {};
     var association;
-    for (let property in Runtime._watch)
+    for (let property in Silica._watch)
     {
-      funcs = Runtime._watch[property];
+      funcs = Silica._watch[property];
       old_values[property] = [];
       //Check if we are looking at an object property (starts with a lowercase)
       //or global property (starts with an uppercase).
@@ -154,7 +154,7 @@ var Runtime = {
         for (association of funcs)
         {
           //Get the current value
-          val = Runtime.getPropByString(association[0], property);
+          val = Silica.getPropByString(association[0], property);
           //Shallow copy the value if it is an array
           if (Array.isArray(val))
           {
@@ -167,7 +167,7 @@ var Runtime = {
       }
       else
       {
-        val = Runtime.getPropByString(window, property);
+        val = Silica.getPropByString(window, property);
         if (Array.isArray(val))
         {
           val = val.slice();
@@ -180,15 +180,15 @@ var Runtime = {
     // If the function to execute triggers another apply, the flag is checked
     // and the additional applies can be executed with out the need to diff the
     // properties since no flush has executed.
-    Runtime.isInApply = true;
+    Silica.isInApply = true;
     // Execute the function
     func.call();
     // Clear mark
-    Runtime.isInApply = false;
+    Silica.isInApply = false;
 
     // Compute the differences
     changes = {};
-    _ref1 = Runtime._watch;
+    _ref1 = Silica._watch;
     for (k in _ref1) {
       funcs = _ref1[k];
       // Check if we are looking at Global or object property key
@@ -199,7 +199,7 @@ var Runtime = {
           if (k.match(/\.\*$/)) {
             changes[k].push(func);
           } else {
-            val = Runtime.getPropByString(func[0], k);
+            val = Silica.getPropByString(func[0], k);
             _ref2 = old_values[k];
             for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
               args = _ref2[_k];
@@ -222,7 +222,7 @@ var Runtime = {
           }
         }
       } else {
-        val = Runtime.getPropByString(window, k);
+        val = Silica.getPropByString(window, k);
         oldVal = old_values[k];
         changed = val !== oldVal;
         if (Array.isArray(val) && Array.isArray(oldVal)) {
@@ -243,7 +243,7 @@ var Runtime = {
         finalChanges[k] = v;
       }
     }
-    return Runtime.flush(element, false, finalChanges);
+    return Silica.flush(element, false, finalChanges);
   },
 
   // Walk through an object to get the specified property.
@@ -292,9 +292,9 @@ var Runtime = {
 
   getValue(raw, propString, context = null, params = null) {
     var ctx;
-    ctx = context ? context : propString.charCodeAt(0) <= 90 ? window : Runtime.getContext(raw);
+    ctx = context ? context : propString.charCodeAt(0) <= 90 ? window : Silica.getContext(raw);
     raw._rt_ctx = ctx;
-    return Runtime.getPropByString(ctx, propString, params);
+    return Silica.getPropByString(ctx, propString, params);
   },
 
   isInDOM(element) {
@@ -332,7 +332,15 @@ var Runtime = {
         }
       }
     }
+
+    let old_value = ctx[prop];
     ctx[prop] = value;
+
+    let hook = ctx[prop + "_changed"];
+    if (hook)
+    {
+      hook.call(ctx, old_value, value);
+    }
   },
   evaluateExpression(expr, $elm, ctx = {}) {
     var filter, filterKey, filterOptions, value;
@@ -347,7 +355,7 @@ var Runtime = {
     }
     if (!ctx.$ctrl)
     {
-      ctx.$ctrl = Runtime.getContext($elm);
+      ctx.$ctrl = Silica.getContext($elm);
     }
 
     //Expr refers to a global property so it must be in window context
@@ -355,13 +363,13 @@ var Runtime = {
       ctx = window;
     }
 
-    value = Runtime.getPropByString(ctx, expr);
+    value = Silica.getPropByString(ctx, expr);
 
     if (filter) {
       filter = filter.split(/:(.+)/);
       filterKey = filter ? filter[0] : null;
       filterOptions = filter && filter.length > 1 ? eval(filter[1]) : null;
-      filter = filterKey ? Runtime.filters[filterKey] : null;
+      filter = filterKey ? Silica.filters[filterKey] : null;
       value = filter ? filter(value, filterOptions, ctx) : value;
     }
     return value;
@@ -386,7 +394,7 @@ var Runtime = {
           // Logic to determine whether to accept, reject or skip node
           // In this case, only accept nodes that have content
           // matching the interpolation pattern
-          if (Runtime.interpolationPattern.test(node.data)) {
+          if (Silica.interpolationPattern.test(node.data)) {
             return NodeFilter.FILTER_ACCEPT;
           }
         }
@@ -402,7 +410,7 @@ var Runtime = {
       text = node.data;
       // While the raw text contains the interpolation pattern
       // loop and replace the pattern with the compiled elemenent
-      while((match = text.match(Runtime.interpolationPattern)) !== null)
+      while((match = text.match(Silica.interpolationPattern)) !== null)
       {
         // The expression to evaluate
         expr = match[1];
@@ -421,7 +429,7 @@ var Runtime = {
           fmt = "<span data-model='" + property + "' data-filter='" + filter + "'>{{val}}</span>";
         }
         // Evaluate and replace the expression
-        evald = fmt.replace('{{val}}', Runtime.evaluateExpression(expr, node, context));
+        evald = fmt.replace('{{val}}', Silica.evaluateExpression(expr, node, context));
         text = text.replace("{{" + expr + "}}", evald);
       }
       // Create a new element containing the interpolated text
@@ -438,15 +446,15 @@ var Runtime = {
       parentNode.removeChild(node);
 
       // Compile the interpolated result
-      Runtime.compile(span, flush, context);
+      Silica.compile(span, flush, context);
     }
   },
 
   addFilter(key, func) {
-    Runtime.filters[key] = func;
+    Silica.filters[key] = func;
   },
   addDirective(key, obj) {
-    Runtime.directives[key] = obj;
+    Silica.directives[key] = obj;
   },
   getContext(element) {
     var $elm, constructor, ctrl, k, v, _ref, raw, ctx;
@@ -458,12 +466,12 @@ var Runtime = {
       } else if (raw._rt_ctrl) {
         return raw._rt_ctrl;
       } else if (raw.nodeName === 'BODY') {
-        return Runtime.context;
+        return Silica.context;
       } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.dataset.controller) {
         constructor = raw.dataset.controller;
         if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
         {
-          model = Runtime.getValue(raw.parentNode,  _ref[2]);
+          model = Silica.getValue(raw.parentNode,  _ref[2]);
         }
         constructor = _ref[1];
         constructor = eval(constructor);
@@ -483,10 +491,10 @@ var Runtime = {
         _ref = constructor.watchers;
         for (k in _ref) {
           v = _ref[k];
-          if (!Runtime._watch[k]) {
-            Runtime._watch[k] = [];
+          if (!Silica._watch[k]) {
+            Silica._watch[k] = [];
           }
-          Runtime._watch[k].push([ctrl, v]);
+          Silica._watch[k].push([ctrl, v]);
         }
         if (typeof ctrl.onLoad === "function") {
           ctrl.onLoad();
@@ -495,23 +503,23 @@ var Runtime = {
       } else if (raw.parentElement) {
         raw = raw.parentElement;
       } else {
-        return Runtime.context;
+        return Silica.context;
       }
     }
   },
   _show(element, expr, negate) {
     var $elm, ctx, isVisible;
     isVisible = true;
-    if (expr.indexOf(Runtime.contextName) === 0) {
-      isVisible = Runtime.getPropByString(Runtime.context, expr.substr(Runtime.contextName.length + 1));
+    if (expr.indexOf(Silica.contextName) === 0) {
+      isVisible = Silica.getPropByString(Silica.context, expr.substr(Silica.contextName.length + 1));
     } else {
       $elm = element.constructor.name === "" ? element : $(element);
       if ((typeof (ctx = $elm[0]._rt_ctx)) !== "undefined") {
-        isVisible = Runtime.getPropByString(ctx, expr);
+        isVisible = Silica.getPropByString(ctx, expr);
       } else {
-        ctx = Runtime.getContext($elm);
+        ctx = Silica.getContext($elm);
         $elm[0]._rt_ctx = ctx;
-        isVisible = Runtime.getPropByString(ctx, expr);
+        isVisible = Silica.getPropByString(ctx, expr);
       }
     }
     if (negate) {
@@ -522,11 +530,11 @@ var Runtime = {
   _call(element, evnt, act)
   {
     evnt.preventDefault();
-    Runtime.apply(function()
+    Silica.apply(function()
     {
       var $elm, action, ctx, model, obj, parameter;
       $elm = $(element);
-      ctx = Runtime.getContext($elm);
+      ctx = Silica.getContext($elm);
       action = $elm.data(act);
       action = action.match(/(\w+)(?:\((\w+)\))*/);
       if (typeof action[2] !== 'undefined')
@@ -547,8 +555,8 @@ var Runtime = {
 
       if (ctx.hasOwnProperty(action) || typeof ctx[action] !== 'undefined') {
         return ctx[action].apply(ctx, [$elm, obj, parameter]);
-      } else if (Runtime.context[action] != null) {
-        return Runtime.context[action].apply(Runtime.ctx, [$elm, obj, parameter]);
+      } else if (Silica.context[action] != null) {
+        return Silica.context[action].apply(Silica.ctx, [$elm, obj, parameter]);
       } else {
         return console.error("Unknown action '" + action + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
       }
@@ -559,12 +567,12 @@ var Runtime = {
     var filter, filterKey, filterOptions, value, _ref;
     filter = (typeof (_ref = raw.dataset.filter)) !== "undefined" ? _ref.split(/:(.+)/) : void 0;
     filterKey = (filter ? filter[0] : null);
-    if (filterKey && !Runtime.filters[filterKey]) {
+    if (filterKey && !Silica.filters[filterKey]) {
       throw new Error("Unknown filter: '" + filterKey + "' for element: " + raw.outerHTML);
     }
     filterOptions = filter && filter.length > 1 ? eval(filter[1]) : null;
-    filter = filterKey ? Runtime.filters[filterKey] : null;
-    value = Runtime.getValue(raw, raw.dataset.model);
+    filter = filterKey ? Silica.filters[filterKey] : null;
+    value = Silica.getValue(raw, raw.dataset.model);
     if (filter && value != null) {
       return filter(value, filterOptions);
     } else {
@@ -574,7 +582,7 @@ var Runtime = {
   removeFromDOM(e) {
     for (var i = 0; i < e.childNodes.length; ++i) {
           var child = e.childNodes[i];
-          Runtime.removeFromDOM(child);
+          Silica.removeFromDOM(child);
           if (typeof child.onremove == 'function') {
               child.onremove();
           }
@@ -584,11 +592,11 @@ var Runtime = {
   compilers: {
     directives() {
       var k, obj, _ref, _results;
-      _ref = Runtime.directives;
+      _ref = Silica.directives;
       _results = [];
       for (k in _ref) {
         obj = _ref[k];
-        if (Runtime.directives.hasOwnProperty(k)) {
+        if (Silica.directives.hasOwnProperty(k)) {
           _results.push($(k, this).each(function() {
             return $(this).replaceWith(obj.template);
           }));
@@ -608,19 +616,19 @@ var Runtime = {
         if (negate) {
           val = val.substr(1);
         }
-        if (!Runtime._ifs[raw]) {
-          Runtime._ifs[raw] = [];
+        if (!Silica._ifs[raw]) {
+          Silica._ifs[raw] = [];
         }
-        isVisible = Runtime._show($elm, val, negate);
+        isVisible = Silica._show($elm, val, negate);
         if (isVisible) {
-          Runtime._ifs[raw].push(this);
+          Silica._ifs[raw].push(this);
         } else {
           $('*[data-show]', $elm).each(function() {
             var $e, list, prop, _ref;
             $e = $(this);
             prop = $e.data('show');
-            list = Runtime._shws[prop];
-            Runtime._shws[prop] = (_ref = list != null ? list.filter(function(obj) {
+            list = Silica._shws[prop];
+            Silica._shws[prop] = (_ref = list != null ? list.filter(function(obj) {
               return !$(obj).is($e);
             }) : void 0) != null ? _ref : [];
           });
@@ -630,17 +638,17 @@ var Runtime = {
             ctrl = this._rt_ctrl;;
             _results = [];
             for (k in ctrl != null ? ctrl.watchers : void 0) {
-              list = Runtime._watch[k];
-              _results.push(Runtime._watch[k] = (_ref = list != null ? list.filter(function(obj) {
+              list = Silica._watch[k];
+              _results.push(Silica._watch[k] = (_ref = list != null ? list.filter(function(obj) {
                 return obj[0] !== ctrl;
               }) : void 0) != null ? _ref : []);
             }
             return _results;
           });
           comment = document.createComment(this.outerHTML);
-          Runtime._ifs[raw].push(comment);
+          Silica._ifs[raw].push(comment);
           $elm.replaceWith(comment);
-          if ((_ref = Runtime.getContext($elm)) != null) {
+          if ((_ref = Silica.getContext($elm)) != null) {
             if (typeof _ref.onLoad === "function") {
               _ref.onLoad();
             }
@@ -658,33 +666,33 @@ var Runtime = {
         if (negate) {
           val = val.substr(1);
         }
-        if (!Runtime._shws[raw]) {
-          Runtime._shws[raw] = [];
+        if (!Silica._shws[raw]) {
+          Silica._shws[raw] = [];
         }
-        if (Runtime._shws[raw].some(function(obj) {
+        if (Silica._shws[raw].some(function(obj) {
           return $(obj).is($elm);
         })) {
       return;
         }
         $elm[0].onremove = function() {
           var list, _ref = $elm[0];
-          list = Runtime._shws[raw];
-          console.log("Removing shw:", raw, Runtime._shws[raw]);
+          list = Silica._shws[raw];
+          console.log("Removing shw:", raw, Silica._shws[raw]);
           if (list !== undefined && list !== null)
           {
-            Runtime._shws[raw] =  list.filter(function(obj)
+            Silica._shws[raw] =  list.filter(function(obj)
             {
               return $elm[0] !== _ref;
             });
           }
           else
           {
-            Runtime._shws[raw] = [];
+            Silica._shws[raw] = [];
           }
-          console.log("After remove shw:", raw, Runtime._shws[raw]);
+          console.log("After remove shw:", raw, Silica._shws[raw]);
         };
-        isVisible = Runtime._show($elm, val, negate);
-        Runtime._shws[raw].push(this);
+        isVisible = Silica._show($elm, val, negate);
+        Silica._shws[raw].push(this);
         if (isVisible) {
           $elm.removeClass('hidden');
         } else {
@@ -702,7 +710,7 @@ var Runtime = {
       if (raw.nodeType != 9 && raw.dataset.class)
       {
         raw.dataset._rt_hard_klass = raw.className;
-        klass = Runtime.getValue(raw, raw.dataset.class);
+        klass = Silica.getValue(raw, raw.dataset.class);
         if (klass)
         {
           raw.classList.add(klass);
@@ -713,11 +721,42 @@ var Runtime = {
       {
         element = elements[i];
         element.dataset._rt_hard_klass = element.className.split('hidden').join(" ").trim();
-        klass = Runtime.getValue(element, element.dataset.class);
+        klass = Silica.getValue(element, element.dataset.class);
         if (klass)
         {
           element.classList.add(klass);
         }
+      }
+    },
+
+    disabled()
+    {
+      var raw = (this instanceof jQuery ? this[0] : this);
+      var elements = raw.querySelectorAll('[data-disabled]');
+      var element;
+      for (let i = elements.length - 1; i >= 0; --i)
+      {
+        element = elements[i];
+        if (Silica.getValue(element, element.dataset.disabled))
+        {
+          element.setAttribute("disabled", true);
+        }
+        else
+        {
+          element.removeAttribute("disabled");
+        }
+      }
+    },
+
+    href()
+    {
+      var raw = (this instanceof jQuery ? this[0] : this);
+      var elements = raw.querySelectorAll('[data-href]');
+      var element;
+      for (let i = elements.length - 1; i >= 0; --i)
+      {
+        element = elements[i];
+        element.setAttribute("href", Silica.getValue(element, element.dataset.href));
       }
     },
 
@@ -729,7 +768,7 @@ var Runtime = {
       for (let i = elements.length - 1; i >= 0; --i)
       {
         element = elements[i];
-        element.setAttribute("style", Runtime.getValue(element, element.dataset.style));
+        element.setAttribute("style", Silica.getValue(element, element.dataset.style));
       }
     },
 
@@ -741,8 +780,8 @@ var Runtime = {
         $elm.removeData('include');
         return $elm.load(partial, function() {
           var _ref;
-          Runtime.compile($elm);
-          return (_ref = Runtime.getContext($elm)) != null ? typeof _ref.onLoad === "function" ? _ref.onLoad() : void 0 : void 0;
+          Silica.compile($elm);
+          return (_ref = Silica.getContext($elm)) != null ? typeof _ref.onLoad === "function" ? _ref.onLoad() : void 0 : void 0;
         });
       });
     },
@@ -755,7 +794,7 @@ var Runtime = {
       constructor = $elm.data('controller');
       if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
       {
-        model = Runtime.getValue($elm.parent()[0],  _ref[2]);
+        model = Silica.getValue($elm.parent()[0],  _ref[2]);
       }
       constructor = _ref[1];
       constructor = eval(constructor);
@@ -774,10 +813,10 @@ var Runtime = {
       _ref = constructor.watchers;
       for (k in _ref) {
         v = _ref[k];
-        if (!Runtime._watch[k]) {
-          Runtime._watch[k] = [];
+        if (!Silica._watch[k]) {
+          Silica._watch[k] = [];
         }
-        Runtime._watch[k].push([ctrl, v]);
+        Silica._watch[k].push([ctrl, v]);
       }
       if (typeof ctrl.onLoad === "function") {
         ctrl.onLoad();
@@ -794,7 +833,7 @@ var Runtime = {
         $elm = $(this);
         $elm[0]._rt_live = true;
         $elm[0].onclick = function(evt) {
-          Runtime._call(this, evt, 'click');
+          Silica._call(this, evt, 'click');
         };
       });
     },
@@ -807,7 +846,7 @@ var Runtime = {
         $elm = $(this);
         $elm[0]._rt_live = true;
         $elm[0].ondblclick = function(evt) {
-          Runtime._call(this, evt, 'dblclick');
+          Silica._call(this, evt, 'dblclick');
         };
       });
     },
@@ -820,7 +859,7 @@ var Runtime = {
         $elm[0]._rt_live = true;
         $elm[0].onblur = function(evt)
         {
-          Runtime._call(this, evt, 'blur');
+          Silica._call(this, evt, 'blur');
         };
       });
     },
@@ -855,29 +894,30 @@ var Runtime = {
           return $('.tab-content', $target).append(newPane);
         });
         tabCtrl.open($('li:first-child > a', $target));
-        return $elm.replaceWith(Runtime.compile($target));
+        return $elm.replaceWith(Silica.compile($target));
       });
     },
     model(context = null) {
       $('input[data-model], select[data-model], textarea[data-model] option[data-model]', this).each(function() {
         var $elm, change, ctx, model, val;
         $elm = $(this);
-        ctx = context != null ? context : Runtime.getContext($elm);
+        //ctx = context != null ? context : Silica.getContext($elm);
+        ctx = Silica.getContext($elm);
         model = $elm.data('model');
         let type = $elm.attr('type');
         if (type === 'text' || type === 'file' || type === 'number' ||
-            type === 'email' || type === 'password') {
-          $elm.val(Runtime.getValue($elm[0], model, ctx));
+            type === 'email' || type === 'password' || type === 'time') {
+          $elm.val(Silica.getValue($elm[0], model, ctx));
         } else if ($elm.attr('type') === 'radio') {
           val = $elm.val();
           if (val[0].match(/[0-9]/)) {
             val = parseInt(val);
           }
-          $elm.prop('checked', Runtime.getValue($elm[0], model, ctx) === val);
+          $elm.prop('checked', Silica.getValue($elm[0], model, ctx) === val);
         } else if ($elm.attr('type') === 'checkbox') {
-          $elm.prop('checked', Runtime.getValue($elm[0], model, ctx));
+          $elm.prop('checked', Silica.getValue($elm[0], model, ctx));
         } else if ($elm[0].nodeName === 'OPTION') {
-          $elm.prop('value', Runtime.getValue($elm[0], model, ctx));
+          $elm.prop('value', Silica.getValue($elm[0], model, ctx));
         }
         change = function() {
           var obj, _ref, _ref1, _ref2;
@@ -889,9 +929,9 @@ var Runtime = {
           } else if ($elm.attr('type') === 'checkbox') {
             val = $elm.prop('checked');
           }
-          if (Runtime.isInApply) {
+          if (Silica.isInApply) {
             obj = (_ref = $elm[0]._rt_ctx) != null ? _ref : ctx;
-            Runtime.setPropByString(obj, model, val);
+            Silica.setPropByString(obj, model, val);
           } else if ((_ref = $elm.data('trap')) != null) {
             obj = (_ref1 = $elm[0]._rt_ctx) != null ? _ref1 : ctx;
             let scope;
@@ -912,13 +952,13 @@ var Runtime = {
                 }
               }
             }
-            Runtime.apply(function() {
-              return Runtime.setPropByString(obj, model, val);
+            Silica.apply(function() {
+              return Silica.setPropByString(obj, model, val);
             }, scope);
           } else {
             obj = (_ref2 = $elm[0]._rt_ctx) != null ? _ref2 : ctx;
-            Runtime.apply(function() {
-              return Runtime.setPropByString(obj, model, val);
+            Silica.apply(function() {
+              return Silica.setPropByString(obj, model, val);
             });
           }
         };
@@ -935,7 +975,7 @@ var Runtime = {
       let element;
       let handler = function(evt)
       {
-        Runtime._call(this, evt, this.dataset.submit);
+        Silica._call(this, evt, 'submit');
         return false;
       };
       for (let i = elements.length - 1; i >= 0; --i)
@@ -955,24 +995,24 @@ var Runtime = {
         repeat = raw.dataset.repeat.split(/\s+in\s+/);
         list = repeat[1];
         model = repeat[0];
-        ctx = Runtime.getContext(raw);
+        ctx = Silica.getContext(raw);
 
         //Check if we are calling a function with a param
         if (typeof (_ref = list.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
         {
           let funcName = _ref[1];
           let param = _ref[2];
-          param = Runtime.getValue(raw.parentNode, param);
+          param = Silica.getValue(raw.parentNode, param);
 
-          list = Runtime.getValue(raw,  _ref[1], null, param);
+          list = Silica.getValue(raw,  _ref[1], null, param);
         }
         else
         {
-          list = Runtime.getPropByString(ctx, list);
+          list = Silica.getPropByString(ctx, list);
         }
 
         listHash = SparkMD5.hash(JSON.stringify(list, function(key, value){
-          if (key == '__elm' || key == '$ctrl')
+          if (key.constructor == String && (key == '__elm' || key == '$ctrl'))
           {
             return undefined;
           }
@@ -982,13 +1022,13 @@ var Runtime = {
         raw._rt_repeat_list = listHash;
 
         // Get the template
-        template = Runtime._repeat_templates[raw.dataset._rt_repeat_template];
+        template = Silica._repeat_templates[raw.dataset._rt_repeat_template];
         // Compile it
         context = {};
         context.$ctrl = ctx;
-        template = Runtime.compile($(template), false, context)[0];
+        template = Silica.compile($(template), false, context)[0];
         // Store the compiled template
-        Runtime._repeat_templates[raw.dataset._rt_repeat_template] = template;
+        Silica._repeat_templates[raw.dataset._rt_repeat_template] = template;
 
         raw.innerHTML = "";
 
@@ -1004,16 +1044,22 @@ var Runtime = {
             context.$ctrl = ctx;
             node = template.cloneNode(true);
             node._rt_ctx = context;
-            Runtime.compilers.repeat.call(node);
-            Runtime.compilers.click.call(node);
-            Runtime.compilers.dblclick.call(node);
-            Runtime.compilers.blur.call(node);
-            Runtime.compilers.model.call(node);
-            Runtime.compilers.show.call(node);
+            Silica.compilers.repeat.call(node);
+            Silica.compilers.click.call(node);
+            Silica.compilers.dblclick.call(node);
+            Silica.compilers.blur.call(node);
+            Silica.compilers.model.call(node);
+            Silica.compilers.show.call(node);
+            Silica.compilers.disabled.call(node);
+            Silica.compilers.href.call(node);
             obj.__elm = node;
             fragment.appendChild(node);
           }
           raw.appendChild(fragment);
+        }
+
+        if (ctx.renderedRepeat) {
+          ctx.renderedRepeat(raw);
         }
       }
     },
@@ -1022,17 +1068,17 @@ var Runtime = {
       $('img[data-src]', this).each(function() {
         var $elm;
         $elm = $(this);
-        $elm.attr('src', Runtime.getValue($elm[0], $elm.data('src')));
+        $elm.attr('src', Silica.getValue($elm[0], $elm.data('src')));
       });
     }
   },
   watchers: {
     _updateIf() {
       var comment, compiled, element, elements, i, isVisible, k, negate, raw, _i, _len, _ref;
-      _ref = Runtime._ifs;
+      _ref = Silica._ifs;
       for (k in _ref) {
         elements = _ref[k];
-        if (Runtime._ifs.hasOwnProperty(k)) {
+        if (Silica._ifs.hasOwnProperty(k)) {
           raw = k;
           negate = k[0] === '!';
           if (negate) {
@@ -1040,12 +1086,12 @@ var Runtime = {
           }
           for (i = _i = 0, _len = elements.length; _i < _len; i = ++_i) {
             element = elements[i];
-            isVisible = Runtime._show($(element), k, negate);
+            isVisible = Silica._show($(element), k, negate);
             if (isVisible) {
               if (element.nodeType === 8) {
-                compiled = Runtime.compile($(element.nodeValue), false);
+                compiled = Silica.compile($(element.nodeValue), false);
                 $(element).replaceWith(compiled);
-                Runtime._ifs[raw][i] = compiled;
+                Silica._ifs[raw][i] = compiled;
               }
             } else {
               if (element.nodeType !== 8) {
@@ -1053,8 +1099,8 @@ var Runtime = {
                   var $e, list, prop, _ref1;
                   $e = $(this);
                   prop = $e.data('show');
-                  list = Runtime._shws[prop];
-                  return Runtime._shws[prop] = (_ref1 = list != null ? list.filter(function(obj) {
+                  list = Silica._shws[prop];
+                  return Silica._shws[prop] = (_ref1 = list != null ? list.filter(function(obj) {
                     return !$(obj).is($e);
                   }) : void 0) != null ? _ref1 : [];
                 });
@@ -1064,15 +1110,15 @@ var Runtime = {
                   ctrl = this._rt_ctrl;
                   _results = [];
                   for (k in ctrl != null ? ctrl.watchers : void 0) {
-                    list = Runtime._watch[k];
-                    _results.push(Runtime._watch[k] = (_ref1 = list != null ? list.filter(function(obj) {
+                    list = Silica._watch[k];
+                    _results.push(Silica._watch[k] = (_ref1 = list != null ? list.filter(function(obj) {
                       return obj[0] !== ctrl;
                     }) : void 0) != null ? _ref1 : []);
                   }
                   return _results;
                 });
                 comment = document.createComment(($(element)[0]).outerHTML);
-                Runtime._ifs[raw][i] = comment;
+                Silica._ifs[raw][i] = comment;
                 $(element).replaceWith(comment);
               }
             }
@@ -1085,30 +1131,42 @@ var Runtime = {
       var $elm, changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
       var elements = (this instanceof jQuery ? this[0] : this).querySelectorAll('[data-repeat]');
       let raw, cache_display;
+      let decache = function(node, skip) {
+        if (!skip) {
+          delete node._rt_ctx;
+          delete node._rt_ctrl;
+        }
+        let children = node.children;
+        for (let i = children.length - 1; i >= 0; --i)
+        {
+          decache(children[i]);
+        }
+      };
       for (let i = elements.length - 1; i >= 0; --i)
       {
         raw = elements[i];
         repeat = raw.dataset.repeat.split(/\s+in\s+/);
         list = repeat[1];
         model = repeat[0];
-        ctx = Runtime.getContext(raw);
+        ctx = Silica.getContext(raw);
 
         //Check if we are calling a function with a param
         if (typeof (_ref = list.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
         {
           let funcName = _ref[1];
           let param = _ref[2];
-          param = Runtime.getValue(raw.parentNode, param);
+          param = Silica.getValue(raw.parentNode, param);
 
-          newList = Runtime.getValue(raw,  _ref[1], null, param);
+          newList = Silica.getValue(raw,  _ref[1], null, param);
         }
         else
         {
-          newList = Runtime.getPropByString(ctx, list);
+          newList = Silica.getValue(raw, list);
         }
 
         newListHash = SparkMD5.hash(JSON.stringify(newList, function(key, value){
-          if (key == '__elm' || key == '$ctrl')
+          //Keys starting with an underscore (char code 95) will be ignored
+          if (key.constructor == String && (key == '__elm' || key == '$ctrl' || key.charCodeAt(0) === 95))
           {
             return undefined;
           }
@@ -1133,7 +1191,7 @@ var Runtime = {
         }
 
         // Get the template
-        template = Runtime._repeat_templates[raw.dataset._rt_repeat_template];
+        template = Silica._repeat_templates[raw.dataset._rt_repeat_template];
 
         let count_diff = raw.childElementCount - newList.length;
         let existing = raw.childNodes;
@@ -1141,24 +1199,27 @@ var Runtime = {
 
         while (count_diff > 0)
         {
-          Runtime.removeFromDOM(existing[count_diff-1]);
+          Silica.removeFromDOM(existing[count_diff-1]);
           --count_diff;
         }
 
         let fragment = document.createDocumentFragment();
+
         while (count_diff < 0)
         {
           context = {};
-          context[model] = obj;
+          context[model] = newList[0 - count_diff - 1];
           context.$ctrl = ctx;
           child = template.cloneNode(true);
           child._rt_ctx = context;
-          Runtime.compilers.repeat.call(child);
-          Runtime.compilers.click.call(child);
-          Runtime.compilers.dblclick.call(child);
-          Runtime.compilers.blur.call(child);
-          Runtime.compilers.model.call(child);
-          Runtime.compilers.show.call(child);
+          Silica.compilers.repeat.call(child);
+          Silica.compilers.click.call(child);
+          Silica.compilers.dblclick.call(child);
+          Silica.compilers.blur.call(child);
+          Silica.compilers.model.call(child);
+          Silica.compilers.show.call(child);
+          Silica.compilers.disabled.call(child);
+          Silica.compilers.href.call(child);
           fragment.appendChild(child);
           ++count_diff;
         }
@@ -1168,18 +1229,23 @@ var Runtime = {
         {
           obj = newList[_i];
           node = existing[_i];
+          decache(node, true);
           node._rt_ctx[model] = obj;
-          Runtime.flush(node);
+          Silica.flush(node, false, {});
+        }
+
+        if (ctx.renderedRepeat) {
+          ctx.renderedRepeat(raw);
         }
       }
     },
 
     updateShow() {
       var element, elements, i, isVisible, k, negate, raw, _i, _len, _ref;
-      _ref = Runtime._shws;
+      _ref = Silica._shws;
       for (k in _ref) {
         elements = _ref[k];
-        if (Runtime._shws.hasOwnProperty(k)) {
+        if (Silica._shws.hasOwnProperty(k)) {
           raw = k;
           negate = k[0] === '!';
           if (negate) {
@@ -1187,10 +1253,10 @@ var Runtime = {
           }
           for (i = _i = 0, _len = elements.length; _i < _len; i = ++_i) {
             element = elements[i];
-            if (!Runtime.isInDOM(element)) {
+            if (!Silica.isInDOM(element)) {
               continue;
             }
-            isVisible = Runtime._show($(element), k, negate);
+            isVisible = Silica._show($(element), k, negate);
             if (isVisible && element.classList.contains('hidden')) {
               element.classList.remove('hidden');
             } else if (!isVisible && !element.classList.contains('hidden')) {
@@ -1209,7 +1275,7 @@ var Runtime = {
       {
         element = elements[i];
         element.className = element.dataset._rt_hard_klass;
-        klass = Runtime.getValue(element, element.dataset.class);
+        klass = Silica.getValue(element, element.dataset.class);
         if (klass)
         {
           element.classList.add(klass);
@@ -1217,7 +1283,7 @@ var Runtime = {
         if (element.dataset.show != null) {
             var key = element.dataset.show;
             var negate = key[0] == "!";
-            isVisible = Runtime._show($(element), key, negate);
+            isVisible = Silica._show($(element), key, negate);
             if (isVisible && element.classList.contains('hidden')) {
               element.classList.remove('hidden');
             } else if (!isVisible && !element.classList.contains('hidden')) {
@@ -1228,16 +1294,26 @@ var Runtime = {
 
     },
 
+    updateDisabled()
+    {
+      Silica.compilers.disabled.call(this);
+    },
+
+    updateHref()
+    {
+      Silica.compilers.href.call(this);
+    },
+
     updateStyle()
     {
-      Runtime.compilers.style.call(this);
+      Silica.compilers.style.call(this);
     },
 
     updateSrc() {
       return $('img[data-src]', $(this)).each(function() {
         var $elm, newSrc;
         $elm = $(this);
-        newSrc = Runtime.getValue($elm[0], $elm.data('src'));
+        newSrc = Silica.getValue($elm[0], $elm.data('src'));
         if ($elm.attr('src') !== newSrc) {
           return $elm.attr('src', newSrc);
         }
@@ -1247,38 +1323,46 @@ var Runtime = {
     updateModel() {
       var raw = (this instanceof jQuery ? this[0] : this);
       var elements = raw.querySelectorAll('[data-model]');
-      var element, i;
+      var element, i, type;
       for (i = elements.length - 1; i >= 0; --i)
       {
         element = elements[i];
-        if (element.type === 'text')
+        type = element.type;
+        if (element !== document.activeElement && (type === 'text' || type === 'file' || type === 'number' ||
+            type === 'email' || type === 'password' || type === 'time'))
         {
-          element.value = Runtime._model_get_val(element);
+          element.value = Silica._model_get_val(element);
         }
-        else if (element.type === 'radio')
+        else if (type === 'radio')
         {
           val = element.value;
           if (val.search(/[0-9]/) != -1) {
             val = parseInt(val);
           }
-          element.checked = Runtime.getValue(element, element.dataset.model) === val;
+          element.checked = Silica.getValue(element, element.dataset.model) === val;
         }
-        else if (element.type === 'checkbox')
+        else if (type === 'checkbox')
         {
-          element.checked = Runtime.getValue(element, element.dataset.model);
+          element.checked = Silica.getValue(element, element.dataset.model);
         }
         else if (element.nodeName === 'SPAN')
         {
-          element.innerHTML = Runtime._model_get_val(element);
+          val = Silica._model_get_val(element);
+          if (val && val.nodeName) {
+              element.innerHTML = "";
+              element.appendChild(val);
+          } else {
+            element.innerHTML = val;
+          }
         }
         else if (element.nodeName === 'OPTION')
         {
-          element.value = Runtime._model_get_val(element);
+          element.value = Silica._model_get_val(element);
         }
       }
     },
   }
 };
 
-Runtime.Controllers = Controllers;
-window.Runtime = Runtime;
+Silica.Controllers = Controllers;
+window.Silica = Silica;

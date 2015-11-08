@@ -50,7 +50,7 @@ task :coffee, [:cf] => ["build", "build/js"] do |t, args|
   print "Running Closure Compiler...."
   js_files = Dir.glob(File.join(cache_path, '**', '*.js'))
   js_files += Dir.glob(File.join(js_path, '**', '*.js'))
-  app_path = bust_cache(:runtime, File.join('build', 'js', 'runtime.js'))
+  app_path = bust_cache(:silica, File.join('build', 'js', 'silica.js'))
   flags = { :compilation_level => 'SIMPLE_OPTIMIZATIONS' }
   flags.merge!({ :debug => true, :formatting => 'pretty_print' }) unless @production
   File.open(app_path, 'w') do |f|
@@ -73,11 +73,11 @@ task :es6 => [:clean, "build", "build/js"] do
   system("babel src --out-dir compiled")
   system("cp src/spark-md5.js #{cache_path}/spark-md5.js")
   system("cp src/containsRegex.jquery.js #{cache_path}/containsRegex.jquery.js")
-  system("browserify ./compiled/runtime.js -o #{cache_path}/bundle.js")
+  system("browserify ./compiled/silica.js -o #{cache_path}/bundle.js")
   js_files = Dir.glob(File.join(cache_path, '**', '*.js'))
-  app_path = bust_cache(:runtime, File.join('build', 'js', 'runtime.js'))
+  app_path = bust_cache(:silica, File.join('build', 'js', 'silica.js'))
   flags = { :compilation_level => 'SIMPLE_OPTIMIZATIONS' }
-  flags.merge!({ :debug => true, :formatting => 'pretty_print' }) unless @production
+  flags.merge!({ :debug => true, :formatting => 'pretty_print', :compilation_level => 'WHITESPACE_ONLY' }) unless @production
   File.open(app_path, 'w') do |f|
     f.write Closure::Compiler.new(flags).compile_files(js_files)
   end

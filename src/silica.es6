@@ -1060,6 +1060,8 @@ var Silica = {
 
         if (ctx.renderedRepeat) {
           ctx.renderedRepeat(raw);
+        } else if (ctx.$ctrl && ctx.$ctrl.renderedRepeat) {
+          ctx.$ctrl.renderedRepeat(raw);
         }
       }
     },
@@ -1236,6 +1238,8 @@ var Silica = {
 
         if (ctx.renderedRepeat) {
           ctx.renderedRepeat(raw);
+        } else if (ctx.$ctrl && ctx.$ctrl.renderedRepeat) {
+          ctx.$ctrl.renderedRepeat(raw);
         }
       }
     },

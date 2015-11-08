@@ -11,7 +11,7 @@ Controllers can be attached to a view using `data-controller`
 
 Example:
 
-    class Ctrl extends Runtime.Controllers.Base
+    class Ctrl extends Silica.Controllers.Base
       constructor: (element) ->
         super
       hello: => alert "Hello world!"
@@ -25,7 +25,7 @@ The value of `data-controller` must be accessible from the window scope
 */
 
 
-// ##Runtime.Controllers.Base
+// ##Silica.Controllers.Base
 // This is a basic controller that all controllers must subclass from
 class Base
 {

@@ -36,8 +36,9 @@ var Silica = {
     {
       element = $(element);
     }
-    if (element == document)
+    if (element[0] == document)
     {
+      element[0] = document.firstElementChild;
       context = context || {};
     }
     else
@@ -579,6 +580,15 @@ var Silica = {
       return value;
     }
   },
+  _get_iterator(root, attribute) {
+    return document.createNodeIterator(root[0] || root, Node.ELEMENT_NODE, {
+      acceptNode: function(node) {
+        if (node.hasAttribute(attribute) && !node._rt_live) {
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    });
+  },
   removeFromDOM(e) {
     for (var i = 0; i < e.childNodes.length; ++i) {
           var child = e.childNodes[i];
@@ -786,82 +796,76 @@ var Silica = {
       });
     },
     controller() {
-      return $('*[data-controller]', this).filter(function() {
-        return !this._rt_live;
-      }).each(function() {
+      var iterator = Silica._get_iterator(this, "data-controller");
+      var node;
       var $elm, constructor, ctrl, k, v, _ref, model;
-      $elm = $(this);
-      constructor = $elm.data('controller');
-      if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
+      while ((node = iterator.nextNode()))
       {
-        model = Silica.getValue($elm.parent()[0],  _ref[2]);
-      }
-      constructor = _ref[1];
-      constructor = eval(constructor);
-      if (!constructor) {
-        return console.error("Unknown Controller: " + ($elm.data('controller')));
-      }
-      if (typeof model !== 'undefined')
-      {
-        ctrl = new constructor($elm, model);
-      }
-      else
-      {
-        ctrl = new constructor($elm);
-      }
-      $elm[0]._rt_live = true;
-      _ref = constructor.watchers;
-      for (k in _ref) {
-        v = _ref[k];
-        if (!Silica._watch[k]) {
-          Silica._watch[k] = [];
+        $elm = $(node);
+        constructor = $elm.data('controller');
+        if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
+        {
+          model = Silica.getValue($elm.parent()[0],  _ref[2]);
         }
-        Silica._watch[k].push([ctrl, v]);
+        constructor = _ref[1];
+        constructor = eval(constructor);
+        if (!constructor) {
+          return console.error("Unknown Controller: " + ($elm.data('controller')));
+        }
+        if (typeof model !== 'undefined')
+        {
+          ctrl = new constructor($elm, model);
+        }
+        else
+        {
+          ctrl = new constructor($elm);
+        }
+        node._rt_live = true;
+        _ref = constructor.watchers;
+        for (k in _ref) {
+          v = _ref[k];
+          if (!Silica._watch[k]) {
+            Silica._watch[k] = [];
+          }
+          Silica._watch[k].push([ctrl, v]);
+        }
+        if (typeof ctrl.onLoad === "function") {
+          ctrl.onLoad();
+        }
       }
-      if (typeof ctrl.onLoad === "function") {
-        ctrl.onLoad();
-      }
-      return null;
-      });
     },
     click() {
-      return $('*[data-click]', this).filter(function() {
-        return !this._rt_live;
-      }).each(function()
+      var iterator = Silica._get_iterator(this, "data-click");
+      var node;
+      while ((node = iterator.nextNode()))
       {
-        var $elm;
-        $elm = $(this);
-        $elm[0]._rt_live = true;
-        $elm[0].onclick = function(evt) {
+        node._rt_live = true;
+        node.onclick = function(evt) {
           Silica._call(this, evt, 'click');
         };
-      });
+      }
     },
     dblclick() {
-      return $('*[data-dblclick]', this).filter(function() {
-        return !this._rt_live;
-      }).each(function()
+      var iterator = Silica._get_iterator(this, "data-dblclick");
+      var node;
+      while ((node = iterator.nextNode()))
       {
-        var $elm;
-        $elm = $(this);
-        $elm[0]._rt_live = true;
-        $elm[0].ondblclick = function(evt) {
+        node._rt_live = true;
+        node.ondblclick = function(evt) {
           Silica._call(this, evt, 'dblclick');
         };
-      });
+      }
     },
     blur() {
-      return $('*[data-blur]', this).filter(function() {
-        return !this._rt_live;
-      }).each(function() {
-        var $elm;
-        $elm = $(this);
-        $elm[0]._rt_live = true;
-        $elm[0].onblur = function(evt)
-        {
+      var iterator = Silica._get_iterator(this, "data-blur");
+      var node;
+      while ((node = iterator.nextNode()))
+      {
+        node._rt_live = true;
+        node.onblur = function(evt) {
           Silica._call(this, evt, 'blur');
         };
-      });
+      }
     },
     tabs() {
       var li, pane, template;

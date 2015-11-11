@@ -580,14 +580,65 @@ var Silica = {
       return value;
     }
   },
-  _get_iterator(root, attribute) {
-    return document.createNodeIterator(root[0] || root, Node.ELEMENT_NODE, {
-      acceptNode: function(node) {
-        if (node.hasAttribute(attribute) && !node._rt_live) {
-          return NodeFilter.FILTER_ACCEPT;
+  query(root, ...attributes) {
+    var raw = (this instanceof jQuery ? this[0] : this);
+    var isSingle = attributes.length == 1;
+    var nodes = raw.querySelectorAll(attributes.join(','));
+    var filtered = [];
+    for (let i = nodes.length - 1; i >=0; --i)
+    {
+      let node = nodes.item(i);
+      if (!node._rt_live)
+      {
+        filtered.push(node);
+      }
+    }
+    if (!root.rt_live)
+    {
+      for (let i = attributes.length - 1; i >=0; --i)
+      {
+        if (raw.hasAttribute(attributes[i]))
+        {
+          filtered.push(raw);
+          break;
         }
       }
-    });
+    }
+    return filtered;
+  },
+  queryOfType(root, type, ...attributes)
+  {
+    var raw = (root instanceof jQuery ? root[0] : root);
+    var isSingle = attributes.length == 1;
+    var nodes = raw.getElementsByName(type);
+    var filtered = [];
+    for (let i = nodes.length - 1; i >=0; --i)
+    {
+      let node = nodes.item(i);
+      if (!node._rt_live)
+      {
+        for (let j = attributes.length - 1; j >=0; --j)
+        {
+          if (node.hasAttribute(attributes[j]))
+          {
+            filtered.push(node);
+            break;
+          }
+        }
+      }
+    }
+    if (raw.tagName === type && !raw.rt_live)
+    {
+      for (let i = attributes.length - 1; i >=0; --i)
+      {
+        if (raw.hasAttribute(attributes[i]))
+        {
+          filtered.push(root);
+          break;
+        }
+      }
+    }
+    return filtered;
   },
   removeFromDOM(e) {
     for (var i = 0; i < e.childNodes.length; ++i) {
@@ -668,9 +719,13 @@ var Silica = {
       });
     },
     show() {
-      return $('*[data-show]', this).each(function() {
-        var $elm, isVisible, negate, raw, val;
-        $elm = $(this);
+      var nodes = Silica.query(this, "[data-show]");
+      var node;
+      var $elm, isVisible, negate, raw, val;
+      for (var i = nodes.length - 1; i >= 0; --i)
+      {
+        node = nodes[i];
+        $elm = $(node);
         raw = val = $elm.data('show');
         negate = val[0] === '!';
         if (negate) {
@@ -679,15 +734,13 @@ var Silica = {
         if (!Silica._shws[raw]) {
           Silica._shws[raw] = [];
         }
-        if (Silica._shws[raw].some(function(obj) {
-          return $(obj).is($elm);
-        })) {
-      return;
+        if (Silica._shws[raw].some(function(obj) { return $(obj).is($elm);}))
+        {
+          continue;
         }
         $elm[0].onremove = function() {
           var list, _ref = $elm[0];
           list = Silica._shws[raw];
-          console.log("Removing shw:", raw, Silica._shws[raw]);
           if (list !== undefined && list !== null)
           {
             Silica._shws[raw] =  list.filter(function(obj)
@@ -699,7 +752,6 @@ var Silica = {
           {
             Silica._shws[raw] = [];
           }
-          console.log("After remove shw:", raw, Silica._shws[raw]);
         };
         isVisible = Silica._show($elm, val, negate);
         Silica._shws[raw].push(this);
@@ -708,13 +760,12 @@ var Silica = {
         } else {
           $elm.addClass('hidden');
         }
-        return null;
-      });
+      }
     },
     "class": function() {
       var raw = (this instanceof jQuery ? this[0] : this);
-      var elements = raw.querySelectorAll('[data-class]');
-      var element;
+      var nodes = Silica.query(raw, "[data-class]");
+      var node;
       var klass;
 
       if (raw.nodeType != 9 && raw.dataset.class)
@@ -727,14 +778,14 @@ var Silica = {
         }
       }
 
-      for (let i = elements.length - 1; i >= 0; --i)
+      for (let i = nodes.length - 1; i >= 0; --i)
       {
-        element = elements[i];
-        element.dataset._rt_hard_klass = element.className.split('hidden').join(" ").trim();
-        klass = Silica.getValue(element, element.dataset.class);
+        node = nodes[i];
+        node.dataset._rt_hard_klass = node.className.split('hidden').join(" ").trim();
+        klass = Silica.getValue(node, node.dataset.class);
         if (klass)
         {
-          element.classList.add(klass);
+          node.classList.add(klass);
         }
       }
     },
@@ -742,18 +793,18 @@ var Silica = {
     disabled()
     {
       var raw = (this instanceof jQuery ? this[0] : this);
-      var elements = raw.querySelectorAll('[data-disabled]');
-      var element;
-      for (let i = elements.length - 1; i >= 0; --i)
+      var nodes = Silica.query(raw, '[data-disabled]');
+      var node;
+      for (let i = nodes.length - 1; i >= 0; --i)
       {
-        element = elements[i];
-        if (Silica.getValue(element, element.dataset.disabled))
+        node = nodes[i];
+        if (Silica.getValue(node, node.dataset.disabled))
         {
-          element.setAttribute("disabled", true);
+          node.setAttribute("disabled", true);
         }
         else
         {
-          element.removeAttribute("disabled");
+          node.removeAttribute("disabled");
         }
       }
     },
@@ -761,46 +812,52 @@ var Silica = {
     href()
     {
       var raw = (this instanceof jQuery ? this[0] : this);
-      var elements = raw.querySelectorAll('[data-href]');
-      var element;
-      for (let i = elements.length - 1; i >= 0; --i)
+      var nodes = Silica.query(raw, '[data-href]');
+      var node;
+      for (let i = nodes.length - 1; i >= 0; --i)
       {
-        element = elements[i];
-        element.setAttribute("href", Silica.getValue(element, element.dataset.href));
+        node = nodes[i];
+        node.setAttribute("href", Silica.getValue(node, node.dataset.href));
       }
     },
 
     style()
     {
       var raw = (this instanceof jQuery ? this[0] : this);
-      var elements = raw.querySelectorAll('[data-style]');
-      var element;
-      for (let i = elements.length - 1; i >= 0; --i)
+      var nodes = Silica.query(raw, '[data-style]');
+      var node;
+      for (let i = nodes.length - 1; i >= 0; --i)
       {
-        element = elements[i];
-        element.setAttribute("style", Silica.getValue(element, element.dataset.style));
+        node = nodes[i];
+        node.setAttribute("style", Silica.getValue(node, node.dataset.style));
       }
     },
 
     include() {
-      return $('*[data-include]', this).each(function() {
-        var $elm, partial;
-        $elm = $(this);
-        partial = eval($elm.data('include'));
-        $elm.removeData('include');
-        return $elm.load(partial, function() {
-          var _ref;
-          Silica.compile($elm);
-          return (_ref = Silica.getContext($elm)) != null ? typeof _ref.onLoad === "function" ? _ref.onLoad() : void 0 : void 0;
+      var raw = (this instanceof jQuery ? this[0] : this);
+      var nodes = Silica.query(raw, '[data-style]');
+      var node, partial;
+      for (let i = nodes.length - 1; i >= 0; --i)
+      {
+        node = nodes[i];
+        partial = eval(node.dataset.include);
+        delete node.dataset.include;
+        $(node).load(partial, function() {
+          Silica.compile(this);
+          var ctx = Silica.getContext(this);
+          if (ctx.onLoad && typeof ctx.onLoad === "function")
+          {
+            ctx.onLoad(this);
+          }
         });
-      });
+      }
     },
     controller() {
-      var iterator = Silica._get_iterator(this, "data-controller");
-      var node;
-      var $elm, constructor, ctrl, k, v, _ref, model;
-      while ((node = iterator.nextNode()))
+      var nodes = Silica.query(this, "[data-controller]")
+      var node, $elm, constructor, ctrl, k, v, _ref, model;
+      for (let i = nodes.length - 1; i >= 0; --i)
       {
+        node = nodes[i];
         $elm = $(node);
         constructor = $elm.data('controller');
         if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
@@ -835,10 +892,11 @@ var Silica = {
       }
     },
     click() {
-      var iterator = Silica._get_iterator(this, "data-click");
+      var nodes = Silica.query(this, "[data-click]");
       var node;
-      while ((node = iterator.nextNode()))
+      for (let i = nodes.length - 1; i >= 0; --i)
       {
+        node = nodes[i];
         node._rt_live = true;
         node.onclick = function(evt) {
           Silica._call(this, evt, 'click');
@@ -846,10 +904,11 @@ var Silica = {
       }
     },
     dblclick() {
-      var iterator = Silica._get_iterator(this, "data-dblclick");
+      var iterator = Silica.query(this, "[data-dblclick]");
       var node;
-      while ((node = iterator.nextNode()))
+      for (let i = nodes.length - 1; i >= 0; --i)
       {
+        node = nodes[i];
         node._rt_live = true;
         node.ondblclick = function(evt) {
           Silica._call(this, evt, 'dblclick');
@@ -857,10 +916,11 @@ var Silica = {
       }
     },
     blur() {
-      var iterator = Silica._get_iterator(this, "data-blur");
+      var iterator = Silica.query(this, "[data-blur]");
       var node;
-      while ((node = iterator.nextNode()))
+      for (let i = nodes.length - 1; i >= 0; --i)
       {
+        node = nodes[i];
         node._rt_live = true;
         node.onblur = function(evt) {
           Silica._call(this, evt, 'blur');
@@ -975,17 +1035,19 @@ var Silica = {
       });
     },
     submit() {
-      let elements = (this instanceof jQuery ? this[0] : this).querySelectorAll('[data-submit]');
-      let element;
-      let handler = function(evt)
+      var raw = (this instanceof jQuery ? this[0] : this);
+      var nodes = Silica.query(raw, '[data-submit]');
+      var node;
+      var handler = function(evt)
       {
         Silica._call(this, evt, 'submit');
         return false;
       };
-      for (let i = elements.length - 1; i >= 0; --i)
+      for (let i = nodes.length - 1; i >= 0; --i)
       {
-        element = elements[i];
-        element.onsubmit = handler;
+        node = nodes[i];
+        node.onsubmit = handler;
+        node._rt_live = true;
       }
     },
     repeat(context = null) {
@@ -1071,11 +1133,14 @@ var Silica = {
     },
 
     src() {
-      $('img[data-src]', this).each(function() {
-        var $elm;
-        $elm = $(this);
-        $elm.attr('src', Silica.getValue($elm[0], $elm.data('src')));
-      });
+      var raw = (this instanceof jQuery ? this[0] : this);
+      var nodes = Silica.queryOfType(raw, 'img', '[data-src]');
+      var node;
+      for (let i = nodes.length - 1; i >= 0; --i)
+      {
+        node = nodes[i];
+        node.src = Silica.getValue(node, node.dataset.src);
+      }
     }
   },
   watchers: {

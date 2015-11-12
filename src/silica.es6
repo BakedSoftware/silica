@@ -299,7 +299,7 @@ var Silica = {
   },
 
   isInDOM(element) {
-    while (element.parentElement !== null) {
+    while (element.parentElement != null) {
       if (element.parentElement == document.body) {
         return true;
       } else {
@@ -565,8 +565,9 @@ var Silica = {
   },
   _model_get_val(raw)
   {
-    var filter, filterKey, filterOptions, value, _ref;
-    filter = (typeof (_ref = raw.dataset.filter)) !== "undefined" ? _ref.split(/:(.+)/) : void 0;
+    var filter, filterKey, filterOptions, value;
+    filter = raw.dataset.filter;
+    filter = filter ? filter.split(/:(.+)/) : null;
     filterKey = (filter ? filter[0] : null);
     if (filterKey && !Silica.filters[filterKey]) {
       throw new Error("Unknown filter: '" + filterKey + "' for element: " + raw.outerHTML);
@@ -760,7 +761,7 @@ var Silica = {
           }
         };
         isVisible = Silica._show($elm, val, negate);
-        Silica._shws[raw].push(this);
+        Silica._shws[raw].push(node);
         if (isVisible) {
           $elm.removeClass('hidden');
         } else {

@@ -581,7 +581,10 @@ var Silica = {
     }
   },
   query(root, ...attributes) {
-    var raw = (this instanceof jQuery ? this[0] : this);
+    var raw = (root instanceof jQuery ? root[0] : root);
+    if (raw == document) {
+      raw = document.firstElementChild;
+    }
     var isSingle = attributes.length == 1;
     var nodes = raw.querySelectorAll(attributes.join(','));
     var filtered = [];
@@ -593,7 +596,7 @@ var Silica = {
         filtered.push(node);
       }
     }
-    if (!root.rt_live)
+    if (!raw.rt_live)
     {
       for (let i = attributes.length - 1; i >=0; --i)
       {
@@ -609,8 +612,11 @@ var Silica = {
   queryOfType(root, type, ...attributes)
   {
     var raw = (root instanceof jQuery ? root[0] : root);
+    if (raw == document) {
+      raw = document.firstElementChild;
+    }
     var isSingle = attributes.length == 1;
-    var nodes = raw.getElementsByName(type);
+    var nodes = raw.getElementsByTagName(type);
     var filtered = [];
     for (let i = nodes.length - 1; i >=0; --i)
     {
@@ -904,7 +910,7 @@ var Silica = {
       }
     },
     dblclick() {
-      var iterator = Silica.query(this, "[data-dblclick]");
+      var nodes = Silica.query(this, "[data-dblclick]");
       var node;
       for (let i = nodes.length - 1; i >= 0; --i)
       {
@@ -916,7 +922,7 @@ var Silica = {
       }
     },
     blur() {
-      var iterator = Silica.query(this, "[data-blur]");
+      var nodes = Silica.query(this, "[data-blur]");
       var node;
       for (let i = nodes.length - 1; i >= 0; --i)
       {

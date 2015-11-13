@@ -26,6 +26,19 @@ var Silica = {
     window.onhashchange = () => {
       this.apply(() => this.router.route(location.hash));
     };
+    window.onpopstate = () => {
+      this.apply(() => this.router.route(location.pathname));
+    };
+  },
+
+  goTo(pathname)
+  {
+    history.pushState(null, null, pathname);
+    if (Silica.router) {
+      Silica.apply(function() {
+        Silica.router.route(location.pathname);
+      });
+    }
   },
 
   // Interpolate and link all Silica directives within an element
@@ -58,6 +71,9 @@ var Silica = {
     if (flush) {
       Silica.flush(element, true);
     }
+
+    Silica._capture_links(element);
+
     return element;
   },
 
@@ -508,6 +524,31 @@ var Silica = {
       }
     }
   },
+  _handle_href(evt){
+    evt.preventDefault();
+    history.pushState(null, null, this.href);
+    if (Silica.router) {
+      Silica.apply(function() {
+        Silica.router.route(location.pathname);
+      });
+    }
+    return false;
+  },
+  _capture_links(element) {
+    //Capture lnks for pushState
+    let nodes = Silica.queryOfType(element, 'a', '[href]', '[data-href]');
+    let node;
+    let externalRegexp = /:\/\//
+    for (let i = nodes.length - 1; i >= 0; --i)
+    {
+      node = nodes[i];
+      if (node.hostname === location.hostname)
+      {
+        node.removeEventListener("click", Silica._handle_href, true);
+        node.addEventListener("click", Silica._handle_href, true);
+      }
+    }
+  },
   _show(element, expr, negate) {
     var $elm, ctx, isVisible;
     isVisible = true;
@@ -626,7 +667,7 @@ var Silica = {
       {
         for (let j = attributes.length - 1; j >=0; --j)
         {
-          if (node.hasAttribute(attributes[j]))
+          if (node.hasAttribute(attributes[j].replace(/\[|\]/g, "")))
           {
             filtered.push(node);
             break;
@@ -826,6 +867,7 @@ var Silica = {
         node = nodes[i];
         node.setAttribute("href", Silica.getValue(node, node.dataset.href));
       }
+      Silica._capture_links(raw);
     },
 
     style()

@@ -94,16 +94,16 @@ var Silica = {
       }
     }
   },
-  flush(element = document, onlySafe = false, changed = null)
+  flush(element = document, onlySafe = false, changed = null, skipSchedule = false)
   {
-    if (Silica.isInFlush) {
+    if (Silica.isInFlush && !skipSchedule) {
       if (Silica._scheduledFlush) {
         return;
       } else {
         Silica._scheduledFlush = true;
       }
     }
-    Silica.isInFlush = true;
+    Silica.isInFlush = !skipSchedule;
     if (changed === null) {
       let funcs;
       let func;
@@ -141,8 +141,8 @@ var Silica = {
       func = watchers[k];
       func.apply(element);
     }
-    Silica.isInFlush = false;
-    if (Silica._scheduledFlush === true) {
+    Silica.isInFlush = skipSchedule;
+    if (Silica._scheduledFlush === true && !skipSchedule) {
       Silica._scheduledFlush = false;
       window.setTimeout(function(){ Silica.flush(document, false, {}); }, 20);
     }
@@ -204,6 +204,7 @@ var Silica = {
     Silica.isInApply = false;
 
     // Compute the differences
+    // TODO: Store the new values as the old values for the next round
     changes = {};
     _ref1 = Silica._watch;
     for (k in _ref1) {
@@ -651,6 +652,24 @@ var Silica = {
     }
     return filtered;
   },
+
+  querySorted(root, ...attributes) {
+    var filtered = Silica.query(root, attributes...);
+
+    for (var i = 0, list_length = filtered.length; i < list_length; i++) {
+      var node = filtered[i];
+      for (var j = i+1; j < list_length; j++) {
+        var other = filtered[j];
+        if (other.contains(node)) {
+          filtered[i] = other;
+          filtered[j] = node;
+        }
+      }
+    }
+
+    return filtered;
+  },
+
   queryOfType(root, type, ...attributes)
   {
     var raw = (root instanceof jQuery ? root[0] : root);
@@ -700,27 +719,31 @@ var Silica = {
   },
   compilers: {
     directives() {
-      var k, obj, _ref, _results;
-      _ref = Silica.directives;
-      _results = [];
-      for (k in _ref) {
-        obj = _ref[k];
-        if (Silica.directives.hasOwnProperty(k)) {
-          _results.push($(k, this).each(function() {
-            return $(this).replaceWith(obj.template);
-          }));
-        } else {
-          _results.push(void 0);
+      for (let k in Silica.directives)
+      {
+        if (Silica.directives.hasOwnProperty(k))
+        {
+          let obj = Silica.directives[k];
+          let nodes = Silica.queryOfType(this, k);
+          let wrapper = document.createElement("div");
+          for (let i = nodes.length - 1; i >= 0; --i)
+          {
+            // A node can only be used once, so create a new instance for each
+            wrapper.innerHTML = obj.template;
+            let newChild = wrapper.firstChild;
+            let node = nodes[i];
+            node.parentNode.replaceChild(newChild, node);
+          }
         }
       }
-      return _results;
     },
     "if": function() {
-      return $('*[data-if]', this).each(function() {
-        var $elm, comment, isVisible, negate, raw, val, _ref;
-        isVisible = false;
-        $elm = $(this);
-        raw = val = $elm.data('if');
+      var nodes = Silica.query(this, '[data-if]');
+      var isVisible, negate, raw, val, node;
+      for (let i = nodes.length - 1; i >=0; --i)
+      {
+        node = nodes[i];
+        raw = val = node.dataset['if'];
         negate = val[0] === '!';
         if (negate) {
           val = val.substr(1);
@@ -728,11 +751,20 @@ var Silica = {
         if (!Silica._ifs[raw]) {
           Silica._ifs[raw] = [];
         }
-        isVisible = Silica._show($elm, val, negate);
-        if (isVisible) {
-          Silica._ifs[raw].push(this);
-        } else {
-          $('*[data-show]', $elm).each(function() {
+        isVisible = Silica._show(node, val, negate);
+        if (isVisible)
+        {
+          Silica._ifs[raw].push(node);
+        }
+        else
+        {
+          // Remove subnodes registered with Silica
+          // [WIP]
+          let subNodes = Silica.query(node, '[data-show]');
+          let subNode;
+          for (let j = subNodes.length - 1; j >= 0; --j)
+          {
+            subNode = subNodes[j];
             var $e, list, prop, _ref;
             $e = $(this);
             prop = $e.data('show');
@@ -740,7 +772,7 @@ var Silica = {
             Silica._shws[prop] = (_ref = list != null ? list.filter(function(obj) {
               return !$(obj).is($e);
             }) : void 0) != null ? _ref : [];
-          });
+          }
           $('*[data-controller]', $elm).each(function() {
             var $e, ctrl, k, list, _ref, _results;
             $e = $(this);
@@ -764,7 +796,7 @@ var Silica = {
           }
         }
         return null;
-      });
+      }
     },
     show() {
       var nodes = Silica.query(this, "[data-show]");
@@ -1100,11 +1132,11 @@ var Silica = {
       }
     },
     repeat(context = null) {
-      var elements = (this instanceof jQuery ? this[0] : this).querySelectorAll('[data-repeat]');
+      var elements = Silica.querySorted(this, '[data-repeat]');
       let element;
       var $elm, child, children, ctx, expr, html, list, model, obj, repeat, template, raw, _ref;
       let fragment;
-      for (var i = elements.length - 1; i >= 0; i--)
+      for (var i = 0, length = elements.length; i < length; i++)
       {
         raw = elements[i];
         repeat = raw.dataset.repeat.split(/\s+in\s+/);
@@ -1134,8 +1166,6 @@ var Silica = {
           return value;
         }));
         raw._rt_ctrl = ctx;
-        raw._rt_repeat_list = listHash;
-
         // Get the template
         template = Silica._repeat_templates[raw.dataset._rt_repeat_template];
         // Compile it
@@ -1146,32 +1176,6 @@ var Silica = {
         Silica._repeat_templates[raw.dataset._rt_repeat_template] = template;
 
         raw.innerHTML = "";
-
-        if (list)
-        {
-          fragment = document.createDocumentFragment();
-          let _i, _len, context, node;
-          for (_i = 0, _len = list.length; _i < _len; _i++)
-          {
-            obj = list[_i];
-            context = {};
-            context[model] = obj;
-            context.$ctrl = ctx;
-            node = template.cloneNode(true);
-            node._rt_ctx = context;
-            Silica.compilers.repeat.call(node);
-            Silica.compilers.click.call(node);
-            Silica.compilers.dblclick.call(node);
-            Silica.compilers.blur.call(node);
-            Silica.compilers.model.call(node);
-            Silica.compilers.show.call(node);
-            Silica.compilers.disabled.call(node);
-            Silica.compilers.href.call(node);
-            obj.__elm = node;
-            fragment.appendChild(node);
-          }
-          raw.appendChild(fragment);
-        }
 
         if (ctx.renderedRepeat) {
           ctx.renderedRepeat(raw);
@@ -1249,7 +1253,7 @@ var Silica = {
 
     updateRepeat() {
       var $elm, changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
-      var elements = (this instanceof jQuery ? this[0] : this).querySelectorAll('[data-repeat]');
+      var elements = Silica.querySorted(this, '[data-repeat]');
       let raw, cache_display;
       let decache = function(node, skip) {
         if (!skip) {
@@ -1262,7 +1266,7 @@ var Silica = {
           decache(children[i]);
         }
       };
-      for (let i = elements.length - 1; i >= 0; --i)
+      for (let i =0, length = elements.length; i < length; ++i)
       {
         raw = elements[i];
         repeat = raw.dataset.repeat.split(/\s+in\s+/);
@@ -1343,14 +1347,27 @@ var Silica = {
           fragment.appendChild(child);
           ++count_diff;
         }
-        raw.appendChild(fragment);
+        if (fragment.hasChildNodes())
+        {
+          raw.appendChild(fragment);
+        }
 
         for (_i = 0, _len = newList.length; _i < _len; _i++)
         {
           obj = newList[_i];
           node = existing[_i];
           decache(node, true);
-          node._rt_ctx[model] = obj;
+          if (node._rt_ctx)
+          {
+            node._rt_ctx[model] = obj;
+          }
+          else
+          {
+            context = {};
+            context[model] = obj;
+            context.$ctrl = ctx;
+            node._rt_ctx = context;
+          }
           Silica.flush(node, false, {});
         }
 
@@ -1432,14 +1449,7 @@ var Silica = {
     },
 
     updateSrc() {
-      return $('img[data-src]', $(this)).each(function() {
-        var $elm, newSrc;
-        $elm = $(this);
-        newSrc = Silica.getValue($elm[0], $elm.data('src'));
-        if ($elm.attr('src') !== newSrc) {
-          return $elm.attr('src', newSrc);
-        }
-      });
+      Silica.compilers.src.call(this);
     },
 
     updateModel() {

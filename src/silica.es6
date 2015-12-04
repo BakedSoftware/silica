@@ -654,7 +654,7 @@ var Silica = {
   },
 
   querySorted(root, ...attributes) {
-    var filtered = Silica.query(root, attributes...);
+    var filtered = Silica.query(root, ...attributes);
 
     for (var i = 0, list_length = filtered.length; i < list_length; i++) {
       var node = filtered[i];

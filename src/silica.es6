@@ -311,7 +311,11 @@ var Silica = {
   getValue(raw, propString, context = null, params = null) {
     var ctx;
     ctx = context ? context : propString.charCodeAt(0) <= 90 ? window : Silica.getContext(raw);
-    raw._rt_ctx = ctx;
+    //TODO: This breaks when in the following case:
+    // div.data-controller=childcontroller > div.data-class=rootController >
+    // div.data-repeat=childContailer.model => the model is looked up on the
+    // rootController as that is the next found context
+    //raw._rt_ctx = ctx;
     return Silica.getPropByString(ctx, propString, params);
   },
 
@@ -331,14 +335,24 @@ var Silica = {
     if (!propString) {
       return obj;
     }
+
     paths = propString.split('.');
     key = paths[paths.length - 1];
-    if (!obj.hasOwnProperty(paths[0]) && obj.hasOwnProperty('$ctrl'))
+
+    if (propString.charCodeAt(0) <= 90)
     {
-      ctx = obj.$ctrl;
-    } else {
-      ctx = obj;
+      ctx = window;
     }
+    else
+    {
+      if (!obj.hasOwnProperty(paths[0]) && obj.hasOwnProperty('$ctrl'))
+      {
+        ctx = obj.$ctrl;
+      } else {
+        ctx = obj;
+      }
+    }
+
     for (_i = 0, _len = paths.length; _i < _len; _i++) {
       prop = paths[_i];
       if (prop !== key) {
@@ -634,6 +648,9 @@ var Silica = {
     for (let i = nodes.length - 1; i >=0; --i)
     {
       let node = nodes.item(i);
+      //TODO: This prevents multiple data-* for the same element, need to
+      //return all elements and have the complex compilers not reattach to the
+      //element (data-controller, data-repeat)
       if (!node._rt_live)
       {
         filtered.push(node);
@@ -952,13 +969,14 @@ var Silica = {
         }
         if (typeof model !== 'undefined')
         {
-          ctrl = new constructor($elm, model);
+          ctrl = new constructor(node, model);
         }
         else
         {
-          ctrl = new constructor($elm);
+          ctrl = new constructor(node);
         }
         node._rt_live = true;
+        node._rt_ctrl = ctrl;
         _ref = constructor.watchers;
         for (k in _ref) {
           v = _ref[k];
@@ -1473,7 +1491,7 @@ var Silica = {
         element = elements[i];
         type = element.type;
         if (element !== document.activeElement && (type === 'text' || type === 'file' || type === 'number' ||
-            type === 'email' || type === 'password' || type === 'time'))
+            type === 'email' || type === 'password' || type === 'time' || type === 'select-one'))
         {
           element.value = Silica._model_get_val(element);
         }

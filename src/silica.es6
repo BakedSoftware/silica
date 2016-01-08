@@ -1447,7 +1447,14 @@ var Silica = {
         klass = Silica.getValue(element, element.dataset.class);
         if (klass)
         {
-          element.classList.add(klass);
+          if (klass instanceof Array)
+          {
+            element.classList.add.apply(element.classList, klass);
+          }
+          else
+          {
+            element.classList.add(klass);
+          }
         }
         if (element.dataset.show != null) {
             var key = element.dataset.show;

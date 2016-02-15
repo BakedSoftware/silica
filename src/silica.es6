@@ -651,10 +651,14 @@ var Silica = {
       //TODO: This prevents multiple data-* for the same element, need to
       //return all elements and have the complex compilers not reattach to the
       //element (data-controller, data-repeat)
+      /*
       if (!node._rt_live)
       {
+      */
         filtered.push(node);
+      /*
       }
+      */
     }
     if (!raw.rt_live)
     {
@@ -1073,54 +1077,56 @@ var Silica = {
       });
     },
     model(context = null) {
-      $('input[data-model], select[data-model], textarea[data-model] option[data-model]', this).each(function() {
-        var $elm, change, ctx, model, val;
-        $elm = $(this);
+      var elm, change, ctx, model, val;
+      var elements = Silica.query(this, 'input[data-model]', 'select[data-model]', 'textarea[data-model]', 'option[data-model]');
+      for (let i = elements.length - 1; i >= 0; i--)
+      {
         //ctx = context != null ? context : Silica.getContext($elm);
-        ctx = Silica.getContext($elm);
-        model = $elm.data('model');
-        let type = $elm.attr('type');
+        elm = elements[i];
+        ctx = Silica.getContext(elm);
+        model = elm.dataset.model;
+        let type = elm.type;
         if (type === 'text' || type === 'file' || type === 'number' ||
             type === 'email' || type === 'password' || type === 'time') {
-          $elm.val(Silica.getValue($elm[0], model, ctx));
-        } else if ($elm.attr('type') === 'radio') {
-          val = $elm.val();
-          if (val[0].match(/[0-9]/)) {
+          elm.value = Silica.getValue(elm, model, ctx);
+        } else if (type === 'radio') {
+          val = elm.value;
+          if (val.match(/[0-9]/)) {
             val = parseInt(val);
           }
-          $elm.prop('checked', Silica.getValue($elm[0], model, ctx) === val);
-        } else if ($elm.attr('type') === 'checkbox') {
-          $elm.prop('checked', Silica.getValue($elm[0], model, ctx));
-        } else if ($elm[0].nodeName === 'OPTION') {
-          $elm.prop('value', Silica.getValue($elm[0], model, ctx));
+          elm.checked = Silica.getValue(elm, model, ctx) === val;
+        } else if (type === 'checkbox') {
+          elm.checked = Silica.getValue(elm, model, ctx);
+        } else if (elm.nodeName === 'OPTION') {
+          elm.value = Silica.getValue(elm, model, ctx);
         }
         change = function() {
           var obj, _ref, _ref1, _ref2;
-          val = $elm.val();
-          if ($elm.attr('type') === 'radio') {
-            if (val[0].match(/[0-9]/)) {
+          var val = this.value, ctx = Silica.getContext(this), model = this.dataset.model;
+          if (this.type === 'radio') {
+            if (val.match(/[0-9]/)) {
               val = parseInt(val);
             }
-          } else if ($elm.attr('type') === 'checkbox') {
-            val = $elm.prop('checked');
+          } else if (this.type === 'checkbox') {
+            val = this.checked;
           }
           if (Silica.isInApply) {
-            obj = (_ref = $elm[0]._rt_ctx) != null ? _ref : ctx;
+            obj = (_ref = this._rt_ctx) != null ? _ref : ctx;
             Silica.setPropByString(obj, model, val);
-          } else if ((_ref = $elm.data('trap')) != null) {
-            obj = (_ref1 = $elm[0]._rt_ctx) != null ? _ref1 : ctx;
+          } else if ((_ref = this.dataset.trap) != null) {
+            obj = (_ref1 = this._rt_ctx) != null ? _ref1 : ctx;
             let scope;
             if (_ref.toLowerCase() === "true")
             {
-              scope = $elm;
+              scope = this;
             }
             else
             {
-              scope = $(document);
-              _ref1 = $elm;
-              while ((_ref1 = _ref1.parent()) && _ref1.length)
+              scope = document;
+              _ref1 = this;
+              while ((_ref1 = _ref1.parentElement) && _ref1.length)
               {
-                if (_ref1.hasClass(_ref))
+                if (_ref1.classList.contains(_ref))
                 {
                   scope = _ref1;
                   break;
@@ -1131,19 +1137,19 @@ var Silica = {
               return Silica.setPropByString(obj, model, val);
             }, scope);
           } else {
-            obj = (_ref2 = $elm[0]._rt_ctx) != null ? _ref2 : ctx;
+            obj = (_ref2 = this._rt_ctx) != null ? _ref2 : ctx;
             Silica.apply(function() {
               return Silica.setPropByString(obj, model, val);
             });
           }
         };
-        $elm[0].onchange = change;
-        $elm[0].onkeyup = change;
-        $elm[0].onsearch = change;
-        if ($elm.attr('x-webkit-speech')) {
-          $elm[0].onwebkitspeechchange = change;
+        elm.onchange = change;
+        elm.onkeyup = change;
+        elm.onsearch = change;
+        if (elm.hasAttribute('x-webkit-speech')) {
+          elm.onwebkitspeechchange = change;
         }
-      });
+      }
     },
     submit() {
       var raw = (this instanceof jQuery ? this[0] : this);
@@ -1287,8 +1293,10 @@ var Silica = {
       let raw, cache_display;
       let decache = function(node, skip) {
         if (!skip) {
+          node._rt_decached_repeat_list = node._rt_repeat_list;
           delete node._rt_ctx;
           delete node._rt_ctrl;
+          delete node._rt_repeat_list;
         }
         let children = node.children;
         for (let i = children.length - 1; i >= 0; --i)
@@ -1326,6 +1334,26 @@ var Silica = {
           }
           return value;
         }));
+
+        let existing = raw.childNodes;
+        // Determine if we decached a list that didn't change, if so restore it
+        if (newListHash && raw._rt_decached_repeat_list === newListHash)
+        {
+          raw._rt_repeat_list = newListHash;
+          for (_i = 0, _len = newList.length;_i < _len;_i++) {
+            obj = newList[_i];
+            node = existing[_i];
+            if (node._rt_ctx) {
+              node._rt_ctx[model] = obj;
+            } else {
+              context = {};
+              context[model] = obj;
+              context.$ctrl = ctx;
+              node._rt_ctx = context;
+            }
+          }
+          continue;
+        }
         oldList = raw._rt_repeat_list;
         changed = oldList && newList ? oldList !== newListHash : true;
 
@@ -1348,7 +1376,6 @@ var Silica = {
         template = Silica._repeat_templates[raw.dataset._rt_repeat_template];
 
         let count_diff = raw.childElementCount - newList.length;
-        let existing = raw.childNodes;
         let node;
 
         while (count_diff > 0)
@@ -1498,7 +1525,7 @@ var Silica = {
         element = elements[i];
         type = element.type;
         if (element !== document.activeElement && (type === 'text' || type === 'file' || type === 'number' ||
-            type === 'email' || type === 'password' || type === 'time' || type === 'select-one'))
+            type === 'email' || type === 'password' || type === 'time' || type === 'select-one' || type === "textarea"))
         {
           element.value = Silica._model_get_val(element);
         }

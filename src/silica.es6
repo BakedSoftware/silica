@@ -776,29 +776,36 @@ var Silica = {
         if (isVisible)
         {
           Silica._ifs[raw].push(node);
+          if ((_ref = Silica.getContext(node)) != null) {
+            if (typeof _ref.onLoad === "function") {
+              _ref.onLoad();
+            }
+          }
         }
         else
         {
           // Remove subnodes registered with Silica
-          // [WIP]
-          let subNodes = Silica.query(node, '[data-show]');
+          let subNodes = Silica.query(node, '[data-if]');
           let subNode;
           for (let j = subNodes.length - 1; j >= 0; --j)
           {
             subNode = subNodes[j];
             var $e, list, prop, _ref;
-            $e = $(this);
-            prop = $e.data('show');
+            prop = subNode.dataset['if'];
             list = Silica._shws[prop];
             Silica._shws[prop] = (_ref = list != null ? list.filter(function(obj) {
               return !$(obj).is($e);
             }) : void 0) != null ? _ref : [];
           }
-          $('*[data-controller]', $elm).each(function() {
-            var $e, ctrl, k, list, _ref, _results;
-            $e = $(this);
-            ctrl = this._rt_ctrl;;
-            _results = [];
+          subNodes = Silica.query(this, "[data-controller]");
+          for (let j = subNodes.length - 1; j >= 0; --j)
+          {
+            subNode = subNodes[j];
+            let ctrl = this._rt_ctrl;;
+            let _results = [];
+            let k, list, _ref;
+            // Note: This is compilled, need to change it to something more
+            // readable
             for (k in ctrl != null ? ctrl.watchers : void 0) {
               list = Silica._watch[k];
               _results.push(Silica._watch[k] = (_ref = list != null ? list.filter(function(obj) {
@@ -806,17 +813,11 @@ var Silica = {
               }) : void 0) != null ? _ref : []);
             }
             return _results;
-          });
+          }
           comment = document.createComment(this.outerHTML);
           Silica._ifs[raw].push(comment);
-          $elm.replaceWith(comment);
-          if ((_ref = Silica.getContext($elm)) != null) {
-            if (typeof _ref.onLoad === "function") {
-              _ref.onLoad();
-            }
-          }
+          node.parentNode.replaceChild(comment, node);
         }
-        return null;
       }
     },
     show() {
@@ -1249,28 +1250,39 @@ var Silica = {
           }
           for (i = _i = 0, _len = elements.length; _i < _len; i = ++_i) {
             element = elements[i];
-            isVisible = Silica._show($(element), k, negate);
+            isVisible = Silica._show(element, k, negate);
             if (isVisible) {
               if (element.nodeType === 8) {
-                compiled = Silica.compile($(element.nodeValue), false);
-                $(element).replaceWith(compiled);
+                compiled = Silica.compile(element.nodeValue, false);
+                element.parentNode.replaceChild(element, compiled);
                 Silica._ifs[raw][i] = compiled;
+                let _ref;
+                if ((_ref = Silica.getContext(compiled)) != null) {
+                  if (typeof _ref.onLoad === "function") {
+                    _ref.onLoad();
+                  }
+                }
               }
             } else {
               if (element.nodeType !== 8) {
-                $('*[data-show]', element).each(function() {
+                let subNodes = Silica.query(element, '[data-if]');
+                let subNode;
+                for (let j = subNodes.length -1; j >= 0; --j)
+                {
                   var $e, list, prop, _ref1;
-                  $e = $(this);
-                  prop = $e.data('show');
+                  subNode = subNodes[j];
+                  prop = subNode.dataset['if'];
                   list = Silica._shws[prop];
-                  return Silica._shws[prop] = (_ref1 = list != null ? list.filter(function(obj) {
-                    return !$(obj).is($e);
+                  Silica._shws[prop] = (_ref1 = list != null ? list.filter(function(obj) {
+                    return !obj == subNode;
                   }) : void 0) != null ? _ref1 : [];
-                });
-                $('*[data-controller]', element).each(function() {
-                  var $e, ctrl, list, _ref1, _results;
-                  $e = $(this);
-                  ctrl = this._rt_ctrl;
+                }
+                subNodes = Silica.query(element, '[data-controller]');
+                for (let j = subNodes.length -1; j >= 0; --j)
+                {
+                  var ctrl, list, _ref1, _results;
+                  subNode = subNodes[j];
+                  ctrl = subNode._rt_ctrl;
                   _results = [];
                   for (k in ctrl != null ? ctrl.watchers : void 0) {
                     list = Silica._watch[k];
@@ -1279,10 +1291,10 @@ var Silica = {
                     }) : void 0) != null ? _ref1 : []);
                   }
                   return _results;
-                });
-                comment = document.createComment(($(element)[0]).outerHTML);
+                }
+                comment = document.createComment(element.outerHTML);
                 Silica._ifs[raw][i] = comment;
-                $(element).replaceWith(comment);
+                element.parentNode.replaceChild(comment, element);
               }
             }
           }

@@ -1,0 +1,23 @@
+{
+  "name": "Silica",
+  "homepage": "https://github.com/BakedSoftware/Silica",
+  "authors": [
+    "Kayle Gishen <k@bkdsw.com>"
+  ],
+  "description": "Easy to use, high performance, no nonsense HTML/JS framework",
+  "main": "silica.min.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "Silica"
+  ],
+  "license": "GPLv3",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

@@ -960,6 +960,9 @@ var Silica = {
       for (let i = nodes.length - 1; i >= 0; --i)
       {
         node = nodes[i];
+        if (node._rt_ctrl !== undefined) {
+          continue;
+        }
         $elm = $(node);
         constructor = $elm.data('controller');
         if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')

@@ -13,19 +13,22 @@
       <script src="https://code.jquery.com/jquery-2.1.4.min.js" type="text/javascript" charset="utf-8"></script>
       <script src="../silica.min.js" type="text/javascript" charset="utf-8"></script>
       <script type="text/javascript" charset="utf-8">
-        window.Ex = {
-          AppCntrl: class AppCntrl extends Silica.Controllers.Base {
-            constructor(el) {
-              super(el)
-              this.name = null;
+        (function(){
+          'use strict';
+          window.Ex = {
+            AppCntrl: class AppCntrl extends Silica.Controllers.Base {
+              constructor(el) {
+                super(el)
+                this.name = null;
+              }
+              greeting() {
+                return "Hello " + (this.name || "World!");
+              }
             }
-            greeting() {
-              return "Hello " + (this.name || "World!");
-            }
-          }
-        };
-        Silica.setContext("Ex");
-        Silica.compile(document);
+          };
+          Silica.setContext("Ex");
+          Silica.compile(document);
+        }());
       </script>
   </body>
 </html>

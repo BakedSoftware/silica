@@ -499,7 +499,7 @@ var Silica = {
         return raw._rt_ctrl;
       } else if (raw.nodeName === 'BODY') {
         return Silica.context;
-      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.dataset.controller) {
+      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && raw.dataset && raw.dataset.controller) {
         constructor = raw.dataset.controller;
         if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
         {
@@ -802,19 +802,17 @@ var Silica = {
           {
             subNode = subNodes[j];
             let ctrl = this._rt_ctrl;;
-            let _results = [];
             let k, list, _ref;
             // Note: This is compilled, need to change it to something more
             // readable
             for (k in ctrl != null ? ctrl.watchers : void 0) {
               list = Silica._watch[k];
-              _results.push(Silica._watch[k] = (_ref = list != null ? list.filter(function(obj) {
+              Silica._watch[k] = (list != null ? list.filter(function(obj) {
                 return obj[0] !== ctrl;
-              }) : void 0) != null ? _ref : []);
+              }) : []);
             }
-            return _results;
           }
-          comment = document.createComment(this.outerHTML);
+          comment = document.createComment(node.outerHTML);
           Silica._ifs[raw].push(comment);
           node.parentNode.replaceChild(comment, node);
         }
@@ -1283,14 +1281,12 @@ var Silica = {
                   var ctrl, list, _ref1, _results;
                   subNode = subNodes[j];
                   ctrl = subNode._rt_ctrl;
-                  _results = [];
                   for (k in ctrl != null ? ctrl.watchers : void 0) {
                     list = Silica._watch[k];
-                    _results.push(Silica._watch[k] = (_ref1 = list != null ? list.filter(function(obj) {
+                    Silica._watch[k] = (list != null ? list.filter(function(obj) {
                       return obj[0] !== ctrl;
-                    }) : void 0) != null ? _ref1 : []);
+                    }) : []);
                   }
-                  return _results;
                 }
                 comment = document.createComment(element.outerHTML);
                 Silica._ifs[raw][i] = comment;

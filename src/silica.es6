@@ -662,9 +662,11 @@ var Silica = {
     }
     if (!raw.rt_live)
     {
+      let attribute;
       for (let i = attributes.length - 1; i >=0; --i)
       {
-        if (raw.hasAttribute(attributes[i]))
+        attribute = attributes[i];
+        if (raw.hasAttribute(attribute.substring(1, attribute.length-1)))
         {
           filtered.push(raw);
           break;
@@ -717,9 +719,11 @@ var Silica = {
     }
     if (raw.tagName === type && !raw.rt_live)
     {
+      let attribute;
       for (let i = attributes.length - 1; i >=0; --i)
       {
-        if (raw.hasAttribute(attributes[i]))
+        attribute = attributes[i];
+        if (raw.hasAttribute(attribute.substring(1, attribute.length-1)))
         {
           filtered.push(root);
           break;

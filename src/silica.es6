@@ -42,7 +42,7 @@ var Silica = {
   },
 
   // Interpolate and link all Silica directives within an element
-  compile(element, flush = true, context = null)
+  compile(element, flush = true, context = null, onlySafe = false)
   {
     var func, k, _ref;
     if (!(element instanceof jQuery))
@@ -57,15 +57,21 @@ var Silica = {
     else
     {
       context = context || Silica.getContext(element);
-      element[0]._rt_ctx = context;
+      if (!onlySafe)
+      {
+        element[0]._rt_ctx = context;
+      }
     }
     Silica.cacheTemplates(element[0]);
     Silica.interpolate(element, context, flush);
     for (let key in Silica.compilers)
     {
-      if (key[0] !== '_')
+      if (!onlySafe)
       {
-        Silica.compilers[key].apply(element, [context]);
+        if (key[0] !== '_')
+        {
+          Silica.compilers[key].apply(element, [context]);
+        }
       }
     }
     if (flush) {
@@ -570,12 +576,11 @@ var Silica = {
     if (expr.indexOf(Silica.contextName) === 0) {
       isVisible = Silica.getPropByString(Silica.context, expr.substr(Silica.contextName.length + 1));
     } else {
-      $elm = element.constructor.name === "" ? element : $(element);
-      if ((typeof (ctx = $elm[0]._rt_ctx)) !== "undefined") {
+      if (element.nodeType !== 8 && (typeof (ctx = element._rt_ctx)) !== "undefined") {
         isVisible = Silica.getPropByString(ctx, expr);
       } else {
-        ctx = Silica.getContext($elm);
-        $elm[0]._rt_ctx = ctx;
+        ctx = Silica.getContext(element);
+        element._rt_ctx = ctx;
         isVisible = Silica.getPropByString(ctx, expr);
       }
     }
@@ -637,6 +642,23 @@ var Silica = {
       return value;
     }
   },
+  findComments(root)
+  {
+    var arr = [];
+    var raw = root instanceof jQuery ? root[0] : root;
+    for (var i = raw.childNodes.length - 1; i >= 0; --i)
+    {
+      var node = raw.childNodes[i];
+      if (node.nodeType === 8)
+      {
+        arr.push(node);
+      }
+      else
+      {
+        arr.push.apply(arr, findComments(node));
+      }
+    }
+  },
   query(root, ...attributes) {
     var raw = (root instanceof jQuery ? root[0] : root);
     if (raw == document) {
@@ -673,6 +695,30 @@ var Silica = {
         }
       }
     }
+    return filtered;
+  },
+
+  queryWithComments(root, ...attributes)
+  {
+    var filtered = Silica.query(root, ...attributes);
+    var comments = Silica.findComments(root);
+
+    var temp = document.createElement("div");
+    for (var i = comments.length - 1; i >= 0; --i)
+    {
+      var node = comments[i];
+      // Check node is a commented out tag, not just text
+      if (node.nodeValue.charAt(0) === "<")
+      {
+        // Convert the comment back to live version to check attributes
+        temp.innerHTML = node.nodeValue;
+        if (temp.firstElementChild.hasAttributes(attributes.join(",")))
+        {
+          filtered.push(node);
+        }
+      }
+    }
+
     return filtered;
   },
 
@@ -762,13 +808,22 @@ var Silica = {
         }
       }
     },
-    "if": function() {
-      var nodes = Silica.query(this, '[data-if]');
+    "_if": function() {
+      var nodes = Silica.queryWithComments(this, '[data-if]');
       var isVisible, negate, raw, val, node;
+      var temp = document.createElement("div");
       for (let i = nodes.length - 1; i >=0; --i)
       {
         node = nodes[i];
-        raw = val = node.dataset['if'];
+        if (node.nodeType === 8)
+        {
+          temp.innerHTML = node.nodeValue;
+          raw = val = temp.firstElementChild.dataset["if"];
+        }
+        else
+        {
+          raw = val = node.dataset['if'];
+        }
         negate = val[0] === '!';
         if (negate) {
           val = val.substr(1);
@@ -779,17 +834,29 @@ var Silica = {
         isVisible = Silica._show(node, val, negate);
         if (isVisible)
         {
-          Silica._ifs[raw].push(node);
+          if (node.nodeType !== 8)
+          {
+            Silica._ifs[raw].push(node);
+          }
+          else
+          {
+            let live = temp.firstElementChild;
+            Silica._ifs[raw].push(live);
+            node.parentElement.insertBefore(live, node);
+            node.remove();
+            node = live;
+          }
+
           if ((_ref = Silica.getContext(node)) != null) {
             if (typeof _ref.onLoad === "function") {
               _ref.onLoad();
             }
           }
         }
-        else
+        else if (node.nodeType !== 8)
         {
           // Remove subnodes registered with Silica
-          let subNodes = Silica.query(node, '[data-if]');
+          let subNodes = Silica.queryWithComments(node, '[data-if]');
           let subNode;
           for (let j = subNodes.length - 1; j >= 0; --j)
           {
@@ -1213,7 +1280,7 @@ var Silica = {
         // Compile it
         context = {};
         context.$ctrl = ctx;
-        template = Silica.compile($(template), false, context)[0];
+        template = Silica.compile($(template), false, context, true)[0];
         // Store the compiled template
         Silica._repeat_templates[raw.dataset._rt_repeat_template] = template;
 
@@ -1255,11 +1322,14 @@ var Silica = {
             isVisible = Silica._show(element, k, negate);
             if (isVisible) {
               if (element.nodeType === 8) {
-                compiled = Silica.compile(element.nodeValue, false);
-                element.parentNode.replaceChild(element, compiled);
-                Silica._ifs[raw][i] = compiled;
+                // Following contains jQuery remants, needs removal, compile
+                // returns jqueyr wrapped node
+                compiled = Silica.compile(element.nodeValue, false, Silica.getContext(element));
+                element.parentNode.insertBefore(compiled[0], element);
+                element.remove();
+                Silica._ifs[raw][i] = compiled[0];
                 let _ref;
-                if ((_ref = Silica.getContext(compiled)) != null) {
+                if ((_ref = Silica.getContext(compiled[0])) != null) {
                   if (typeof _ref.onLoad === "function") {
                     _ref.onLoad();
                   }
@@ -1267,7 +1337,7 @@ var Silica = {
               }
             } else {
               if (element.nodeType !== 8) {
-                let subNodes = Silica.query(element, '[data-if]');
+                let subNodes = Silica.queryWithComments(element, '[data-if]');
                 let subNode;
                 for (let j = subNodes.length -1; j >= 0; --j)
                 {
@@ -1293,6 +1363,7 @@ var Silica = {
                   }
                 }
                 comment = document.createComment(element.outerHTML);
+                comment.parentElement = element.parentElement;
                 Silica._ifs[raw][i] = comment;
                 element.parentNode.replaceChild(comment, element);
               }
@@ -1408,6 +1479,7 @@ var Silica = {
           context.$ctrl = ctx;
           child = template.cloneNode(true);
           child._rt_ctx = context;
+          Silica.compilers._if.call(child);
           Silica.compilers.repeat.call(child);
           Silica.compilers.click.call(child);
           Silica.compilers.dblclick.call(child);

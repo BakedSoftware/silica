@@ -39,9 +39,9 @@ while ((match = include_regex.exec(index)) !== null) {
 fs.writeFileSync(path.join('build', 'index.html'), index);
 
 browserify({debug: true})
-.transform(babelify)
+  .transform(babelify, {presets: ["es2015"]})
   .require(path.join(cache_path, 'app.js'), { entry: true })
-.bundle()
+  .bundle()
   .on("error", function (err) { console.log("Error: " + err.message); })
   .pipe(fs.createWriteStream(path.join('build', 'js', 'app.js')));
 

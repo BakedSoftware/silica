@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 // Node Provided modules
-const  exec          =  require('child_process').exec;
-const  http          =  require('http');
+const  exec  =  require('child_process').exec;
+const  http  =  require('http');
+const  path  =  require('path');
 
 // Third party dependencies
 const  livereload    =  require('livereload');
@@ -19,7 +20,7 @@ program
 
 var child_callback = function (error, stdout, stderr) {
   console.log(stdout);
-  console.log(stderr);
+  console.error(stderr);
 
   if (error !== null) {
     console.error('exec error: ' + error);
@@ -61,4 +62,4 @@ require('http').createServer(function (request, response) {
 }).listen(program.port || 8080);
 
 var server = livereload.createServer();
-server.watch(__dirname + "/build");
+server.watch(path.join(process.cwd(), "/build"));

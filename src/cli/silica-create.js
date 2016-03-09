@@ -116,3 +116,8 @@ var bower = spawnSync('bower',
 var bower_install = spawnSync('bower',
                               ['install', 'jquery', 'silica'],
                               { 'cwd': projectName });
+
+// Setup npm
+spawnSync('npm',
+          ['install', '--save', 'babel-preset-es2015'],
+          { 'cwd': projectName});

@@ -66,12 +66,9 @@ var Silica = {
     Silica.interpolate(element, context, flush);
     for (let key in Silica.compilers)
     {
-      if (!onlySafe)
+      if (!(onlySafe & key[0] === '_'))
       {
-        if (key[0] !== '_')
-        {
-          Silica.compilers[key].apply(element, [context]);
-        }
+        Silica.compilers[key].apply(element, [context]);
       }
     }
     if (flush) {
@@ -655,9 +652,10 @@ var Silica = {
       }
       else
       {
-        arr.push.apply(arr, findComments(node));
+        arr.push.apply(arr, Silica.findComments(node));
       }
     }
+    return arr;
   },
   query(root, ...attributes) {
     var raw = (root instanceof jQuery ? root[0] : root);

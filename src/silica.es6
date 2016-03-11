@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.0.10",
+  version               :  "0.0.11",
 
   // Set the root context
   setContext(contextName)
@@ -98,7 +98,7 @@ var Silica = {
       }
     }
   },
-  flush(element = document.body.firstElementChild, onlySafe = false, changed = null, skipSchedule = false)
+  flush(element = document.body.parentElement, onlySafe = false, changed = null, skipSchedule = false)
   {
     if (Silica.isInFlush && !skipSchedule) {
       if (Silica._scheduledFlush) {
@@ -108,7 +108,7 @@ var Silica = {
       }
     }
     if (element == document) {
-      element = document.body.firstElementChild;
+      element = document.body.parentElement;
     }
     Silica.isInFlush = !skipSchedule;
     if (changed === null) {

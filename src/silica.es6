@@ -577,7 +577,9 @@ var Silica = {
         isVisible = Silica.getPropByString(ctx, expr);
       } else {
         ctx = Silica.getContext(element);
-        element._rt_ctx = ctx;
+        if (element.nodeType !== 8) {
+          element._rt_ctx = ctx;
+        }
         isVisible = Silica.getPropByString(ctx, expr);
       }
     }

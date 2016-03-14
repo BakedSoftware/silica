@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.0.11",
+  version               :  "0.0.12",
 
   // Set the root context
   setContext(contextName)
@@ -663,6 +663,20 @@ var Silica = {
     }
     return arr;
   },
+  isInRepeat(root, node) {
+    while(node.parentElement && node.parentElement !== root)
+    {
+      if (node.parentElement.hasAttribute("data-repeat"))
+      {
+        return true;
+      }
+      else
+      {
+        node = node.parentElement;
+      }
+    }
+    return false;
+  },
   query(root, ...attributes) {
     var raw = (root instanceof jQuery ? root[0] : root);
     if (raw == document) {
@@ -681,7 +695,10 @@ var Silica = {
       if (!node._rt_live)
       {
       */
-        filtered.push(node);
+        if (!Silica.isInRepeat(root, node))
+        {
+          filtered.push(node);
+        }
       /*
       }
       */

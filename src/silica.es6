@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.0.13",
+  version               :  "0.0.14",
 
   // Set the root context
   setContext(contextName)
@@ -973,7 +973,9 @@ var Silica = {
       for (let i = nodes.length - 1; i >= 0; --i)
       {
         node = nodes[i];
-        node.dataset._rt_hard_klass = node.className.split('hidden').join(" ").trim();
+        if (!node.dataset._rt_hard_klass) {
+          node.dataset._rt_hard_klass = node.className.split('hidden').join(" ").trim();
+        }
         klass = Silica.getValue(node, node.dataset.class);
         if (klass)
         {

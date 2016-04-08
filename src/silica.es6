@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.1.1",
+  version               :  "0.1.2",
 
   // Set the root context
   setContext(contextName)
@@ -513,13 +513,12 @@ var Silica = {
         if (!constructor) {
           return console.error("Unknown Controller: " + raw.dataset.controller);
         }
-        if (model != null)
-        {
+        if (typeof model !== "undefined") {
           ctrl = new constructor(raw, model);
-        }
-        else
-        {
+        } else {
           ctrl = new constructor(raw);
+        }
+        if (model != null) {
           raw._rt_live = true;
           raw._rt_ctrl = ctrl;
         }

@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.1.0",
+  version               :  "0.1.1",
 
   // Set the root context
   setContext(contextName)
@@ -492,7 +492,7 @@ var Silica = {
     Silica.directives[key] = obj;
   },
   getContext(element) {
-    var $elm, constructor, ctrl, k, v, _ref, raw, ctx;
+    var $elm, constructor, ctrl, k, v, _ref, raw, ctx, model;
     raw = element instanceof jQuery ? element[0] : element; //TODO: remove jQuery
     while (true)
     {
@@ -513,16 +513,16 @@ var Silica = {
         if (!constructor) {
           return console.error("Unknown Controller: " + raw.dataset.controller);
         }
-        if (typeof model !== 'undefined')
+        if (model != null)
         {
           ctrl = new constructor(raw, model);
         }
         else
         {
           ctrl = new constructor(raw);
+          raw._rt_live = true;
+          raw._rt_ctrl = ctrl;
         }
-        raw._rt_live = true;
-        raw._rt_ctrl = ctrl;
         _ref = constructor.watchers;
         for (k in _ref) {
           v = _ref[k];

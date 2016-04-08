@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.0.14",
+  version               :  "0.1.0",
 
   // Set the root context
   setContext(contextName)
@@ -58,10 +58,6 @@ var Silica = {
     else
     {
       context = context || Silica.getContext(element);
-      if (!onlySafe)
-      {
-        element[0]._rt_ctx = context;
-      }
     }
     Silica.cacheTemplates(element[0]);
     Silica.interpolate(element, context, flush);
@@ -581,9 +577,6 @@ var Silica = {
         isVisible = Silica.getPropByString(ctx, expr);
       } else {
         ctx = Silica.getContext(element);
-        if (element.nodeType !== 8) {
-          element._rt_ctx = ctx;
-        }
         isVisible = Silica.getPropByString(ctx, expr);
       }
     }
@@ -676,6 +669,10 @@ var Silica = {
       }
     }
     return false;
+  },
+  isDescendent(ancestor, child) {
+    while((child=child.parentNode)&&child!==ancestor);
+    return !!child;
   },
   query(root, ...attributes) {
     var raw = (root instanceof jQuery ? root[0] : root);
@@ -1342,6 +1339,10 @@ var Silica = {
           }
           for (i = _i = 0, _len = elements.length; _i < _len; i = ++_i) {
             element = elements[i];
+            if (element != this && !Silica.isDescendent(this, element))
+            {
+              continue;
+            }
             isVisible = Silica._show(element, k, negate);
             if (isVisible) {
               if (element.nodeType === 8) {

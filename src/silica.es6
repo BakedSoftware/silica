@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.1.2",
+  version               :  "0.1.3",
 
   // Set the root context
   setContext(contextName)
@@ -1287,7 +1287,7 @@ var Silica = {
         }
 
         listHash = SparkMD5.hash(JSON.stringify(list, function(key, value){
-          if (key.constructor == String && (key == '__elm' || key == '$ctrl'))
+          if (key.constructor == String && (key == '__elm' || key == '$ctrl' || key.charCodeAt(0) == 95))
           {
             return undefined;
           }

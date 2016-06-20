@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.1.6",
+  version               :  "0.1.7",
 
   // Set the root context
   setContext(contextName)

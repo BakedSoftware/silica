@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
-const  fs          =  require('fs');
+const  fs          =  require('fs-extra');
 const  path        =  require('path');
-const  wrench      =  require('wrench');
 const  browserify  =  require('browserify');
 const  babelify    =  require("babelify");
 const  stylus      =  require('stylus');
@@ -12,13 +11,13 @@ var  cache_path  =  'build_cache';
 
 console.log("Starting Build")
 
-wrench.rmdirSyncRecursive(cache_path, true);
-wrench.rmdirSyncRecursive('build', true);
+fs.removeSync(cache_path, true);
+fs.removeSync('build', true);
 
 fs.mkdirSync('build');
 fs.mkdirSync(path.join('build', 'js'));
 fs.mkdirSync(path.join('build', 'css'));
-wrench.copyDirSyncRecursive('src', cache_path);
+fs.copySync('src', cache_path);
 
 var  index_path  =  path.join(cache_path, 'index.html');
 var  index       =  fs.readFileSync(index_path, 'utf8');
@@ -59,7 +58,7 @@ function stylus_callback(err, css) {
   }
 }
 
-wrench.copyDirSync(path.join('src', 'images'), path.join('build', 'images'));
+fs.copySync(path.join('src', 'images'), path.join('build', 'images'));
 
 nsg({
   src: [
@@ -107,7 +106,7 @@ nsg({
 var font_dir_path = path.join(cache_path, 'fonts');
 if (fs.statSync(font_dir_path).isDirectory())
 {
-  wrench.copyDirSyncRecursive(font_dir_path, path.join('build', 'css', 'fonts'));
+  fs.copySync(font_dir_path, path.join('build', 'css', 'fonts'));
 }
 
-wrench.copyDirSyncRecursive(path.join('bower_components'), path.join('build', 'bower_components'));
+fs.copySync(path.join('bower_components'), path.join('build', 'bower_components'));

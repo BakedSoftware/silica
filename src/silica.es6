@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.1.4",
+  version               :  "0.1.5",
 
   // Set the root context
   setContext(contextName)
@@ -587,6 +587,20 @@ var Silica = {
   _call(element, evnt, act)
   {
     evnt.preventDefault();
+    var scope = document, trap_to, trapped_scope;
+    if ((trap_to = element.dataset.trap) != null) {
+      if (trap_to.toLowerCase() === "true") {
+        scope = element;
+      } else {
+        trapped_scope = element;
+        while ((trapped_scope = trapped_scope.parentElement)) {
+          if (trapped_scope.classList.contains(trap_to)) {
+            scope = trapped_scope;
+            break;
+          }
+        }
+      }
+    }
     Silica.apply(function()
     {
       var $elm, action, ctx, model, obj, parameter;
@@ -617,7 +631,7 @@ var Silica = {
       } else {
         return console.error("Unknown action '" + action + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
       }
-    });
+    }, scope);
   },
   _model_get_val(raw)
   {

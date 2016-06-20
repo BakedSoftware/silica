@@ -10,6 +10,8 @@ const  nsg         =  require('node-sprite-generator');
 
 var  cache_path  =  'build_cache';
 
+console.log("Starting Build")
+
 wrench.rmdirSyncRecursive(cache_path, true);
 wrench.rmdirSyncRecursive('build', true);
 
@@ -45,17 +47,19 @@ browserify({debug: true})
   .on("error", function (err) { console.log("Error: " + err.message); })
   .pipe(fs.createWriteStream(path.join('build', 'js', 'app.js')));
 
-  //Generate sprite styles
-  var  sprite_css_path  =  path.join(cache_path, 'styles', 'sprite.css');
-  var  total_css        =  "";
+//Generate sprite styles
+var  sprite_css_path  =  path.join(cache_path, 'styles', 'sprite.css');
+var  total_css        =  "";
 
-  function stylus_callback(err, css) {
-    if (err) {
-      console.log(err);
-    } else {
-      total_css += css;
-    }
+function stylus_callback(err, css) {
+  if (err) {
+    console.log(err);
+  } else {
+    total_css += css;
   }
+}
+
+wrench.copyDirSync(path.join('src', 'images'), path.join('build', 'images'));
 
 nsg({
   src: [
@@ -97,10 +101,13 @@ nsg({
   total_css += fs.readFileSync(sprite_css_path, 'utf8');
 
   fs.writeFileSync(path.join('build', 'css', 'styles.css'), total_css);
+  console.log("Built Style sheet")
 });
 
-
-wrench.copyDirSyncRecursive(path.join(cache_path, 'fonts'), path.join('build', 'css', 'fonts'));
+var font_dir_path = path.join(cache_path, 'fonts');
+if (fs.statSync(font_dir_path).isDirectory())
+{
+  wrench.copyDirSyncRecursive(font_dir_path, path.join('build', 'css', 'fonts'));
+}
 
 wrench.copyDirSyncRecursive(path.join('bower_components'), path.join('build', 'bower_components'));
-

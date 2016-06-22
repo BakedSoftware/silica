@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.1.7",
+  version               :  "0.1.8",
 
   // Set the root context
   setContext(contextName)
@@ -1549,6 +1549,7 @@ var Silica = {
             context.$ctrl = ctx;
             node._rt_ctx = context;
           }
+          node._rt_ctx.index = i;
           Silica.flush(node, false, {}, true);
         }
 

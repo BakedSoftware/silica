@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.1.9",
+  version               :  "0.2.0",
 
   // Set the root context
   setContext(contextName)
@@ -94,6 +94,22 @@ var Silica = {
       }
     }
   },
+
+  debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+      var context = this, args = arguments;
+      var later = function() {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  },
+
   flush(element = document.body.parentElement, onlySafe = false, changed = null, skipSchedule = false)
   {
     if (Silica.isInFlush && !skipSchedule) {
@@ -1335,6 +1351,42 @@ var Silica = {
       {
         node = nodes[i];
         node.src = Silica.getValue(node, node.dataset.src);
+      }
+    },
+
+    scroll() {
+      var nodes = Silica.query(this, "[data-scroll]");
+      var node;
+      for (let i = nodes.length - 1; i >= 0; --i)
+      {
+        node = nodes[i];
+        node._rt_live = true;
+
+        node.onscroll = function(evt) {
+          Silica._call(this, evt, 'scroll');
+        };
+      }
+    },
+
+    "scroll-finished": function() {
+      var nodes = Silica.query(this, "[data-scroll-finished]");
+      var node;
+      for (let i = nodes.length - 1; i >= 0; --i)
+      {
+        node = nodes[i];
+        node._rt_live = true;
+        let element = this;
+
+        var onscrollfinished = Silica.debounce(function(element, evt) {
+          Silica._call(element, evt, 'scroll-finished');
+        }, 50);
+
+        node.onscroll = function(evt) {
+          if (this.dataset.scroll) {
+            Silica._call(this, evt, 'scroll');
+          }
+          onscrollfinished(element, evt);
+        };
       }
     }
   },

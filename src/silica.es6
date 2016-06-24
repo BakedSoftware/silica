@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.2.0",
+  version               :  "0.2.1",
 
   // Set the root context
   setContext(contextName)
@@ -1577,6 +1577,10 @@ var Silica = {
           Silica.compilers.show.call(child);
           Silica.compilers.disabled.call(child);
           Silica.compilers.href.call(child);
+          Silica.compilers.scroll.call(child);
+          Silica.compilers.style.call(child);
+          Silica.compilers["scroll-finshed"].call(child);
+          Silica.compilers["class"].call(child);
           fragment.appendChild(child);
           ++count_diff;
         }

@@ -12,7 +12,7 @@ var Silica = {
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.2.2",
+  version               :  "0.2.3",
 
   // Set the root context
   setContext(contextName)
@@ -603,6 +603,7 @@ var Silica = {
   _call(element, evnt, act)
   {
     evnt.preventDefault();
+    evnt.stopPropagation();
     var scope = document, trap_to, trapped_scope;
     if ((trap_to = element.dataset.trap) != null) {
       if (trap_to.toLowerCase() === "true") {

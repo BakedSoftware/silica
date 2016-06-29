@@ -21,7 +21,6 @@ export default function Controller(force = false) {
     if (typeof model !== 'undefined')
     {
       ctrl = new constructor(node, model);
-      console.log("Invoking", constructor, "with", model);
     }
     else
     {

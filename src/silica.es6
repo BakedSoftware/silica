@@ -15,8 +15,10 @@ var Silica = {
   _klass                :  {}, // Stores the registered css class
   _watch                :  {}, // Stores the registered watchers
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
+  _isReady              :  false, // Keeps track if app is ready
+  _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.3.0",
+  version               :  "0.3.1",
 
   // Set the root context
   setContext(contextName)
@@ -49,6 +51,9 @@ var Silica = {
   // Interpolate and link all Silica directives within an element
   compile(element, flush = true, context = null, onlySafe = false)
   {
+    if (Silica._appRoot === null) {
+      Silica._appRoot = element;
+    }
     var func, k, _ref;
     if (!(element instanceof jQuery))
     {
@@ -78,6 +83,9 @@ var Silica = {
 
     Silica._capture_links(element);
 
+    if (element === Silica._appRoot) {
+      Silica._isReady = true;
+    }
     return element;
   },
 
@@ -133,7 +141,7 @@ var Silica = {
       element = document.body.parentElement;
     }
     Silica.isInFlush = !skipSchedule;
-    if (changed === null) {
+    if (changed === null && Silica._isReady) {
       let funcs;
       let func;
       for (let key in Silica._watch) {

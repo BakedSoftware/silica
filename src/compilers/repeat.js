@@ -32,7 +32,7 @@ export default function Repeat(context = null) {
       }
       return value;
     }));
-    raw._rt_ctrl = ctx;
+    //raw._rt_ctrl = ctx;
     // Get the template
     template = Silica._repeat_templates[raw.dataset._rt_repeat_template];
     // Compile it

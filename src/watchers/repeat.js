@@ -1,3 +1,5 @@
+import ControllerCompiler from '../compilers/controller.js'
+
 export default function Repeat() {
   var $elm, changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
   var elements = Silica.querySorted(this, '[data-repeat]');
@@ -88,6 +90,7 @@ export default function Repeat() {
     {
       obj = newList[_i];
       node = existing[_i];
+      let modelChanged = model != obj;
       if (node._rt_ctx)
       {
         node._rt_ctx[model] = obj;
@@ -98,6 +101,10 @@ export default function Repeat() {
         context[model] = obj;
         context.$ctrl = ctx;
         node._rt_ctx = context;
+      }
+      // Rebuild controllers if the model changed
+      if (modelChanged) {
+        ControllerCompiler.call(node, true);
       }
       node._rt_ctx.index = _i;
       Silica.flush(node, false, {}, true);

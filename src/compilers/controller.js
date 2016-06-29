@@ -1,10 +1,10 @@
-export default function Controller() {
+export default function Controller(force = false) {
   var nodes = Silica.query(this, "[data-controller]")
     var node, $elm, constructor, ctrl, k, v, _ref, model;
   for (let i = nodes.length - 1; i >= 0; --i)
   {
     node = nodes[i];
-    if (node._rt_ctrl !== undefined) {
+    if (!force && node._rt_ctrl !== undefined) {
       continue;
     }
     $elm = $(node);
@@ -21,6 +21,7 @@ export default function Controller() {
     if (typeof model !== 'undefined')
     {
       ctrl = new constructor(node, model);
+      console.log("Invoking", constructor, "with", model);
     }
     else
     {

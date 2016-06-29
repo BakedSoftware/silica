@@ -6,9 +6,35 @@
     <title>Silica Example</title>
   </head>
   <body>
-    <div data-controller="Ex.AppCntrl">
+    <div data-controller="Ex.AppCntrl" data-style="appStyle">
       <h1>{{greeting}}</h1>
       <input type="text" data-model="name" placeholder="Enter Your Name" />
+      <select data-model="selectedFont" data-repeat="font in fonts">
+        <option data-model="font">{{font}}</option>
+      </select>
+      <form action="" data-submit="alertUser">
+        <input type="text" data-model="name">
+        <input type="email" data-model="email">
+        <input type="submit" value="Submit">
+      </form>
+      <ul data-repeat="user in users">
+        <li>
+          <h2>{{user.name}}</h2>
+          <div data-repeat="grade in user.reportCard">
+            <h3>{{grade.name}}</h3>
+            <table data-repeat="klass in grade.classes">
+              <tr>
+                <td>{{klass.name}}</td>
+                <td>
+                  <ol data-repeat="grade in klass.grades">
+                    <li>{{grade}}</li>
+                  </ol>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </li>
+      </ul>
     </div>
       <script src="https://code.jquery.com/jquery-2.1.4.min.js" type="text/javascript" charset="utf-8"></script>
       <script src="../silica.min.js" type="text/javascript" charset="utf-8"></script>
@@ -20,9 +46,82 @@
               constructor(el) {
                 super(el)
                 this.name = null;
+                this.fonts = ["Arial", "Courier", "Operator Mono"];
+                this.selectedFont = "Courier";
+                this.users = [
+                  {
+                    name: "Alice",
+                    reportCard: [
+                    {
+                      name: "9th",
+                      classes: [
+                        {
+                          name: "English",
+                          grades: ["A", "A", "B", "A"]
+                        },
+                        {
+                          name: "History",
+                          grades: ["B"]
+                        }
+                      ]
+                    }
+                    ]
+                  },
+
+                  {
+                    name: "Bob",
+                    reportCard: [
+                    {
+                      name: "9th",
+                      classes: [
+                        {
+                          name: "English",
+                          grades: ["C", "D"]
+                        },
+                        {
+                          name: "History",
+                          grades: ["A-"]
+                        }
+                      ]
+                    },
+
+                    {
+                      name: "10th",
+                      classes: [
+                        {
+                          name: "Chemistry",
+                          grades: ["A+"]
+                        },
+                        {
+                          name: "Physics",
+                          grades: ["A-"]
+                        }
+                      ]
+                    }
+                    ]
+                  }
+                ];
               }
+
               greeting() {
                 return "Hello " + (this.name || "World!");
+              }
+
+              appStyle(){
+                return `font-family: ${this.selectedFont}`
+              }
+
+              alertUser(){
+                console.log(this.name, this.email);
+              }
+            }
+          };
+          Ex.AppCntrl.watchers = {
+            "name": function() {
+              if (this.name) {
+                this.email = `${this.name.replace(/\s/g, "_")}@gmail.com`;
+              } else {
+                this.email = "";
               }
             }
           };

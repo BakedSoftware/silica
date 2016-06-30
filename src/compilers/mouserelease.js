@@ -5,7 +5,7 @@ export default function MouseRelease() {
   {
     node = nodes[i];
     node._rt_live = true;
-    node.onclick = function(evt) {
+    node.onmouserelease = function(evt) {
       Silica._call(this, evt, 'mouserelease');
     };
   }

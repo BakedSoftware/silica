@@ -18,6 +18,8 @@ import Repeat from "./repeat.js"
 import Src from "./src.js"
 import Scroll from "./scroll.js"
 import ScrollFinished from "./scroll_finished.js"
+import MouseDown from "./mousedown.js"
+import MouseRelease from "./mouserelease.js"
 
 export default {
   Directives,
@@ -39,5 +41,7 @@ export default {
   Repeat,
   Src,
   Scroll,
-  ScrollFinished
+  ScrollFinished,
+  MouseDown,
+  MouseRelease
 };

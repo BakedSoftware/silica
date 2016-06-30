@@ -5,7 +5,7 @@ export default function MouseDown() {
   {
     node = nodes[i];
     node._rt_live = true;
-    node.onclick = function(evt) {
+    node.onmousedown = function(evt) {
       Silica._call(this, evt, 'mousedown');
     };
   }

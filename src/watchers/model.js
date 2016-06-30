@@ -10,7 +10,7 @@ export default function Model() {
     type = element.type;
     if (element !== document.activeElement && (type === 'text' || type === 'file' || type === 'number' ||
           type === 'email' || type === 'password' || type === 'select-one' || type === "textarea"
-          || inputTimeRegexp.match(type)) )
+          || inputTimeRegexp.test(type)) )
     {
       element.value = Silica._model_get_val(element);
     }

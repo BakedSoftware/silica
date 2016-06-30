@@ -20,6 +20,10 @@ import Scroll from "./scroll.js"
 import ScrollFinished from "./scroll_finished.js"
 import MouseDown from "./mousedown.js"
 import MouseUp from "./mouseup.js"
+//Touch Events
+import TouchStart from "./touch/touchstart.js"
+import TouchCancel from "./touch/touchcancel.js"
+import TouchEnd from "./touch/touchend.js"
 
 export default {
   Directives,
@@ -43,5 +47,9 @@ export default {
   Scroll,
   ScrollFinished,
   MouseDown,
-  MouseUp
+  MouseUp,
+  //Touch Events
+  TouchStart,
+  TouchCancel,
+  TouchEnd
 };

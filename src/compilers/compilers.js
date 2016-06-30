@@ -19,7 +19,7 @@ import Src from "./src.js"
 import Scroll from "./scroll.js"
 import ScrollFinished from "./scroll_finished.js"
 import MouseDown from "./mousedown.js"
-import MouseRelease from "./mouserelease.js"
+import MouseUp from "./mouseup.js"
 
 export default {
   Directives,
@@ -43,5 +43,5 @@ export default {
   Scroll,
   ScrollFinished,
   MouseDown,
-  MouseRelease
+  MouseUp
 };

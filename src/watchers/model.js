@@ -1,3 +1,5 @@
+var inputTimeRegexp = new /date|time/i;
+
 export default function Model() {
   var raw = (this instanceof jQuery ? this[0] : this);
   var elements = raw.querySelectorAll('[data-model]');
@@ -7,7 +9,8 @@ export default function Model() {
     element = elements[i];
     type = element.type;
     if (element !== document.activeElement && (type === 'text' || type === 'file' || type === 'number' ||
-          type === 'email' || type === 'password' || type === 'time' || type === 'select-one' || type === "textarea"))
+          type === 'email' || type === 'password' || type === 'select-one' || type === "textarea"
+          || inputTimeRegexp.match(type)) )
     {
       element.value = Silica._model_get_val(element);
     }

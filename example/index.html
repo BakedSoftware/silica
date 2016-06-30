@@ -9,14 +9,16 @@
     <div data-controller="Ex.AppCntrl" data-style="appStyle">
       <h1>{{greeting}}</h1>
       <input type="text" data-model="name" placeholder="Enter Your Name" />
-      <select data-model="selectedFont" data-repeat="font in fonts">
-        <option data-model="font">{{font}}</option>
-      </select>
+
       <form action="" data-submit="alertUser">
         <input type="text" data-model="name">
         <input type="email" data-model="email">
+        <select data-model="selectedFont" data-repeat="font in fonts">
+          <option data-model="font.key">{{font.name}}</option>
+        </select>
         <input type="submit" value="Submit">
       </form>
+
       <ul data-repeat="user in users">
         <li>
           <h2>{{user.name}}</h2>
@@ -46,7 +48,8 @@
               constructor(el) {
                 super(el)
                 this.name = null;
-                this.fonts = ["Arial", "Courier", "Operator Mono"];
+                this.fonts = [{key: "Arial", name:"Super A"}, {key:"Courier",
+                  name:"Old Typey"}, {key:"Operator Mono", name:"Best"}];
                 this.selectedFont = "Courier";
                 this.users = [
                   {

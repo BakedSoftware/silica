@@ -1,3 +1,5 @@
+var inputTimeRegexp = new /date|time/i;
+
 export default function Model(context = null) {
   var elm, change, ctx, model, val;
   var elements = Silica.query(this, 'input[data-model]', 'select[data-model]', 'textarea[data-model]', 'option[data-model]');
@@ -9,7 +11,7 @@ export default function Model(context = null) {
     model = elm.dataset.model;
     let type = elm.type;
     if (type === 'text' || type === 'file' || type === 'number' ||
-        type === 'email' || type === 'password' || type === 'time') {
+        type === 'email' || type === 'password' || inputTimeRegexp.test(type)) {
       elm.value = Silica.getValue(elm, model, ctx);
     } else if (type === 'radio') {
       val = elm.value;

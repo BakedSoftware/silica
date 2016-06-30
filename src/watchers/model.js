@@ -1,4 +1,4 @@
-var inputTimeRegexp = new /date|time/i;
+var inputTimeRegexp = /date|time/i;
 
 export default function Model() {
   var raw = (this instanceof jQuery ? this[0] : this);

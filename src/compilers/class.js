@@ -6,7 +6,10 @@ export default function Class() {
 
   if (raw.nodeType != 9 && raw.dataset.class)
   {
-    raw.dataset._rt_hard_klass = raw.className;
+    if (!raw.dataset._rt_hard_klass)
+    {
+      raw.dataset._rt_hard_klass = raw.className;
+    }
     klass = Silica.getValue(raw, raw.dataset.class);
     if (klass)
     {

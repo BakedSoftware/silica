@@ -54,6 +54,12 @@ export default function Repeat() {
       continue;
     }
 
+    // Add support for iterating X times
+    if (newList.constructor === Number)
+    {
+      newList = new Array(newList);
+    }
+
     // Get the template
     template = Silica._repeat_templates[raw.dataset._rt_repeat_template];
 

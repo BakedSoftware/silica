@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.4.1",
+  version               :  "0.4.2",
 
   // Set the root context
   setContext(contextName)
@@ -312,7 +312,7 @@ var Silica = {
     }
 
     let comps = propString.split('.');
-    if (!obj[comps[0]])
+    if (obj[comps[0]] == null || obj[comps[0]] == undefined)
     {
       if (obj.$ctrl)
       {

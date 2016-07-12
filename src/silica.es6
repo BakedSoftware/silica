@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.4.3",
+  version               :  "0.4.4",
 
   // Set the root context
   setContext(contextName)
@@ -359,7 +359,7 @@ var Silica = {
   },
 
   isInDOM(element) {
-    while (element.parentElement != null) {
+    while (element.parentElement != null && !element._deleted) {
       if (element.parentElement == document.body) {
         return true;
       } else {
@@ -858,6 +858,7 @@ var Silica = {
               child.onremove();
           }
       }
+      e._deleted = true;
       e.remove();
   },
   compilers: Compilers,

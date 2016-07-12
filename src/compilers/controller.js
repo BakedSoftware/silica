@@ -36,7 +36,7 @@ export default function Controller(force = false) {
         if (!stored) {
           continue
         }
-        for (let pairIdx = stored.length - 1; pairIdx >= 0; --i)
+        for (let pairIdx = stored.length - 1; pairIdx >= 0; --pairIdx)
         {
           let pair = stored[pairIdx];
           if (node._rt_ctrl == pair[0])

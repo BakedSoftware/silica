@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.1",
+  version               :  "0.5.2",
 
   // Set the root context
   setContext(contextName)
@@ -565,7 +565,7 @@ var Silica = {
                 if (!stored) {
                   continue
                 }
-              for (let pairIdx = stored.length - 1; pairIdx >= 0; --i)
+              for (let pairIdx = stored.length - 1; pairIdx >= 0; --pairIdx)
               {
                 let pair = stored[pairIdx];
                 if (raw._rt_ctrl == pair[0])

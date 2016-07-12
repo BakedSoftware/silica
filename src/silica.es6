@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.4.6",
+  version               :  "0.5.0",
 
   // Set the root context
   setContext(contextName)
@@ -528,7 +528,7 @@ var Silica = {
     Silica.directives[key] = obj;
   },
   getContext(element) {
-    var $elm, constructor, ctrl, k, v, _ref, raw, ctx, model;
+    var $elm, constructor, ctrl, k, v, _ref, raw, ctx, model, needsModel;
     raw = element instanceof jQuery ? element[0] : element; //TODO: remove jQuery
     while (true)
     {
@@ -554,20 +554,22 @@ var Silica = {
         } else {
           ctrl = new constructor(raw);
         }
-        if (model != null) {
+
+        if (!needsModel ^ model != null) {
           raw._rt_live = true;
           raw._rt_ctrl = ctrl;
-        }
-        _ref = constructor.watchers;
-        for (k in _ref) {
-          v = _ref[k];
-          if (!Silica._watch[k]) {
-            Silica._watch[k] = [];
+
+          _ref = constructor.watchers;
+          for (k in _ref) {
+            v = _ref[k];
+            if (!Silica._watch[k]) {
+              Silica._watch[k] = [];
+            }
+            Silica._watch[k].push([ctrl, v]);
           }
-          Silica._watch[k].push([ctrl, v]);
-        }
-        if (typeof ctrl.onLoad === "function") {
-          ctrl.onLoad();
+          if (typeof ctrl.onLoad === "function") {
+            ctrl.onLoad();
+          }
         }
         return ctrl;
       } else if (raw.parentElement) {

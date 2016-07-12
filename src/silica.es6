@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.2",
+  version               :  "0.5.3",
 
   // Set the root context
   setContext(contextName)
@@ -570,7 +570,7 @@ var Silica = {
                 let pair = stored[pairIdx];
                 if (raw._rt_ctrl == pair[0])
                 {
-                  Silica._watch[k] = stored.splice(pairIdx, 1);
+                  stored.splice(pairIdx, 1);
                   break;
                 }
               }

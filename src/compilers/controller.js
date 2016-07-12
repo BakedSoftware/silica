@@ -41,7 +41,7 @@ export default function Controller(force = false) {
           let pair = stored[pairIdx];
           if (node._rt_ctrl == pair[0])
           {
-            Silica._watch[k] = stored.splice(pairIdx, 1);
+            stored.splice(pairIdx, 1);
             break;
           }
         }

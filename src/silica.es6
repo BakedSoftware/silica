@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.0",
+  version               :  "0.5.1",
 
   // Set the root context
   setContext(contextName)
@@ -556,6 +556,27 @@ var Silica = {
         }
 
         if (!needsModel ^ model != null) {
+          // Remove old wathcers if rebuilding a controller for a node
+          let watchers = constructor.watchers;
+          if (raw._rt_ctrl && watchers && Object.keys(watchers).length > 0) {
+            for (k in watchers) {
+              v = watchers[k];
+              let stored = Silica._watch[k]
+                if (!stored) {
+                  continue
+                }
+              for (let pairIdx = stored.length - 1; pairIdx >= 0; --i)
+              {
+                let pair = stored[pairIdx];
+                if (raw._rt_ctrl == pair[0])
+                {
+                  Silica._watch[k] = stored.splice(pairIdx, 1);
+                  break;
+                }
+              }
+            }
+          }
+
           raw._rt_live = true;
           raw._rt_ctrl = ctrl;
 

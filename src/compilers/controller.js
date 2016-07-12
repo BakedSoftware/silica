@@ -26,11 +26,32 @@ export default function Controller(force = false) {
     {
       ctrl = new constructor(node);
     }
+
+    // Remove old watchers if rebuilding a controller for a node
+    let watchers = constructor.watchers;
+    if (node._rt_ctrl && watchers && Object.keys(watchers).length > 0) {
+      for (k in watchers) {
+        v = watchers[k];
+        let stored = Silica._watch[k]
+        if (!stored) {
+          continue
+        }
+        for (let pairIdx = stored.length - 1; pairIdx >= 0; --i)
+        {
+          let pair = stored[pairIdx];
+          if (node._rt_ctrl == pair[0])
+          {
+            Silica._watch[k] = stored.splice(pairIdx, 1);
+            break;
+          }
+        }
+      }
+    }
+
     node._rt_live = true;
     node._rt_ctrl = ctrl;
-    _ref = constructor.watchers;
-    for (k in _ref) {
-      v = _ref[k];
+    for (k in watchers) {
+      v = watchers[k];
       if (!Silica._watch[k]) {
         Silica._watch[k] = [];
       }

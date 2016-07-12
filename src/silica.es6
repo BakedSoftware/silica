@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.4.2",
+  version               :  "0.4.3",
 
   // Set the root context
   setContext(contextName)
@@ -154,16 +154,18 @@ var Silica = {
         }
       }
     } else {
-      let obj, k;
+      let obj, k, funcs, func;
       for (k in changed) {
-        obj = changed[k];
+        funcs = changed[k];
         if (obj !== true) {
-          for (let func of obj){
+          for (let i = funcs.length - 1; i >= 0; --i) {
+            func = funcs[i];
             func[1].apply(func[0]);
           }
         } else {
-          obj = Silica._watch[k];
-          for (let func of obj) {
+          funcs = Silica._watch[k];
+          for (let i = funcs.length - 1; i >= 0; --i) {
+            func = funcs[i];
             func[1].apply(func[0]);
           }
         }
@@ -620,6 +622,10 @@ var Silica = {
   },
   _call(element, evnt, act)
   {
+    if (!Silica.isInDOM(element))
+    {
+      return;
+    }
     evnt.preventDefault();
     evnt.stopPropagation();
     var scope = document, trap_to, trapped_scope;

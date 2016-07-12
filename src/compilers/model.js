@@ -48,7 +48,7 @@ export default function Model(context = null) {
         {
           scope = document;
           _ref1 = this;
-          while ((_ref1 = _ref1.parentElement) && _ref1.length)
+          while ((_ref1 = _ref1.parentElement))
           {
             if (_ref1.classList.contains(_ref))
             {

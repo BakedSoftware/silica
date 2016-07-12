@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.4.5",
+  version               :  "0.4.6",
 
   // Set the root context
   setContext(contextName)
@@ -157,14 +157,14 @@ var Silica = {
       let obj, k, funcs, func;
       for (k in changed) {
         funcs = changed[k];
-        if (obj !== true) {
-          for (let i = funcs.length - 1; i >= 0; --i) {
+        if (funcs !== true) {
+          for (var i = funcs.length - 1; i >= 0; --i) {
             func = funcs[i];
             func[1].apply(func[0]);
           }
         } else {
           funcs = Silica._watch[k];
-          for (let i = funcs.length - 1; i >= 0; --i) {
+          for (var i = funcs.length - 1; i >= 0; --i) {
             func = funcs[i];
             func[1].apply(func[0]);
           }

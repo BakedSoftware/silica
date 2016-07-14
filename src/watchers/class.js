@@ -3,16 +3,18 @@ export default function Class() {
   var elements = raw.querySelectorAll('[data-class]');
   var element;
   var klass;
+  var hardClass;
   for (let i = elements.length - 1; i >= 0; --i)
   {
     element = elements[i];
-    if (element.dataset._rt_hard_klass.length > 0)
+    hardClass = element.dataset._rt_hard_klass;
+    if (hardClass && hardClass.length > 0)
     {
-      element.className = element.dataset._rt_hard_klass;
+      element.className = hardClass;
     }
     else
     {
-      if (element.dataset._rt_hard_klass = "")
+      if (hardClass = "")
       {
         element.className = "";
       }

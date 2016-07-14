@@ -15,6 +15,7 @@ desc "Remove previous build"
 task :clean do
   print "cleaning build dir...."
   FileUtils.rm_rf 'build'
+  FileUtils.rm_rf 'compiled'
   puts "done"
 end
 

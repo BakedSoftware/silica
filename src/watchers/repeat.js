@@ -50,7 +50,9 @@ export default function Repeat() {
     }
 
     if (!newList) {
-      raw.innerHTML = "";
+      while(raw.childNodes.length > 0) {
+        Silica.removeFromDOM(raw.childNodes[0]);
+      }
       continue;
     }
 

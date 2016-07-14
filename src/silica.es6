@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.6",
+  version               :  "0.5.7",
 
   // Set the root context
   setContext(contextName)
@@ -91,9 +91,10 @@ var Silica = {
 
   cacheTemplates(element)
   {
-    let nodes = element.querySelectorAll('[data-repeat]');
-    let node;
-    let hash;
+    var nodes = element.querySelectorAll('[data-repeat]');
+    var node;
+    var hash;
+    var context;
     for (let i = nodes.length - 1; i >= 0; --i)
     {
       node = nodes[i];
@@ -108,6 +109,9 @@ var Silica = {
           Silica._repeat_templates[hash]   =  wrap;
         }
         node.dataset._rt_repeat_template  =  hash;
+        context                           =  {};
+        context.$ctrl                     =  ctx;
+        Silica._repeat_templates[hash]    =  Silica.compile($(template), false, context, true)[0];
         node.innerHTML                    =  "";
       }
     }

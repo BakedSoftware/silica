@@ -41,7 +41,6 @@ export default {
   Tabs,
   Model,
   Submit,
-  Repeat,
   Src,
   Scroll,
   ScrollFinished,

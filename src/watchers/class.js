@@ -6,13 +6,20 @@ export default function Class() {
   for (let i = elements.length - 1; i >= 0; --i)
   {
     element = elements[i];
-    if (element.dataset._rt_hard_klass)
+    if (element.dataset._rt_hard_klass.length > 0)
     {
       element.className = element.dataset._rt_hard_klass;
     }
     else
     {
-      element.className = "";
+      if (element.dataset._rt_hard_klass = "")
+      {
+        element.className = "";
+      }
+      else
+      {
+        element.dataset._rt_hard_klass = element.className;
+      }
     }
     klass = Silica.getValue(element, element.dataset.class);
     if (klass)

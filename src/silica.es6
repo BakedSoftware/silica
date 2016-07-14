@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.22",
+  version               :  "0.5.23",
 
   // Set the root context
   setContext(contextName)
@@ -909,7 +909,6 @@ var Silica = {
 
     e._deleted = true;
     e.remove();
-    removeWatchers(e);
   },
 
   compilers: Compilers,

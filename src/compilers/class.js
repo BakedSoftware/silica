@@ -6,7 +6,7 @@ export default function Class() {
 
   if (raw.nodeType != 9 && raw.dataset.class)
   {
-    if (!raw.dataset._rt_hard_klass)
+    if (raw.dataset._rt_hard_klass == null)
     {
       raw.dataset._rt_hard_klass = raw.className;
     }

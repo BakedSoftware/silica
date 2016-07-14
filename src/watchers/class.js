@@ -14,7 +14,7 @@ export default function Class() {
     }
     else
     {
-      if (hardClass = "")
+      if (hardClass == "")
       {
         element.className = "";
       }

@@ -10,10 +10,6 @@ export default function Class() {
     {
       element.className = element.dataset._rt_hard_klass;
     }
-    else
-    {
-      element.dataset._rt_hard_klass = element.className;
-    }
     klass = Silica.getValue(element, element.dataset.class);
     if (klass)
     {

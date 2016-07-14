@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.17",
+  version               :  "0.5.18",
 
   // Set the root context
   setContext(contextName)
@@ -879,14 +879,26 @@ var Silica = {
   },
   removeFromDOM(e) {
     for (var i = 0; i < e.childNodes.length; ++i) {
-          var child = e.childNodes[i];
-          Silica.removeFromDOM(child);
-          if (typeof child.onremove == 'function') {
-              child.onremove();
-          }
+      var child = e.childNodes[i];
+      Silica.removeFromDOM(child);
+      if (typeof child.onremove == 'function') {
+        child.onremove();
       }
-      e._deleted = true;
-      e.remove();
+    }
+
+    e._deleted = true;
+    e.remove();
+
+    if (e._rt_ctrl) {
+      ctrl = e._rt_ctrl;
+      for (k in ctrl.watchers)
+      {
+        list = Silica._watch[k];
+        Silica._watch[k] = (list != null ? list.filter(function(obj) {
+          return obj[0] !== ctrl;
+        }) : []);
+      }
+    }
   },
   compilers: Compilers,
   watchers: Watchers

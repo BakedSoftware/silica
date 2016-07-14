@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.19",
+  version               :  "0.5.20",
 
   // Set the root context
   setContext(contextName)
@@ -881,7 +881,7 @@ var Silica = {
     var removeWatchers = function(node) {
       if (node._rt_ctrl) {
         ctrl = node._rt_ctrl;
-        for (k in ctrl.watchers)
+        for (k in ctrl.constructor.watchers)
         {
           list = Silica._watch[k];
           Silica._watch[k] = (list != null ? list.filter(function(obj) {

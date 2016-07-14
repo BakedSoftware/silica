@@ -51,7 +51,7 @@ export default function _If() {
               var ctrl, list, _ref1, _results;
               subNode = subNodes[j];
               ctrl = subNode._rt_ctrl;
-              for (k in ctrl != null ? ctrl.watchers : void 0) {
+              for (k in ctrl != null ? ctrl.constructor.watchers : void 0) {
                 list = Silica._watch[k];
                 Silica._watch[k] = (list != null ? list.filter(function(obj) {
                   return obj[0] !== ctrl;

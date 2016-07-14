@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.23",
+  version               :  "0.5.24",
 
   // Set the root context
   setContext(contextName)
@@ -903,8 +903,9 @@ var Silica = {
     }
 
     if (e.nodeType !== 3 && e.nodeType !== 8) {
-      var nodesWithControllers = e.querySelectorAll('[data-controller]').push(e);
+      var nodesWithControllers = e.querySelectorAll('[data-controller]');
       removeWatchers(nodesWithControllers);
+      removeWatchers([e]);
     }
 
     e._deleted = true;

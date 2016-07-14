@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.18",
+  version               :  "0.5.19",
 
   // Set the root context
   setContext(contextName)
@@ -878,9 +878,22 @@ var Silica = {
     return filtered;
   },
   removeFromDOM(e) {
-    for (var i = 0; i < e.childNodes.length; ++i) {
+    var removeWatchers = function(node) {
+      if (node._rt_ctrl) {
+        ctrl = node._rt_ctrl;
+        for (k in ctrl.watchers)
+        {
+          list = Silica._watch[k];
+          Silica._watch[k] = (list != null ? list.filter(function(obj) {
+            return obj[0] !== ctrl;
+          }) : []);
+        }
+      }
+    };
+
+    for (var i = e.childNodes.length - 1; i >= 0; --i) {
       var child = e.childNodes[i];
-      Silica.removeFromDOM(child);
+      removeWatchers(child);
       if (typeof child.onremove == 'function') {
         child.onremove();
       }
@@ -888,18 +901,9 @@ var Silica = {
 
     e._deleted = true;
     e.remove();
-
-    if (e._rt_ctrl) {
-      ctrl = e._rt_ctrl;
-      for (k in ctrl.watchers)
-      {
-        list = Silica._watch[k];
-        Silica._watch[k] = (list != null ? list.filter(function(obj) {
-          return obj[0] !== ctrl;
-        }) : []);
-      }
-    }
+    removeWatchers(e);
   },
+
   compilers: Compilers,
   watchers: Watchers
 };

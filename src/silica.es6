@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.7",
+  version               :  "0.5.8",
 
   // Set the root context
   setContext(contextName)
@@ -110,7 +110,7 @@ var Silica = {
         }
         node.dataset._rt_repeat_template  =  hash;
         context                           =  {};
-        context.$ctrl                     =  ctx;
+        context.$ctrl                     =  Silica.getContext(node);
         Silica._repeat_templates[hash]    =  Silica.compile($(template), false, context, true)[0];
         node.innerHTML                    =  "";
       }

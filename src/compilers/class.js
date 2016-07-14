@@ -20,7 +20,7 @@ export default function Class() {
   for (let i = nodes.length - 1; i >= 0; --i)
   {
     node = nodes[i];
-    if (!node.dataset._rt_hard_klass) {
+    if (node.dataset._rt_hard_klass == null) {
       node.dataset._rt_hard_klass = node.className.split('hidden').join(" ").trim();
     }
     klass = Silica.getValue(node, node.dataset.class);

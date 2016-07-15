@@ -11,7 +11,15 @@ export default function Controller(ctx, force = false) {
     constructor = $elm.data('controller');
     if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
     {
-      model = Silica.getValue($elm.parent()[0],  _ref[2]);
+      let parent = $elm.parent()[0];
+      if (parent)
+      {
+        model = Silica.getValue($elm.parent()[0],  _ref[2]);
+      }
+      else
+      {
+        model = Silica.getValue(node,  _ref[2], node._rt_ctx);
+      }
     }
     constructor = _ref[1];
     constructor = eval(constructor);

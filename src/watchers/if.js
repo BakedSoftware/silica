@@ -20,13 +20,13 @@ export default function _If() {
           if (element.nodeType === 8) {
             // Following contains jQuery remants, needs removal, compile
             // returns jqueyr wrapped node
-            compiled = Silica.compile(element.nodeValue, false, Silica.getContext(element));
-            element.parentNode.insertBefore(compiled[0], element);
+            compiled = Silica.compile(element.nodeValue, false, Silica.getContext(element))[0];
+            element.parentNode.insertBefore(compiled, element);
             element.remove();
-            Silica._ifs[raw][i] = compiled[0];
+            Silica._ifs[raw][i] = compiled;
             let _ref;
-            if ((_ref = Silica.getContext(compiled[0])) != null) {
-              if (typeof _ref.onLoad === "function") {
+            if ((_ref = Silica.getContext(compiled)) != null) {
+              if (typeof _ref.onLoad === "function" && _ref.el == compiled) {
                 _ref.onLoad();
               }
             }

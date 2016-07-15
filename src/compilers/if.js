@@ -38,7 +38,7 @@ export default function _if() {
       }
 
       if ((_ref = Silica.getContext(node)) != null) {
-        if (typeof _ref.onLoad === "function") {
+        if (typeof _ref.onLoad === "function" && _ref.el === node) {
           _ref.onLoad();
         }
       }

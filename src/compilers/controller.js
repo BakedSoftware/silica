@@ -1,4 +1,4 @@
-export default function Controller(force = false) {
+export default function Controller(ctx, force = false) {
   var nodes = Silica.query(this, "[data-controller]")
     var node, $elm, constructor, ctrl, k, v, _ref, model;
   for (let i = nodes.length - 1; i >= 0; --i)

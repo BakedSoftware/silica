@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.5.25",
+  version               :  "0.6.0",
 
   // Set the root context
   setContext(contextName)
@@ -653,8 +653,14 @@ var Silica = {
     {
       return;
     }
-    evnt.preventDefault();
-    evnt.stopPropagation();
+    if (!element.dataset["no-prevent-default"])
+    {
+      evnt.preventDefault();
+    }
+    if (!element.dataset["no-stop-propagation"])
+    {
+      evnt.stopPropagation();
+    }
     var scope = document, trap_to, trapped_scope;
     if ((trap_to = element.dataset.trap) != null) {
       if (trap_to.toLowerCase() === "true") {

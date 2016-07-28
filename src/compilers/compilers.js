@@ -19,6 +19,8 @@ import Scroll from "./scroll.js"
 import ScrollFinished from "./scroll_finished.js"
 import MouseDown from "./mousedown.js"
 import MouseUp from "./mouseup.js"
+// Key Events
+import KeyDown from "./keydown.js"
 //Touch Events
 import TouchStart from "./touch/touchstart.js"
 import TouchCancel from "./touch/touchcancel.js"
@@ -46,6 +48,8 @@ export default {
   ScrollFinished,
   MouseDown,
   MouseUp,
+  // Key Events
+  KeyDown,
   //Touch Events
   TouchStart,
   TouchCancel,

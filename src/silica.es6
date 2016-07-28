@@ -18,7 +18,7 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.6.1",
+  version               :  "0.7.0",
 
   // Set the root context
   setContext(contextName)
@@ -653,11 +653,11 @@ var Silica = {
     {
       return;
     }
-    if (!element.dataset["no-prevent-default"])
+    if (!element.dataset["noPreventDefault"])
     {
       evnt.preventDefault();
     }
-    if (!element.dataset["no-stop-propagation"])
+    if (!element.dataset["noStopPropagation"])
     {
       evnt.stopPropagation();
     }
@@ -699,9 +699,9 @@ var Silica = {
       }
 
       if (ctx.hasOwnProperty(action) || typeof ctx[action] !== 'undefined') {
-        return ctx[action].apply(ctx, [$elm, obj, parameter]);
+        return ctx[action].apply(ctx, [$elm, obj, parameter, evnt]);
       } else if (Silica.context[action] != null) {
-        return Silica.context[action].apply(Silica.ctx, [$elm, obj, parameter]);
+        return Silica.context[action].apply(Silica.ctx, [$elm, obj, parameter, evnt]);
       } else {
         return console.error("Unknown action '" + action + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
       }

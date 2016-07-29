@@ -26,9 +26,6 @@ export default function Model() {
     {
       element.checked = Silica.getValue(element, element.dataset.model);
     }
-    if (node._rt_ctrl) {
-
-    }
     else if (element.nodeName === 'SPAN' || element.nodeName === "PRE" || element.nodeName === "DIV" || element.nodeName === "P")
     {
       val = Silica._model_get_val(element);

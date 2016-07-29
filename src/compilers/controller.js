@@ -7,6 +7,7 @@ export default function Controller(ctx, force = false) {
     if (!force && node._rt_ctrl !== undefined) {
       continue;
     }
+    delete node._rt_ctrl;
     $elm = $(node);
     constructor = $elm.data('controller');
     if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')

@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.7.8",
+  version               :  "0.7.9",
 
   // Set the root context
   setContext(contextName)
@@ -42,7 +42,7 @@ var Silica = {
   goTo(pathname)
   {
     var route;
-    if (usePushState) {
+    if (Silica.usePushState) {
       history.pushState(null, null, pathname);
       route = pathname;
     } else {

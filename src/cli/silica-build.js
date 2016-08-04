@@ -47,12 +47,36 @@ while ((match = include_regex.exec(index)) !== null) {
 
 fs.writeFileSync(path.join('build', 'index.html'), index);
 
+var asyncLock = 0;
+
+function afterScriptCaller() {
+  if (!afterScript) {
+    return
+  }
+  asyncLock++;
+  if (asyncLock == 2) {
+    console.log("Running after build script")
+    afterScriptResult = spawnSync(afterScript, [], {
+      stdio: [0, 1, 2],
+      cwd: process.cwd()
+    });
+    if (afterScriptResult.error) {
+      console.log("An error occurred running the after script, make sure it is executable");
+      console.error(afterScriptResult.error);
+    }
+    console.log("Finished after build script");
+  }
+}
+
 browserify({debug: true})
   .transform(babelify, {presets: ["es2015"]})
   .require(path.join(cache_path, 'app.js'), { entry: true })
   .bundle()
   .on("error", function (err) { console.log("Error: " + err.message); })
-  .pipe(fs.createWriteStream(path.join('build', 'js', 'app.js')));
+  .pipe(fs.createWriteStream(path.join('build', 'js', 'app.js')))
+  .on("close", function(){
+    afterScriptCaller();
+  });
 
 //Generate sprite styles
 var  sprite_css_path  =  path.join(cache_path, 'styles', 'sprite.css');
@@ -122,19 +146,6 @@ nsg({
   }
 
   fs.copySync(path.join('bower_components'), path.join('build', 'bower_components'));
-
-  if (afterScript)
-  {
-    console.log("Running after build script")
-    afterScriptResult = spawnSync(afterScript, [], {
-      stdio: [0, 1, 2],
-      cwd: process.cwd()
-    });
-    if (afterScriptResult.error) {
-      console.log("An error occurred running the after script, make sure it is executable");
-      console.error(afterScriptResult.error);
-    }
-    console.log("Finished after build script");
-  }
+  afterScriptCaller();
 });
 

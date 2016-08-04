@@ -18,7 +18,8 @@ var Silica = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
-  version               :  "0.7.7",
+  usePushState          :  true,
+  version               :  "0.7.8",
 
   // Set the root context
   setContext(contextName)
@@ -40,10 +41,17 @@ var Silica = {
 
   goTo(pathname)
   {
-    history.pushState(null, null, pathname);
+    var route;
+    if (usePushState) {
+      history.pushState(null, null, pathname);
+      route = pathname;
+    } else {
+      window.location.hash = "#" + pathname;
+      route = window.location.hash;
+    }
     if (Silica.router) {
       Silica.apply(function() {
-        Silica.router.route(location.pathname);
+        Silica.router.route(route);
       });
     }
   },
@@ -606,12 +614,7 @@ var Silica = {
   },
   _handle_href(evt){
     evt.preventDefault();
-    history.pushState(null, null, this.href);
-    if (Silica.router) {
-      Silica.apply(function() {
-        Silica.router.route(location.pathname);
-      });
-    }
+    Silica.goTo(this.href);
     return false;
   },
   _capture_links(element) {

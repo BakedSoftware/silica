@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.7.11",
+  version               :  "0.7.12",
 
   // Set the root context
   setContext(contextName)
@@ -615,15 +615,13 @@ var Silica = {
     }
   },
   _handle_href(evt){
+    var path = this.getAttribute("href")
+    if (path === "#" || path === "")
+    {
+      return;
+    }
     evt.preventDefault();
-    if (this.href.indexOf("file://") == 0)
-    {
-      Silica.goTo(this.href.substr(7));
-    }
-    else
-    {
-      Silica.goTo(this.href);
-    }
+    Silica.goTo(path);
     return false;
   },
   _capture_links(element) {

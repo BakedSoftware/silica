@@ -1,14 +1,21 @@
 #!/usr/bin/env node
 
-const  fs               =  require('fs-extra');
-const  path             =  require('path');
-const  browserify       =  require('browserify');
 const  babelify         =  require("babelify");
 const  babelify_preset  =  require('babel-preset-es2015');
-const  stylus           =  require('stylus');
+const  browserify       =  require('browserify');
+const  fs               =  require('fs-extra');
 const  nsg              =  require('node-sprite-generator');
+const  path             =  require('path');
+const  program          =  require('commander');
+const  spawnSync        =  require('child_process').spawnSync;
+const  stylus           =  require('stylus');
 
-var  cache_path  =  'build_cache';
+program
+  .option('-d --done [script]', "The path to a script to run after build")
+  .parse(process.argv);
+
+var  afterScript  =  program.done;
+var  cache_path   =  'build_cache';
 
 console.log("Starting Build")
 
@@ -106,13 +113,28 @@ nsg({
   total_css += fs.readFileSync(sprite_css_path, 'utf8');
 
   fs.writeFileSync(path.join('build', 'css', 'styles.css'), total_css);
-  console.log("Built Style sheet")
+  console.log("Built Style sheet");
+
+  var font_dir_path = path.join(cache_path, 'fonts');
+  if (fs.statSync(font_dir_path).isDirectory())
+  {
+    fs.copySync(font_dir_path, path.join('build', 'css', 'fonts'));
+  }
+
+  fs.copySync(path.join('bower_components'), path.join('build', 'bower_components'));
+
+  if (afterScript)
+  {
+    console.log("Running after build script")
+    afterScriptResult = spawnSync(afterScript, [], {
+      stdio: [0, 1, 2],
+      cwd: process.cwd()
+    });
+    if (afterScriptResult.error) {
+      console.log("An error occurred running the after script, make sure it is executable");
+      console.error(afterScriptResult.error);
+    }
+    console.log("Finished after build script");
+  }
 });
 
-var font_dir_path = path.join(cache_path, 'fonts');
-if (fs.statSync(font_dir_path).isDirectory())
-{
-  fs.copySync(font_dir_path, path.join('build', 'css', 'fonts'));
-}
-
-fs.copySync(path.join('bower_components'), path.join('build', 'bower_components'));

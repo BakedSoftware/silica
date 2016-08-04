@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
-const  fs          =  require('fs-extra');
-const  path        =  require('path');
-const  browserify  =  require('browserify');
-const  babelify    =  require("babelify");
-const  stylus      =  require('stylus');
-const  nsg         =  require('node-sprite-generator');
+const  fs               =  require('fs-extra');
+const  path             =  require('path');
+const  browserify       =  require('browserify');
+const  babelify         =  require("babelify");
+const  babelify_preset  =  require('babel-preset-es2015');
+const  stylus           =  require('stylus');
+const  nsg              =  require('node-sprite-generator');
 
 var  cache_path  =  'build_cache';
 
@@ -60,9 +61,11 @@ function stylus_callback(err, css) {
 
 fs.copySync(path.join('src', 'images'), path.join('build', 'images'));
 
+var sprite_src = path.join('src', 'images', 'sprites');
+
 nsg({
   src: [
-    path.join('src', 'images', 'sprites', '*.png')
+    path.join(sprite_src, '*.png')
   ],
   spritePath: path.join('build', 'images', 'sprite.png'),
   stylesheetPath: sprite_css_path,
@@ -74,7 +77,10 @@ nsg({
   }
 }, function(err) {
   if (err) {
-    console.log("Error Generating Sprites", err);
+    if (fs.readdirSync(sprite_src).length > 0)
+    {
+      console.log("Error Generating Sprites", err);
+    }
   }
   else
   {

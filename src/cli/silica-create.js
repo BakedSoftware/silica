@@ -118,6 +118,12 @@ var bower_install = spawnSync('bower',
                               { 'cwd': projectName });
 
 // Setup npm
+var npm_init = spawnSync('npm',
+                         ['init'],
+                         {
+                           stdio: [0, 1, 2],
+                           cwd: projectName
+                         });
 spawnSync('npm',
           ['install', '--save', 'babel-preset-es2015'],
           { 'cwd': projectName});

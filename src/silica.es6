@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.7.10",
+  version               :  "0.7.11",
 
   // Set the root context
   setContext(contextName)
@@ -34,9 +34,11 @@ var Silica = {
     window.onhashchange = () => {
       this.apply(() => this.router.route(location.hash));
     };
-    window.onpopstate = () => {
-      this.apply(() => this.router.route(location.pathname));
-    };
+    if (Silica.usePushState) {
+      window.onpopstate = () => {
+        this.apply(() => this.router.route(Silica.usePushState ? location.pathname : location.hash));
+      };
+    }
   },
 
   goTo(pathname)

@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.7.9",
+  version               :  "0.7.10",
 
   // Set the root context
   setContext(contextName)
@@ -614,7 +614,14 @@ var Silica = {
   },
   _handle_href(evt){
     evt.preventDefault();
-    Silica.goTo(this.href);
+    if (this.href.indexOf("file://") == 0)
+    {
+      Silica.goTo(this.href.substr(7));
+    }
+    else
+    {
+      Silica.goTo(this.href);
+    }
     return false;
   },
   _capture_links(element) {

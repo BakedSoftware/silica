@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.7.12",
+  version               :  "0.7.13",
 
   // Set the root context
   setContext(contextName)
@@ -59,7 +59,7 @@ var Silica = {
   },
 
   // Interpolate and link all Silica directives within an element
-  compile(element, flush = true, context = null, onlySafe = false)
+  compile(element, flush = true, context = null, onlySafe = false, storeWatchers = true)
   {
     if (Silica._appRoot === null) {
       Silica._appRoot = element;
@@ -84,7 +84,11 @@ var Silica = {
     {
       if (!(onlySafe & key[0] === '_'))
       {
-        Silica.compilers[key].apply(element, [context]);
+        if (key == "Controller") {
+          Silica.compilers[key].apply(element, [context, false, storeWatchers]);
+        } else {
+          Silica.compilers[key].apply(element, [context]);
+        }
       }
     }
     if (flush) {
@@ -121,7 +125,7 @@ var Silica = {
         node.dataset._rt_repeat_template  =  hash;
         context                           =  {};
         context.$ctrl                     =  Silica.getContext(node);
-        Silica._repeat_templates[hash]    =  Silica.compile($(Silica._repeat_templates[hash]), false, context, true)[0];
+        Silica._repeat_templates[hash]    =  Silica.compile($(Silica._repeat_templates[hash]), false, context, true, false)[0];
         node.innerHTML                    =  "";
       }
     }
@@ -556,6 +560,7 @@ var Silica = {
         constructor = raw.dataset.controller;
         if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
         {
+          needsModel = true;
           model = Silica.getValue(raw.parentNode,  _ref[2]);
         }
         constructor = _ref[1];
@@ -569,7 +574,7 @@ var Silica = {
           ctrl = new constructor(raw);
         }
 
-        if (!needsModel ^ model != null) {
+        if (!needsModel ^ (model != null)) {
           // Remove old wathcers if rebuilding a controller for a node
           let watchers = constructor.watchers;
           if (raw._rt_ctrl && watchers && Object.keys(watchers).length > 0) {

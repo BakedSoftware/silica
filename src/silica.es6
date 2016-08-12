@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.7.14",
+  version               :  "0.7.15",
 
   // Set the root context
   setContext(contextName)
@@ -637,7 +637,7 @@ var Silica = {
     for (let i = nodes.length - 1; i >= 0; --i)
     {
       node = nodes[i];
-      if (node.hostname === location.hostname)
+      if (node.hostname === location.hostname && node.target !== "_blank")
       {
         node.removeEventListener("click", Silica._handle_href, true);
         node.addEventListener("click", Silica._handle_href, true);

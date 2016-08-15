@@ -8,6 +8,7 @@ import Disabled from '../compilers/disabled.js'
 import Href from '../compilers/href.js'
 import Style from '../compilers/style.js'
 import Src from '../compilers/src.js'
+import Generic from '../compilers/generic-attribute.js'
 
 export default {
   _If,
@@ -18,5 +19,6 @@ export default {
   Disabled,
   Href,
   Style,
-  Src
+  Src,
+  Generic
 }

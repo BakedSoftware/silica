@@ -19,6 +19,7 @@ import Scroll from "./scroll.js"
 import ScrollFinished from "./scroll_finished.js"
 import MouseDown from "./mousedown.js"
 import MouseUp from "./mouseup.js"
+import Generic from "./generic-attribute.js"
 // Key Events
 import KeyDown from "./keydown.js"
 //Touch Events
@@ -48,6 +49,7 @@ export default {
   ScrollFinished,
   MouseDown,
   MouseUp,
+  Generic,
   // Key Events
   KeyDown,
   //Touch Events

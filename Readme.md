@@ -75,6 +75,7 @@ The properties specified can be functions, primitives, or objects.
 syntax.
 * `data-model` - Bind the innerHTML, value, checked attributes to the value specified. If the element is editable, these are 2-way bindings
 * `data-filter` - Used in conjunction with `data-model` **only**; allows a filter to be applied to the value returned by model before outputing the value.
+* `data-silica="attribute=value"`- Bind the _value_ to the specified _attribute_
 
 
 This will pipe the value of `category.amount` through the `currency` filter before setting the `span.innerHTML`

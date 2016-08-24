@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.8.1",
+  version               :  "0.8.2",
 
   // Set the root context
   setContext(contextName)
@@ -725,8 +725,8 @@ var Silica = {
   _model_get_val(raw)
   {
     var filter, filterKey, filterOptions, value;
-    filter = raw.dataset.filter;
-    filter = filter ? filter.split(/:(.+)/) : null;
+    filter = raw.attributes["data-filter"];
+    filter = filter ? filter.value.split(/:(.+)/) : null;
     filterKey = (filter ? filter[0] : null);
     if (filterKey && !Silica.filters[filterKey]) {
       throw new Error("Unknown filter: '" + filterKey + "' for element: " + raw.outerHTML);

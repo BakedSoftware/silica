@@ -1,4 +1,5 @@
 var inputTimeRegexp = /date|time/i;
+var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color"]
 
 export default function Model() {
   var raw = (this instanceof jQuery ? this[0] : this);
@@ -8,9 +9,7 @@ export default function Model() {
   {
     element = elements[i];
     type = element.type;
-    if (element !== document.activeElement && (type === 'text' || type === 'file' || type === 'number' ||
-          type === 'email' || type === 'password' || type === 'select-one' || type === "textarea"
-          || inputTimeRegexp.test(type)) )
+    if (element !== document.activeElement && (inputTypes.indexOf(type) !== -1) )
     {
       element.value = Silica._model_get_val(element);
     }

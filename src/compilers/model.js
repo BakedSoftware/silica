@@ -1,4 +1,5 @@
 var inputTimeRegexp = /date|time/i;
+var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color"]
 
 export default function Model(context = null) {
   var elm, change, ctx, model, val;
@@ -10,8 +11,7 @@ export default function Model(context = null) {
     ctx = Silica.getContext(elm);
     model = elm.dataset.model;
     let type = elm.type;
-    if (type === 'text' || type === 'file' || type === 'number' ||
-        type === 'email' || type === 'password' || inputTimeRegexp.test(type)) {
+    if (inputTypes.indexOf(type) !== -1) {
       elm.value = Silica.getValue(elm, model, ctx);
     } else if (type === 'radio') {
       val = elm.value;

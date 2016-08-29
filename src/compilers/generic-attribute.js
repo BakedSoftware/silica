@@ -29,7 +29,11 @@ export default function Href() {
       valueKey = valueKey.substr(0, valueKey.indexOf("("));
     }
 
-    node.setAttribute(attribute, Silica.getValue(node, valueKey, null, params));
+    if (attribute !== "innerHTML") {
+      node.setAttribute(attribute, Silica.getValue(node, valueKey, null, params));
+    } else {
+      node.innerHTML = Silica.getValue(node, valueKey, null, params);
+    }
   }
   Silica._capture_links(raw);
 }

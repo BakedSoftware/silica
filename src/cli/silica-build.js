@@ -12,10 +12,12 @@ const  stylus           =  require('stylus');
 
 program
   .option('-d --done [script]', "The path to a script to run after build")
+  .option('-s --styles [path]', "Directory of additional style imports relative to the src directory")
   .parse(process.argv);
 
-var  afterScript  =  program.done;
-var  cache_path   =  'build_cache';
+var  afterScript    =  program.done;
+var  styleIncludes  =  program.styles;
+var  cache_path     =  'build_cache';
 
 console.log("Starting Build")
 
@@ -127,11 +129,16 @@ nsg({
   for (var len = styles.length, i = 0; i < len; ++i) {
     styl_path = path.join(cache_path, 'styles', styles[i]);
     styl_content = fs.readFileSync(styl_path, 'utf8');
-    stylus(styl_content)
-      .set('filename', styles[i])
-      .include(require('nib').path)
-      .include(path.join(cache_path, 'styles'))
-      .render(stylus_callback);
+    var s = stylus(styl_content)
+              .set('filename', styles[i])
+              .include(require('nib').path)
+              .include(path.join(cache_path, 'styles'))
+
+    if (styleIncludes && styleIncludes.length > 0) {
+      s = s.include(path.join(cache_path, styleIncludes));
+    }
+
+    s.render(stylus_callback);
   }
 
   total_css += fs.readFileSync(sprite_css_path, 'utf8');

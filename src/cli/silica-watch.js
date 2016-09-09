@@ -16,7 +16,10 @@ var  fileServer    =  new serveStatic.Server('./build');
 
 program
   .option('-p --port [value]', "The port to listen on")
+  .option('-s --styles [path]', "Directory of additional style imports relative to the src directory")
   .parse(process.argv);
+
+var styleIncludes = program.styles;
 
 var child_callback = function (error, stdout, stderr) {
   console.log(stdout);
@@ -41,7 +44,11 @@ var rebuild = function() {
     wait = false;
   }, 1000);
   console.log("Rebuilding...");
-  exec('silica build', child_callback);
+  var cmd = 'silica build';
+  if (styleIncludes && styleIncludes.length > 0) {
+    cmd += " -s " + styleIncludes
+  }
+  exec(cmd, child_callback);
 };
 
 watch.createMonitor('./src', { 'ignoreDotFiles': true}, function (monitor) {
@@ -60,6 +67,8 @@ require('http').createServer(function (request, response) {
     });
   }).resume();
 }).listen(program.port || 8080);
+
+rebuild();
 
 var server = livereload.createServer();
 server.watch(path.join(process.cwd(), "/build"));

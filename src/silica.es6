@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.8.8",
+  version               :  "0.8.9",
 
   // Set the root context
   setContext(contextName)

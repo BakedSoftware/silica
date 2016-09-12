@@ -434,7 +434,7 @@
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Model;
   var inputTimeRegexp = /date|time/i;
-  var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select"];
+  var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select", "select-one"];
   function Model() {
     var context = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
     var elm, change, ctx, model, val;
@@ -810,7 +810,7 @@
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {default:obj};
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.8.9", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.8.10", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1675,7 +1675,7 @@
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Model;
   var inputTimeRegexp = /date|time/i;
-  var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select"];
+  var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select", "select-one"];
   function Model() {
     var raw = this instanceof jQuery ? this[0] : this;
     var elements = raw.querySelectorAll("[data-model]");

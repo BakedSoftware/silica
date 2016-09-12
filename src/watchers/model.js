@@ -1,5 +1,5 @@
 var inputTimeRegexp = /date|time/i;
-var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select"]
+var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select", "select-one"]
 
 export default function Model() {
   var raw = (this instanceof jQuery ? this[0] : this);

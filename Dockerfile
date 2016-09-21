@@ -1,24 +1,17 @@
 # Get Golang
-FROM golang:1.6.2
+FROM golang:alpine
 
 # Maintainer of the File
 MAINTAINER Kayle Gishen <k@bkdsw.com>
 
+RUN echo "http://dl-5.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+RUN apk update
+
 # Install Curl for NodeJS
-RUN apt-get install curl;
+RUN apk add nodejs;
 
 # Install graphics magick
-RUN apt-get update;
-RUN apt-get install -y graphicsmagick;
-
-# Get the nodejs source
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -;
-
-# Install nodejs
-RUN apt-get install --yes nodejs
-
-# Set the timezone (#RUN echo "UTC" > /etc/timezone)
-RUN echo "America/New_York" > /etc/timezone; dpkg-reconfigure -f noninteractive tzdata
+RUN apk add graphicsmagick;
 
 # Download bower and silica
 RUN npm install -g bower silica

@@ -92,33 +92,15 @@ function stylus_callback(err, css) {
   }
 }
 
-fs.copySync(path.join('src', 'images'), path.join('build', 'images'));
+try {
+  fs.statSync(path.join('src', 'images')).isDirectory()
+  fs.copySync(path.join('src', 'images'), path.join('build', 'images'));
+} catch(err) {
+}
 
 var sprite_src = path.join('src', 'images', 'sprites');
 
-nsg({
-  src: [
-    path.join(sprite_src, '*.png')
-  ],
-  spritePath: path.join('build', 'images', 'sprite.png'),
-  stylesheetPath: sprite_css_path,
-  stylesheet: 'css',
-  stylesheetOptions: {
-    prefix: 'icon-',
-    pixelRatio: 2,
-    spritePath: '../images/sprite.png'
-  }
-}, function(err) {
-  if (err) {
-    if (fs.readdirSync(sprite_src).length > 0)
-    {
-      console.log("Error Generating Sprites", err);
-    }
-  }
-  else
-  {
-    console.log("Sprite Generated");
-  }
+function stylus_render() {
   var  styles   =  fs.readdirSync(path.join(cache_path, 'styles')).filter(function(name) {
     return name[0] !== '.' && name !== 'base.styl' && name !== 'fonts.styl';
   });
@@ -140,19 +122,60 @@ nsg({
 
     s.render(stylus_callback);
   }
+}
 
-  total_css += fs.readFileSync(sprite_css_path, 'utf8');
-
+function writeStyles() {
   fs.writeFileSync(path.join('build', 'css', 'styles.css'), total_css);
   console.log("Built Style sheet");
 
-  var font_dir_path = path.join(cache_path, 'fonts');
-  if (fs.statSync(font_dir_path).isDirectory())
-  {
-    fs.copySync(font_dir_path, path.join('build', 'css', 'fonts'));
-  }
+  try {
+    var font_dir_path = path.join(cache_path, 'fonts');
+    if (fs.statSync(font_dir_path).isDirectory())
+    {
+      fs.copySync(font_dir_path, path.join('build', 'css', 'fonts'));
+    }
+  } catch(err){}
 
   fs.copySync(path.join('bower_components'), path.join('build', 'bower_components'));
   afterScriptCaller();
-});
+}
 
+try {
+  fs.statSync(sprite_src)
+  if (fs.readdirSync(sprite_src).length > 0) {
+    nsg({
+      src: [
+        path.join(sprite_src, '*.png')
+      ],
+      spritePath: path.join('build', 'images', 'sprite.png'),
+      stylesheetPath: sprite_css_path,
+      stylesheet: 'css',
+      stylesheetOptions: {
+        prefix: 'icon-',
+        pixelRatio: 2,
+        spritePath: '../images/sprite.png'
+      }
+    }, function(err) {
+      if (err) {
+        if (fs.readdirSync(sprite_src).length > 0)
+        {
+          console.log("Error Generating Sprites", err);
+        }
+      }
+      else
+      {
+        console.log("Sprite Generated");
+      }
+
+      stylus_render();
+      total_css += fs.readFileSync(sprite_css_path, 'utf8');
+      writeStyles();
+    });
+  } else {
+  stylus_render();
+  writeStyles();
+  }
+} catch(err){
+  stylus_render();
+  writeStyles();
+}

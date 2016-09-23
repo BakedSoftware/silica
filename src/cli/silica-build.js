@@ -154,7 +154,8 @@ try {
         prefix: 'icon-',
         pixelRatio: 2,
         spritePath: '../images/sprite.png'
-      }
+      },
+      compositor: require('node-sprite-generator-jimp')
     }, function(err) {
       if (err) {
         if (fs.readdirSync(sprite_src).length > 0)

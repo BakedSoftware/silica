@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.8.12",
+  version               :  "0.8.13",
 
   // Set the root context
   setContext(contextName)
@@ -355,7 +355,7 @@ var Silica = {
       obj = obj[property];
       if (typeof obj === 'function')
       {
-        obj = obj.call(context, params);
+        obj = obj.apply(context, params);
       }
       if (obj === null || obj === void 0)
       {

@@ -29,7 +29,8 @@
                 <td>{{klass.name}}</td>
                 <td>
                   <ol data-repeat="grade in klass.grades">
-                    <li data-silica="id=Ex.indexTest(index)">{{grade}}</li>
+                    <li data-silica="id=Ex.indexTest(index)"
+                        data-click="printGrade(grade, klass, user)">{{grade}}</li>
                   </ol>
                 </td>
               </tr>
@@ -116,6 +117,10 @@
 
               alertUser(){
                 console.log(this.name, this.email);
+              }
+
+              printGrade(_, grade, klass, user) {
+                console.log(user.name, "received", grade, "for", klass.name);
               }
             },
 

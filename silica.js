@@ -810,7 +810,17 @@
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {default:obj};
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.8.13", setContext:function setContext(contextName) {
+  function _toConsumableArray(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length);i < arr.length;i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    } else {
+      return Array.from(arr);
+    }
+  }
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.8.14", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1092,7 +1102,7 @@
       return obj;
     }
     var comps = propString.split(".");
-    if (obj[comps[0]] == null || obj[comps[0]] == undefined) {
+    while (obj[comps[0]] == null || obj[comps[0]] == undefined) {
       if (obj.$ctrl) {
         obj = obj.$ctrl;
       } else {
@@ -1364,18 +1374,19 @@
       }
     }
     Silica.apply(function() {
-      var $elm, action, ctx, model, obj, parameter;
+      var $elm, action, ctx, objects, parameter;
       $elm = $(element);
       ctx = Silica.getContext($elm);
       action = $elm.data(act);
-      action = action.match(/(\w+)(?:\((\w+)\))*/);
-      if (typeof action[2] !== "undefined") {
-        model = action[2];
+      action = action.match(/(\w+)(?:\(?(\w+)\))?/g);
+      var models;
+      if (typeof action[1] !== "undefined") {
+        models = action.slice(1, action.length);
+        for (var i = 0;i < models.length;i++) {
+          models[i] = Silica.getPropByString(ctx, models[i]);
+        }
       }
-      action = action[1];
-      if (model) {
-        obj = ctx[model];
-      }
+      action = action[0];
       while (!ctx.hasOwnProperty(action) && ctx.hasOwnProperty("$ctrl")) {
         ctx = ctx.$ctrl;
       }
@@ -1383,10 +1394,10 @@
         parameter = element.dataset.parameter;
       }
       if (ctx.hasOwnProperty(action) || typeof ctx[action] !== "undefined") {
-        return ctx[action].apply(ctx, [$elm, obj, parameter, evnt]);
+        return ctx[action].apply(ctx, [$elm].concat(_toConsumableArray(models), [parameter, evnt]));
       } else {
         if (Silica.context[action] != null) {
-          return Silica.context[action].apply(Silica.ctx, [$elm, obj, parameter, evnt]);
+          return Silica.context[action].apply(Silica.ctx, [$elm].concat(_toConsumableArray(models), [parameter, evnt]));
         } else {
           return console.error("Unknown action '" + action + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
         }

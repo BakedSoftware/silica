@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.8.13",
+  version               :  "0.8.14",
 
   // Set the root context
   setContext(contextName)
@@ -332,7 +332,7 @@ var Silica = {
     }
 
     let comps = propString.split('.');
-    if (obj[comps[0]] == null || obj[comps[0]] == undefined)
+    while (obj[comps[0]] == null || obj[comps[0]] == undefined)
     {
       if (obj.$ctrl)
       {
@@ -692,19 +692,20 @@ var Silica = {
     }
     Silica.apply(function()
     {
-      var $elm, action, ctx, model, obj, parameter;
+      var $elm, action, ctx, objects, parameter;
       $elm = $(element);
       ctx = Silica.getContext($elm);
       action = $elm.data(act);
-      action = action.match(/(\w+)(?:\((\w+)\))*/);
-      if (typeof action[2] !== 'undefined')
+      action = action.match(/(\w+)(?:\(?(\w+)\))?/g);
+      var models;
+      if (typeof action[1] !== 'undefined')
       {
-        model = action[2];
+        models = action.slice(1, action.length);
+        for (let i = 0; i < models.length; i++) {
+          models[i] = Silica.getPropByString(ctx, models[i])
+        }
       }
-      action = action[1];
-      if (model) {
-        obj = ctx[model];
-      }
+      action = action[0];
       while (!ctx.hasOwnProperty(action) && ctx.hasOwnProperty('$ctrl'))
       {
         ctx = ctx.$ctrl;
@@ -714,9 +715,9 @@ var Silica = {
       }
 
       if (ctx.hasOwnProperty(action) || typeof ctx[action] !== 'undefined') {
-        return ctx[action].apply(ctx, [$elm, obj, parameter, evnt]);
+        return ctx[action].apply(ctx, [$elm, ...models, parameter, evnt]);
       } else if (Silica.context[action] != null) {
-        return Silica.context[action].apply(Silica.ctx, [$elm, obj, parameter, evnt]);
+        return Silica.context[action].apply(Silica.ctx, [$elm, ...models, parameter, evnt]);
       } else {
         return console.error("Unknown action '" + action + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
       }

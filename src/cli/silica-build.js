@@ -29,7 +29,6 @@ fs.remove(cache_path, function(err) {
     console.log("Couldn't remove cache_path:"+cache_path+" error:"+err);    
     return;
   }
-  console.log("removed cache_path "+err);
   fs.remove('build', function(err) {
     if (err != null) {
       console.log("Couldn't remove build:"+err);    

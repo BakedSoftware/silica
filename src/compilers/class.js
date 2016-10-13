@@ -10,7 +10,7 @@ export default function Class() {
     {
       raw.dataset._rt_hard_klass = raw.className;
     }
-    klass = Silica.getValue(raw, raw.dataset.class);
+    klass = Silica.getValue(raw, raw.dataset.class, null, [node, node.dataset.parameter]);
     if (klass)
     {
       raw.classList.add(klass);
@@ -23,7 +23,7 @@ export default function Class() {
     if (node.dataset._rt_hard_klass == null) {
       node.dataset._rt_hard_klass = node.className.split('hidden').join(" ").trim();
     }
-    klass = Silica.getValue(node, node.dataset.class);
+    klass = Silica.getValue(node, node.dataset.class, null, [node, node.dataset.parameter]);
     if (klass)
     {
       node.classList.add(klass);

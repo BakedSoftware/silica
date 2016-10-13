@@ -23,7 +23,7 @@ export default function Class() {
         element.dataset._rt_hard_klass = element.className;
       }
     }
-    klass = Silica.getValue(element, element.dataset.class);
+    klass = Silica.getValue(element, element.dataset.class, null, [element, element.dataset.parameter]);
     if (klass)
     {
       if (klass instanceof Array)

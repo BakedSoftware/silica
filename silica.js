@@ -1,3 +1,319 @@
+$.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(function(text) {
+  return function(elem) {
+    return $.trim(elem.innerHTML.toLowerCase()) === text.toLowerCase();
+  };
+}) : function(elem, i, match) {
+  return $.trim(elem.innerHTML.toLowerCase()) === match[3].toLowerCase();
+}, containsExactCase:$.expr.createPseudo ? $.expr.createPseudo(function(text) {
+  return function(elem) {
+    return $.trim(elem.innerHTML) === text;
+  };
+}) : function(elem, i, match) {
+  return $.trim(elem.innerHTML) === match[3];
+}, containsRegex:$.expr.createPseudo ? $.expr.createPseudo(function(text) {
+  var reg = /^\/((?:\\\/|[^\/])+)\/([mig]{0,3})$/.exec(text);
+  return function(elem) {
+    return reg ? RegExp(reg[1], reg[2]).test($.trim(elem.textContent)) : false;
+  };
+}) : function(elem, i, match) {
+  var reg = /^\/((?:\\\/|[^\/])+)\/([mig]{0,3})$/.exec(match[3]);
+  return reg ? RegExp(reg[1], reg[2]).test($.trim(elem.innerHTML)) : false;
+}});
+(function(factory) {
+  if (typeof exports === "object") {
+    module.exports = factory();
+  } else {
+    if (typeof define === "function" && define.amd) {
+      define(factory);
+    } else {
+      var glob;
+      try {
+        glob = window;
+      } catch (e) {
+        glob = self;
+      }
+      glob.SparkMD5 = factory();
+    }
+  }
+})(function(undefined) {
+  var add32 = function(a, b) {
+    return a + b & 4294967295;
+  }, cmn = function(q, a, b, x, s, t) {
+    a = add32(add32(a, q), add32(x, t));
+    return add32(a << s | a >>> 32 - s, b);
+  }, ff = function(a, b, c, d, x, s, t) {
+    return cmn(b & c | ~b & d, a, b, x, s, t);
+  }, gg = function(a, b, c, d, x, s, t) {
+    return cmn(b & d | c & ~d, a, b, x, s, t);
+  }, hh = function(a, b, c, d, x, s, t) {
+    return cmn(b ^ c ^ d, a, b, x, s, t);
+  }, ii = function(a, b, c, d, x, s, t) {
+    return cmn(c ^ (b | ~d), a, b, x, s, t);
+  }, md5cycle = function(x, k) {
+    var a = x[0], b = x[1], c = x[2], d = x[3];
+    a = ff(a, b, c, d, k[0], 7, -680876936);
+    d = ff(d, a, b, c, k[1], 12, -389564586);
+    c = ff(c, d, a, b, k[2], 17, 606105819);
+    b = ff(b, c, d, a, k[3], 22, -1044525330);
+    a = ff(a, b, c, d, k[4], 7, -176418897);
+    d = ff(d, a, b, c, k[5], 12, 1200080426);
+    c = ff(c, d, a, b, k[6], 17, -1473231341);
+    b = ff(b, c, d, a, k[7], 22, -45705983);
+    a = ff(a, b, c, d, k[8], 7, 1770035416);
+    d = ff(d, a, b, c, k[9], 12, -1958414417);
+    c = ff(c, d, a, b, k[10], 17, -42063);
+    b = ff(b, c, d, a, k[11], 22, -1990404162);
+    a = ff(a, b, c, d, k[12], 7, 1804603682);
+    d = ff(d, a, b, c, k[13], 12, -40341101);
+    c = ff(c, d, a, b, k[14], 17, -1502002290);
+    b = ff(b, c, d, a, k[15], 22, 1236535329);
+    a = gg(a, b, c, d, k[1], 5, -165796510);
+    d = gg(d, a, b, c, k[6], 9, -1069501632);
+    c = gg(c, d, a, b, k[11], 14, 643717713);
+    b = gg(b, c, d, a, k[0], 20, -373897302);
+    a = gg(a, b, c, d, k[5], 5, -701558691);
+    d = gg(d, a, b, c, k[10], 9, 38016083);
+    c = gg(c, d, a, b, k[15], 14, -660478335);
+    b = gg(b, c, d, a, k[4], 20, -405537848);
+    a = gg(a, b, c, d, k[9], 5, 568446438);
+    d = gg(d, a, b, c, k[14], 9, -1019803690);
+    c = gg(c, d, a, b, k[3], 14, -187363961);
+    b = gg(b, c, d, a, k[8], 20, 1163531501);
+    a = gg(a, b, c, d, k[13], 5, -1444681467);
+    d = gg(d, a, b, c, k[2], 9, -51403784);
+    c = gg(c, d, a, b, k[7], 14, 1735328473);
+    b = gg(b, c, d, a, k[12], 20, -1926607734);
+    a = hh(a, b, c, d, k[5], 4, -378558);
+    d = hh(d, a, b, c, k[8], 11, -2022574463);
+    c = hh(c, d, a, b, k[11], 16, 1839030562);
+    b = hh(b, c, d, a, k[14], 23, -35309556);
+    a = hh(a, b, c, d, k[1], 4, -1530992060);
+    d = hh(d, a, b, c, k[4], 11, 1272893353);
+    c = hh(c, d, a, b, k[7], 16, -155497632);
+    b = hh(b, c, d, a, k[10], 23, -1094730640);
+    a = hh(a, b, c, d, k[13], 4, 681279174);
+    d = hh(d, a, b, c, k[0], 11, -358537222);
+    c = hh(c, d, a, b, k[3], 16, -722521979);
+    b = hh(b, c, d, a, k[6], 23, 76029189);
+    a = hh(a, b, c, d, k[9], 4, -640364487);
+    d = hh(d, a, b, c, k[12], 11, -421815835);
+    c = hh(c, d, a, b, k[15], 16, 530742520);
+    b = hh(b, c, d, a, k[2], 23, -995338651);
+    a = ii(a, b, c, d, k[0], 6, -198630844);
+    d = ii(d, a, b, c, k[7], 10, 1126891415);
+    c = ii(c, d, a, b, k[14], 15, -1416354905);
+    b = ii(b, c, d, a, k[5], 21, -57434055);
+    a = ii(a, b, c, d, k[12], 6, 1700485571);
+    d = ii(d, a, b, c, k[3], 10, -1894986606);
+    c = ii(c, d, a, b, k[10], 15, -1051523);
+    b = ii(b, c, d, a, k[1], 21, -2054922799);
+    a = ii(a, b, c, d, k[8], 6, 1873313359);
+    d = ii(d, a, b, c, k[15], 10, -30611744);
+    c = ii(c, d, a, b, k[6], 15, -1560198380);
+    b = ii(b, c, d, a, k[13], 21, 1309151649);
+    a = ii(a, b, c, d, k[4], 6, -145523070);
+    d = ii(d, a, b, c, k[11], 10, -1120210379);
+    c = ii(c, d, a, b, k[2], 15, 718787259);
+    b = ii(b, c, d, a, k[9], 21, -343485551);
+    x[0] = add32(a, x[0]);
+    x[1] = add32(b, x[1]);
+    x[2] = add32(c, x[2]);
+    x[3] = add32(d, x[3]);
+  }, md5blk = function(s) {
+    var md5blks = [], i;
+    for (i = 0;i < 64;i += 4) {
+      md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
+    }
+    return md5blks;
+  }, md5blk_array = function(a) {
+    var md5blks = [], i;
+    for (i = 0;i < 64;i += 4) {
+      md5blks[i >> 2] = a[i] + (a[i + 1] << 8) + (a[i + 2] << 16) + (a[i + 3] << 24);
+    }
+    return md5blks;
+  }, md51 = function(s) {
+    var n = s.length, state = [1732584193, -271733879, -1732584194, 271733878], i, length, tail, tmp, lo, hi;
+    for (i = 64;i <= n;i += 64) {
+      md5cycle(state, md5blk(s.substring(i - 64, i)));
+    }
+    s = s.substring(i - 64);
+    length = s.length;
+    tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (i = 0;i < length;i += 1) {
+      tail[i >> 2] |= s.charCodeAt(i) << (i % 4 << 3);
+    }
+    tail[i >> 2] |= 128 << (i % 4 << 3);
+    if (i > 55) {
+      md5cycle(state, tail);
+      for (i = 0;i < 16;i += 1) {
+        tail[i] = 0;
+      }
+    }
+    tmp = n * 8;
+    tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
+    lo = parseInt(tmp[2], 16);
+    hi = parseInt(tmp[1], 16) || 0;
+    tail[14] = lo;
+    tail[15] = hi;
+    md5cycle(state, tail);
+    return state;
+  }, md51_array = function(a) {
+    var n = a.length, state = [1732584193, -271733879, -1732584194, 271733878], i, length, tail, tmp, lo, hi;
+    for (i = 64;i <= n;i += 64) {
+      md5cycle(state, md5blk_array(a.subarray(i - 64, i)));
+    }
+    a = i - 64 < n ? a.subarray(i - 64) : new Uint8Array(0);
+    length = a.length;
+    tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (i = 0;i < length;i += 1) {
+      tail[i >> 2] |= a[i] << (i % 4 << 3);
+    }
+    tail[i >> 2] |= 128 << (i % 4 << 3);
+    if (i > 55) {
+      md5cycle(state, tail);
+      for (i = 0;i < 16;i += 1) {
+        tail[i] = 0;
+      }
+    }
+    tmp = n * 8;
+    tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
+    lo = parseInt(tmp[2], 16);
+    hi = parseInt(tmp[1], 16) || 0;
+    tail[14] = lo;
+    tail[15] = hi;
+    md5cycle(state, tail);
+    return state;
+  }, hex_chr = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"], rhex = function(n) {
+    var s = "", j;
+    for (j = 0;j < 4;j += 1) {
+      s += hex_chr[n >> j * 8 + 4 & 15] + hex_chr[n >> j * 8 & 15];
+    }
+    return s;
+  }, hex = function(x) {
+    var i;
+    for (i = 0;i < x.length;i += 1) {
+      x[i] = rhex(x[i]);
+    }
+    return x.join("");
+  }, md5 = function(s) {
+    return hex(md51(s));
+  }, SparkMD5 = function() {
+    this.reset();
+  };
+  if (md5("hello") !== "5d41402abc4b2a76b9719d911017c592") {
+    add32 = function(x, y) {
+      var lsw = (x & 65535) + (y & 65535), msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+      return msw << 16 | lsw & 65535;
+    };
+  }
+  SparkMD5.prototype.append = function(str) {
+    if (/[\u0080-\uFFFF]/.test(str)) {
+      str = unescape(encodeURIComponent(str));
+    }
+    this.appendBinary(str);
+    return this;
+  };
+  SparkMD5.prototype.appendBinary = function(contents) {
+    this._buff += contents;
+    this._length += contents.length;
+    var length = this._buff.length, i;
+    for (i = 64;i <= length;i += 64) {
+      md5cycle(this._state, md5blk(this._buff.substring(i - 64, i)));
+    }
+    this._buff = this._buff.substr(i - 64);
+    return this;
+  };
+  SparkMD5.prototype.end = function(raw) {
+    var buff = this._buff, length = buff.length, i, tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ret;
+    for (i = 0;i < length;i += 1) {
+      tail[i >> 2] |= buff.charCodeAt(i) << (i % 4 << 3);
+    }
+    this._finish(tail, length);
+    ret = !!raw ? this._state : hex(this._state);
+    this.reset();
+    return ret;
+  };
+  SparkMD5.prototype._finish = function(tail, length) {
+    var i = length, tmp, lo, hi;
+    tail[i >> 2] |= 128 << (i % 4 << 3);
+    if (i > 55) {
+      md5cycle(this._state, tail);
+      for (i = 0;i < 16;i += 1) {
+        tail[i] = 0;
+      }
+    }
+    tmp = this._length * 8;
+    tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
+    lo = parseInt(tmp[2], 16);
+    hi = parseInt(tmp[1], 16) || 0;
+    tail[14] = lo;
+    tail[15] = hi;
+    md5cycle(this._state, tail);
+  };
+  SparkMD5.prototype.reset = function() {
+    this._buff = "";
+    this._length = 0;
+    this._state = [1732584193, -271733879, -1732584194, 271733878];
+    return this;
+  };
+  SparkMD5.prototype.destroy = function() {
+    delete this._state;
+    delete this._buff;
+    delete this._length;
+  };
+  SparkMD5.hash = function(str, raw) {
+    if (/[\u0080-\uFFFF]/.test(str)) {
+      str = unescape(encodeURIComponent(str));
+    }
+    var hash = md51(str);
+    return!!raw ? hash : hex(hash);
+  };
+  SparkMD5.hashBinary = function(content, raw) {
+    var hash = md51(content);
+    return!!raw ? hash : hex(hash);
+  };
+  SparkMD5.ArrayBuffer = function() {
+    this.reset();
+  };
+  SparkMD5.ArrayBuffer.prototype.append = function(arr) {
+    var buff = this._concatArrayBuffer(this._buff, arr), length = buff.length, i;
+    this._length += arr.byteLength;
+    for (i = 64;i <= length;i += 64) {
+      md5cycle(this._state, md5blk_array(buff.subarray(i - 64, i)));
+    }
+    this._buff = i - 64 < length ? buff.subarray(i - 64) : new Uint8Array(0);
+    return this;
+  };
+  SparkMD5.ArrayBuffer.prototype.end = function(raw) {
+    var buff = this._buff, length = buff.length, tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], i, ret;
+    for (i = 0;i < length;i += 1) {
+      tail[i >> 2] |= buff[i] << (i % 4 << 3);
+    }
+    this._finish(tail, length);
+    ret = !!raw ? this._state : hex(this._state);
+    this.reset();
+    return ret;
+  };
+  SparkMD5.ArrayBuffer.prototype._finish = SparkMD5.prototype._finish;
+  SparkMD5.ArrayBuffer.prototype.reset = function() {
+    this._buff = new Uint8Array(0);
+    this._length = 0;
+    this._state = [1732584193, -271733879, -1732584194, 271733878];
+    return this;
+  };
+  SparkMD5.ArrayBuffer.prototype.destroy = SparkMD5.prototype.destroy;
+  SparkMD5.ArrayBuffer.prototype._concatArrayBuffer = function(first, second) {
+    var firstLength = first.length, result = new Uint8Array(firstLength + second.byteLength);
+    result.set(first);
+    result.set(new Uint8Array(second), firstLength);
+    return result;
+  };
+  SparkMD5.ArrayBuffer.hash = function(arr, raw) {
+    var hash = md51_array(new Uint8Array(arr));
+    return!!raw ? hash : hex(hash);
+  };
+  return SparkMD5;
+});
 (function e(t, n, r) {
   function s(o, u) {
     if (!n[o]) {
@@ -51,7 +367,7 @@
       if (raw.dataset._rt_hard_klass == null) {
         raw.dataset._rt_hard_klass = raw.className;
       }
-      klass = Silica.getValue(raw, raw.dataset.class);
+      klass = Silica.getValue(raw, raw.dataset.class, null, [node, node.dataset.parameter]);
       if (klass) {
         raw.classList.add(klass);
       }
@@ -61,7 +377,7 @@
       if (node.dataset._rt_hard_klass == null) {
         node.dataset._rt_hard_klass = node.className.split("hidden").join(" ").trim();
       }
-      klass = Silica.getValue(node, node.dataset.class);
+      klass = Silica.getValue(node, node.dataset.class, null, [node, node.dataset.parameter]);
       if (klass) {
         node.classList.add(klass);
       }
@@ -145,8 +461,8 @@
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Controller;
   function Controller(ctx) {
-    var force = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-    var storeWatchers = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+    var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var storeWatchers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
     var nodes = Silica.query(this, "[data-controller]");
     var node, $elm, constructor, ctrl, k, v, _ref, model;
     for (var i = nodes.length - 1;i >= 0;--i) {
@@ -366,7 +682,7 @@
       } else {
         if (node.nodeType !== 8) {
           var subNodes = Silica.queryWithComments(node, "[data-if]");
-          var subNode = undefined;
+          var subNode = void 0;
           for (var j = subNodes.length - 1;j >= 0;--j) {
             subNode = subNodes[j];
             var $e, list, prop, _ref;
@@ -380,7 +696,7 @@
           var _loop = function _loop(_j) {
             subNode = subNodes[_j];
             var ctrl = _this._rt_ctrl;
-            var k = undefined, list = undefined, _ref = undefined;
+            var k = void 0, list = void 0, _ref = void 0;
             for (k in ctrl != null ? ctrl.watchers : void 0) {
               list = Silica._watch[k];
               Silica._watch[k] = list != null ? list.filter(function(obj) {
@@ -422,7 +738,7 @@
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = KeyDown;
   function KeyDown() {
-    var context = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+    var context = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     var elements = Silica.query(this, "[data-keydown]");
     for (var i = elements.length - 1;i >= 0;i--) {
       elements[i].addEventListener("keydown", function(evt) {
@@ -436,7 +752,7 @@
   var inputTimeRegexp = /date|time/i;
   var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select", "select-one"];
   function Model() {
-    var context = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+    var context = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     var elm, change, ctx, model, val;
     var elements = Silica.query(this, "input[data-model]", "select[data-model]", "textarea[data-model]", "option[data-model]");
     for (var i = elements.length - 1;i >= 0;i--) {
@@ -481,7 +797,7 @@
         } else {
           if ((_ref = this.dataset.trap) != null) {
             obj = (_ref1 = this._rt_ctx) != null ? _ref1 : ctx;
-            var scope = undefined;
+            var scope = void 0;
             if (_ref.toLowerCase() === "true") {
               scope = this;
             } else {
@@ -820,7 +1136,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.8.14", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.9.0", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -853,10 +1169,10 @@
       });
     }
   }, compile:function compile(element) {
-    var flush = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
-    var context = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-    var onlySafe = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
-    var storeWatchers = arguments.length <= 4 || arguments[4] === undefined ? true : arguments[4];
+    var flush = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var onlySafe = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    var storeWatchers = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
     if (Silica._appRoot === null) {
       Silica._appRoot = element;
     }
@@ -930,10 +1246,10 @@
       }
     };
   }, flush:function flush() {
-    var element = arguments.length <= 0 || arguments[0] === undefined ? document.body.parentElement : arguments[0];
-    var onlySafe = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-    var changed = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-    var skipSchedule = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
+    var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document.body.parentElement;
+    var onlySafe = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var changed = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var skipSchedule = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
     if (Silica.isInFlush && !skipSchedule) {
       if (Silica._scheduledFlush) {
         return;
@@ -946,8 +1262,8 @@
     }
     Silica.isInFlush = !skipSchedule;
     if (changed === null && Silica._isReady) {
-      var funcs = undefined;
-      var _func = undefined;
+      var funcs = void 0;
+      var _func = void 0;
       for (var key in Silica._watch) {
         if (Silica._watch.hasOwnProperty(key)) {
           funcs = Silica._watch[key];
@@ -958,7 +1274,7 @@
         }
       }
     } else {
-      var obj = undefined, _k2 = undefined, _funcs = undefined, _func2 = undefined;
+      var obj = void 0, _k2 = void 0, _funcs = void 0, _func2 = void 0;
       for (_k2 in changed) {
         _funcs = changed[_k2];
         if (_funcs !== true) {
@@ -976,7 +1292,7 @@
       }
     }
     var watchers = Silica.watchers;
-    var func = undefined;
+    var func = void 0;
     for (var _k3 in watchers) {
       if (onlySafe && _k3[0] === "_") {
         continue;
@@ -993,7 +1309,7 @@
     }
     return Silica;
   }, apply:function apply(func) {
-    var element = arguments.length <= 1 || arguments[1] === undefined ? document : arguments[1];
+    var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document;
     var args, assoc, changed, changes, finalChanges, funcs, k, oldVal, old_values, v, val, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
     if (Silica.isInApply) {
       return func.call();
@@ -1109,10 +1425,10 @@
         return null;
       }
     }
-    var context = undefined;
+    var context = void 0;
     var property_path = propString.split(".");
     var path_length = property_path.length;
-    var property = undefined;
+    var property = void 0;
     for (var i = 0;i < path_length;++i) {
       property = property_path[i];
       context = obj;
@@ -1126,8 +1442,8 @@
     }
     return obj;
   }, getValue:function getValue(raw, propString) {
-    var context = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-    var params = arguments.length <= 3 || arguments[3] === undefined ? null : arguments[3];
+    var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
     var ctx;
     ctx = context ? context : propString.charCodeAt(0) <= 90 ? window : Silica.getContext(raw);
     return Silica.getPropByString(ctx, propString, params);
@@ -1173,7 +1489,7 @@
       hook.call(ctx, old_value, value);
     }
   }, evaluateExpression:function evaluateExpression(expr, $elm) {
-    var ctx = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var ctx = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     var filter, filterKey, filterOptions, value;
     if (!expr) {
       return;
@@ -1200,8 +1516,8 @@
     }
     return value;
   }, interpolate:function interpolate($elm) {
-    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-    var flush = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+    var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    var flush = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
     var element = $elm instanceof jQuery ? $elm[0] : $elm;
     var elements = [];
     var children = element.childNodes;
@@ -1323,7 +1639,7 @@
     return false;
   }, _capture_links:function _capture_links(element) {
     var nodes = Silica.queryOfType(element, "a", "[href]", "[data-href]");
-    var node = undefined;
+    var node = void 0;
     var externalRegexp = /:\/\//;
     for (var i = nodes.length - 1;i >= 0;--i) {
       node = nodes[i];
@@ -1462,7 +1778,7 @@
       }
     }
     if (!raw.rt_live) {
-      var attribute = undefined;
+      var attribute = void 0;
       for (var _i3 = attributes.length - 1;_i3 >= 0;--_i3) {
         attribute = attributes[_i3];
         if (raw.hasAttribute(attribute.substring(1, attribute.length - 1))) {
@@ -1528,7 +1844,7 @@
       }
     }
     if (raw.tagName === type && !raw.rt_live) {
-      var attribute = undefined;
+      var attribute = void 0;
       for (var _i4 = attributes.length - 1;_i4 >= 0;--_i4) {
         attribute = attributes[_i4];
         if (raw.hasAttribute(attribute.substring(1, attribute.length - 1))) {
@@ -1590,7 +1906,7 @@
           element.dataset._rt_hard_klass = element.className;
         }
       }
-      klass = Silica.getValue(element, element.dataset.class);
+      klass = Silica.getValue(element, element.dataset.class, null, [element, element.dataset.parameter]);
       if (klass) {
         if (klass instanceof Array) {
           element.classList.add.apply(element.classList, klass);
@@ -1638,7 +1954,7 @@
               element.parentNode.insertBefore(compiled, element);
               element.remove();
               Silica._ifs[raw][i] = compiled;
-              var _ref2 = undefined;
+              var _ref2 = void 0;
               if ((_ref2 = Silica.getContext(compiled)) != null) {
                 if (typeof _ref2.onLoad === "function" && _ref2.el == compiled) {
                   _ref2.onLoad();
@@ -1651,7 +1967,7 @@
               var ctrl, list, _ref1, _results;
               (function() {
                 var subNodes = Silica.queryWithComments(element, "[data-if]");
-                var subNode = undefined;
+                var subNode = void 0;
                 for (var j = subNodes.length - 1;j >= 0;--j) {
                   subNode = subNodes[j];
                   prop = subNode.dataset["if"];
@@ -1736,7 +2052,7 @@
   function Repeat() {
     var $elm, changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
     var elements = Silica.querySorted(this, "[data-repeat]");
-    var raw = undefined, cache_display = undefined;
+    var raw = void 0, cache_display = void 0;
     for (var i = 0, length = elements.length;i < length;++i) {
       raw = elements[i];
       repeat = raw.dataset.repeat.split(/\s+in\s+/);
@@ -1779,7 +2095,7 @@
       }
       template = Silica._repeat_templates[raw.dataset._rt_repeat_template];
       var count_diff = raw.childElementCount - newList.length;
-      var node = undefined;
+      var node = void 0;
       while (count_diff > 0) {
         Silica.removeFromDOM(existing[count_diff - 1]);
         --count_diff;
@@ -1892,320 +2208,4 @@
   }
   exports.default = {_If:_if2.default, Repeat:_repeat2.default, Show:_show2.default, Class:_class2.default, Model:_model2.default, Disabled:_disabled2.default, Href:_href2.default, Style:_style2.default, Src:_src2.default, Generic:_genericAttribute2.default};
 }, {"../compilers/disabled.js":7, "../compilers/generic-attribute.js":10, "../compilers/href.js":11, "../compilers/src.js":21, "../compilers/style.js":22, "./class.js":31, "./if.js":32, "./model.js":33, "./repeat.js":34, "./show.js":35}]}, {}, [30]);
-$.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(function(text) {
-  return function(elem) {
-    return $.trim(elem.innerHTML.toLowerCase()) === text.toLowerCase();
-  };
-}) : function(elem, i, match) {
-  return $.trim(elem.innerHTML.toLowerCase()) === match[3].toLowerCase();
-}, containsExactCase:$.expr.createPseudo ? $.expr.createPseudo(function(text) {
-  return function(elem) {
-    return $.trim(elem.innerHTML) === text;
-  };
-}) : function(elem, i, match) {
-  return $.trim(elem.innerHTML) === match[3];
-}, containsRegex:$.expr.createPseudo ? $.expr.createPseudo(function(text) {
-  var reg = /^\/((?:\\\/|[^\/])+)\/([mig]{0,3})$/.exec(text);
-  return function(elem) {
-    return reg ? RegExp(reg[1], reg[2]).test($.trim(elem.textContent)) : false;
-  };
-}) : function(elem, i, match) {
-  var reg = /^\/((?:\\\/|[^\/])+)\/([mig]{0,3})$/.exec(match[3]);
-  return reg ? RegExp(reg[1], reg[2]).test($.trim(elem.innerHTML)) : false;
-}});
-(function(factory) {
-  if (typeof exports === "object") {
-    module.exports = factory();
-  } else {
-    if (typeof define === "function" && define.amd) {
-      define(factory);
-    } else {
-      var glob;
-      try {
-        glob = window;
-      } catch (e) {
-        glob = self;
-      }
-      glob.SparkMD5 = factory();
-    }
-  }
-})(function(undefined) {
-  var add32 = function(a, b) {
-    return a + b & 4294967295;
-  }, cmn = function(q, a, b, x, s, t) {
-    a = add32(add32(a, q), add32(x, t));
-    return add32(a << s | a >>> 32 - s, b);
-  }, ff = function(a, b, c, d, x, s, t) {
-    return cmn(b & c | ~b & d, a, b, x, s, t);
-  }, gg = function(a, b, c, d, x, s, t) {
-    return cmn(b & d | c & ~d, a, b, x, s, t);
-  }, hh = function(a, b, c, d, x, s, t) {
-    return cmn(b ^ c ^ d, a, b, x, s, t);
-  }, ii = function(a, b, c, d, x, s, t) {
-    return cmn(c ^ (b | ~d), a, b, x, s, t);
-  }, md5cycle = function(x, k) {
-    var a = x[0], b = x[1], c = x[2], d = x[3];
-    a = ff(a, b, c, d, k[0], 7, -680876936);
-    d = ff(d, a, b, c, k[1], 12, -389564586);
-    c = ff(c, d, a, b, k[2], 17, 606105819);
-    b = ff(b, c, d, a, k[3], 22, -1044525330);
-    a = ff(a, b, c, d, k[4], 7, -176418897);
-    d = ff(d, a, b, c, k[5], 12, 1200080426);
-    c = ff(c, d, a, b, k[6], 17, -1473231341);
-    b = ff(b, c, d, a, k[7], 22, -45705983);
-    a = ff(a, b, c, d, k[8], 7, 1770035416);
-    d = ff(d, a, b, c, k[9], 12, -1958414417);
-    c = ff(c, d, a, b, k[10], 17, -42063);
-    b = ff(b, c, d, a, k[11], 22, -1990404162);
-    a = ff(a, b, c, d, k[12], 7, 1804603682);
-    d = ff(d, a, b, c, k[13], 12, -40341101);
-    c = ff(c, d, a, b, k[14], 17, -1502002290);
-    b = ff(b, c, d, a, k[15], 22, 1236535329);
-    a = gg(a, b, c, d, k[1], 5, -165796510);
-    d = gg(d, a, b, c, k[6], 9, -1069501632);
-    c = gg(c, d, a, b, k[11], 14, 643717713);
-    b = gg(b, c, d, a, k[0], 20, -373897302);
-    a = gg(a, b, c, d, k[5], 5, -701558691);
-    d = gg(d, a, b, c, k[10], 9, 38016083);
-    c = gg(c, d, a, b, k[15], 14, -660478335);
-    b = gg(b, c, d, a, k[4], 20, -405537848);
-    a = gg(a, b, c, d, k[9], 5, 568446438);
-    d = gg(d, a, b, c, k[14], 9, -1019803690);
-    c = gg(c, d, a, b, k[3], 14, -187363961);
-    b = gg(b, c, d, a, k[8], 20, 1163531501);
-    a = gg(a, b, c, d, k[13], 5, -1444681467);
-    d = gg(d, a, b, c, k[2], 9, -51403784);
-    c = gg(c, d, a, b, k[7], 14, 1735328473);
-    b = gg(b, c, d, a, k[12], 20, -1926607734);
-    a = hh(a, b, c, d, k[5], 4, -378558);
-    d = hh(d, a, b, c, k[8], 11, -2022574463);
-    c = hh(c, d, a, b, k[11], 16, 1839030562);
-    b = hh(b, c, d, a, k[14], 23, -35309556);
-    a = hh(a, b, c, d, k[1], 4, -1530992060);
-    d = hh(d, a, b, c, k[4], 11, 1272893353);
-    c = hh(c, d, a, b, k[7], 16, -155497632);
-    b = hh(b, c, d, a, k[10], 23, -1094730640);
-    a = hh(a, b, c, d, k[13], 4, 681279174);
-    d = hh(d, a, b, c, k[0], 11, -358537222);
-    c = hh(c, d, a, b, k[3], 16, -722521979);
-    b = hh(b, c, d, a, k[6], 23, 76029189);
-    a = hh(a, b, c, d, k[9], 4, -640364487);
-    d = hh(d, a, b, c, k[12], 11, -421815835);
-    c = hh(c, d, a, b, k[15], 16, 530742520);
-    b = hh(b, c, d, a, k[2], 23, -995338651);
-    a = ii(a, b, c, d, k[0], 6, -198630844);
-    d = ii(d, a, b, c, k[7], 10, 1126891415);
-    c = ii(c, d, a, b, k[14], 15, -1416354905);
-    b = ii(b, c, d, a, k[5], 21, -57434055);
-    a = ii(a, b, c, d, k[12], 6, 1700485571);
-    d = ii(d, a, b, c, k[3], 10, -1894986606);
-    c = ii(c, d, a, b, k[10], 15, -1051523);
-    b = ii(b, c, d, a, k[1], 21, -2054922799);
-    a = ii(a, b, c, d, k[8], 6, 1873313359);
-    d = ii(d, a, b, c, k[15], 10, -30611744);
-    c = ii(c, d, a, b, k[6], 15, -1560198380);
-    b = ii(b, c, d, a, k[13], 21, 1309151649);
-    a = ii(a, b, c, d, k[4], 6, -145523070);
-    d = ii(d, a, b, c, k[11], 10, -1120210379);
-    c = ii(c, d, a, b, k[2], 15, 718787259);
-    b = ii(b, c, d, a, k[9], 21, -343485551);
-    x[0] = add32(a, x[0]);
-    x[1] = add32(b, x[1]);
-    x[2] = add32(c, x[2]);
-    x[3] = add32(d, x[3]);
-  }, md5blk = function(s) {
-    var md5blks = [], i;
-    for (i = 0;i < 64;i += 4) {
-      md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
-    }
-    return md5blks;
-  }, md5blk_array = function(a) {
-    var md5blks = [], i;
-    for (i = 0;i < 64;i += 4) {
-      md5blks[i >> 2] = a[i] + (a[i + 1] << 8) + (a[i + 2] << 16) + (a[i + 3] << 24);
-    }
-    return md5blks;
-  }, md51 = function(s) {
-    var n = s.length, state = [1732584193, -271733879, -1732584194, 271733878], i, length, tail, tmp, lo, hi;
-    for (i = 64;i <= n;i += 64) {
-      md5cycle(state, md5blk(s.substring(i - 64, i)));
-    }
-    s = s.substring(i - 64);
-    length = s.length;
-    tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (i = 0;i < length;i += 1) {
-      tail[i >> 2] |= s.charCodeAt(i) << (i % 4 << 3);
-    }
-    tail[i >> 2] |= 128 << (i % 4 << 3);
-    if (i > 55) {
-      md5cycle(state, tail);
-      for (i = 0;i < 16;i += 1) {
-        tail[i] = 0;
-      }
-    }
-    tmp = n * 8;
-    tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
-    lo = parseInt(tmp[2], 16);
-    hi = parseInt(tmp[1], 16) || 0;
-    tail[14] = lo;
-    tail[15] = hi;
-    md5cycle(state, tail);
-    return state;
-  }, md51_array = function(a) {
-    var n = a.length, state = [1732584193, -271733879, -1732584194, 271733878], i, length, tail, tmp, lo, hi;
-    for (i = 64;i <= n;i += 64) {
-      md5cycle(state, md5blk_array(a.subarray(i - 64, i)));
-    }
-    a = i - 64 < n ? a.subarray(i - 64) : new Uint8Array(0);
-    length = a.length;
-    tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (i = 0;i < length;i += 1) {
-      tail[i >> 2] |= a[i] << (i % 4 << 3);
-    }
-    tail[i >> 2] |= 128 << (i % 4 << 3);
-    if (i > 55) {
-      md5cycle(state, tail);
-      for (i = 0;i < 16;i += 1) {
-        tail[i] = 0;
-      }
-    }
-    tmp = n * 8;
-    tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
-    lo = parseInt(tmp[2], 16);
-    hi = parseInt(tmp[1], 16) || 0;
-    tail[14] = lo;
-    tail[15] = hi;
-    md5cycle(state, tail);
-    return state;
-  }, hex_chr = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"], rhex = function(n) {
-    var s = "", j;
-    for (j = 0;j < 4;j += 1) {
-      s += hex_chr[n >> j * 8 + 4 & 15] + hex_chr[n >> j * 8 & 15];
-    }
-    return s;
-  }, hex = function(x) {
-    var i;
-    for (i = 0;i < x.length;i += 1) {
-      x[i] = rhex(x[i]);
-    }
-    return x.join("");
-  }, md5 = function(s) {
-    return hex(md51(s));
-  }, SparkMD5 = function() {
-    this.reset();
-  };
-  if (md5("hello") !== "5d41402abc4b2a76b9719d911017c592") {
-    add32 = function(x, y) {
-      var lsw = (x & 65535) + (y & 65535), msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-      return msw << 16 | lsw & 65535;
-    };
-  }
-  SparkMD5.prototype.append = function(str) {
-    if (/[\u0080-\uFFFF]/.test(str)) {
-      str = unescape(encodeURIComponent(str));
-    }
-    this.appendBinary(str);
-    return this;
-  };
-  SparkMD5.prototype.appendBinary = function(contents) {
-    this._buff += contents;
-    this._length += contents.length;
-    var length = this._buff.length, i;
-    for (i = 64;i <= length;i += 64) {
-      md5cycle(this._state, md5blk(this._buff.substring(i - 64, i)));
-    }
-    this._buff = this._buff.substr(i - 64);
-    return this;
-  };
-  SparkMD5.prototype.end = function(raw) {
-    var buff = this._buff, length = buff.length, i, tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ret;
-    for (i = 0;i < length;i += 1) {
-      tail[i >> 2] |= buff.charCodeAt(i) << (i % 4 << 3);
-    }
-    this._finish(tail, length);
-    ret = !!raw ? this._state : hex(this._state);
-    this.reset();
-    return ret;
-  };
-  SparkMD5.prototype._finish = function(tail, length) {
-    var i = length, tmp, lo, hi;
-    tail[i >> 2] |= 128 << (i % 4 << 3);
-    if (i > 55) {
-      md5cycle(this._state, tail);
-      for (i = 0;i < 16;i += 1) {
-        tail[i] = 0;
-      }
-    }
-    tmp = this._length * 8;
-    tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
-    lo = parseInt(tmp[2], 16);
-    hi = parseInt(tmp[1], 16) || 0;
-    tail[14] = lo;
-    tail[15] = hi;
-    md5cycle(this._state, tail);
-  };
-  SparkMD5.prototype.reset = function() {
-    this._buff = "";
-    this._length = 0;
-    this._state = [1732584193, -271733879, -1732584194, 271733878];
-    return this;
-  };
-  SparkMD5.prototype.destroy = function() {
-    delete this._state;
-    delete this._buff;
-    delete this._length;
-  };
-  SparkMD5.hash = function(str, raw) {
-    if (/[\u0080-\uFFFF]/.test(str)) {
-      str = unescape(encodeURIComponent(str));
-    }
-    var hash = md51(str);
-    return!!raw ? hash : hex(hash);
-  };
-  SparkMD5.hashBinary = function(content, raw) {
-    var hash = md51(content);
-    return!!raw ? hash : hex(hash);
-  };
-  SparkMD5.ArrayBuffer = function() {
-    this.reset();
-  };
-  SparkMD5.ArrayBuffer.prototype.append = function(arr) {
-    var buff = this._concatArrayBuffer(this._buff, arr), length = buff.length, i;
-    this._length += arr.byteLength;
-    for (i = 64;i <= length;i += 64) {
-      md5cycle(this._state, md5blk_array(buff.subarray(i - 64, i)));
-    }
-    this._buff = i - 64 < length ? buff.subarray(i - 64) : new Uint8Array(0);
-    return this;
-  };
-  SparkMD5.ArrayBuffer.prototype.end = function(raw) {
-    var buff = this._buff, length = buff.length, tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], i, ret;
-    for (i = 0;i < length;i += 1) {
-      tail[i >> 2] |= buff[i] << (i % 4 << 3);
-    }
-    this._finish(tail, length);
-    ret = !!raw ? this._state : hex(this._state);
-    this.reset();
-    return ret;
-  };
-  SparkMD5.ArrayBuffer.prototype._finish = SparkMD5.prototype._finish;
-  SparkMD5.ArrayBuffer.prototype.reset = function() {
-    this._buff = new Uint8Array(0);
-    this._length = 0;
-    this._state = [1732584193, -271733879, -1732584194, 271733878];
-    return this;
-  };
-  SparkMD5.ArrayBuffer.prototype.destroy = SparkMD5.prototype.destroy;
-  SparkMD5.ArrayBuffer.prototype._concatArrayBuffer = function(first, second) {
-    var firstLength = first.length, result = new Uint8Array(firstLength + second.byteLength);
-    result.set(first);
-    result.set(new Uint8Array(second), firstLength);
-    return result;
-  };
-  SparkMD5.ArrayBuffer.hash = function(arr, raw) {
-    var hash = md51_array(new Uint8Array(arr));
-    return!!raw ? hash : hex(hash);
-  };
-  return SparkMD5;
-});
 

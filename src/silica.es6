@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.9.2",
+  version               :  "0.9.3",
 
   // Set the root context
   setContext(contextName)
@@ -696,15 +696,17 @@ var Silica = {
       $elm = $(element);
       ctx = Silica.getContext($elm);
       action = $elm.data(act);
-      var actionName = action.substr(0, action.indexOf(")"))
+      var actionName = action.substr(0, action.indexOf("("))
       var models = action.substr(actionName.length).match(/(\w+)(?:\(?(\w+)\))?/g);
-      if (typeof action[1] !== 'undefined')
+      if (models)
       {
         for (let i = 0; i < models.length; i++) {
           models[i] = Silica.getPropByString(ctx, models[i])
         }
+      } else {
+        models = [];
       }
-      while (!ctx.hasOwnProperty(action) && ctx.hasOwnProperty('$ctrl'))
+      while (!ctx.hasOwnProperty(actionName) && ctx.hasOwnProperty('$ctrl'))
       {
         ctx = ctx.$ctrl;
       }
@@ -712,10 +714,10 @@ var Silica = {
         parameter = element.dataset.parameter;
       }
 
-      if (ctx.hasOwnProperty(action) || typeof ctx[action] !== 'undefined') {
-        return ctx[action].apply(ctx, [$elm, ...models, parameter, evnt]);
-      } else if (Silica.context[actionName] != null) {
-        return Silica.context[actionName].apply(Silica.ctx, [$elm, ...models, parameter, evnt]);
+      if (ctx.hasOwnProperty(actionName) || typeof ctx[actionName] !== 'undefined') {
+        return ctx[actionName].apply(ctx, [$elm, ...models, parameter, evnt]);
+      } else if (Silica.context[actionNameName] != null) {
+        return Silica.context[actionNameName].apply(Silica.ctx, [$elm, ...models, parameter, evnt]);
       } else {
         return console.error("Unknown action '" + actionName + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
       }

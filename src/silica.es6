@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.9.3",
+  version               :  "0.9.4",
 
   // Set the root context
   setContext(contextName)
@@ -716,8 +716,8 @@ var Silica = {
 
       if (ctx.hasOwnProperty(actionName) || typeof ctx[actionName] !== 'undefined') {
         return ctx[actionName].apply(ctx, [$elm, ...models, parameter, evnt]);
-      } else if (Silica.context[actionNameName] != null) {
-        return Silica.context[actionNameName].apply(Silica.ctx, [$elm, ...models, parameter, evnt]);
+      } else if (Silica.context[actionName] != null) {
+        return Silica.context[actionName].apply(Silica.ctx, [$elm, ...models, parameter, evnt]);
       } else {
         return console.error("Unknown action '" + actionName + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
       }

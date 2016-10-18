@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.9.4",
+  version               :  "0.9.5",
 
   // Set the root context
   setContext(contextName)
@@ -692,19 +692,24 @@ var Silica = {
     }
     Silica.apply(function()
     {
-      var $elm, action, ctx, objects, parameter;
+      var $elm, action, ctx, objects, parameter, actionName, models = [];
       $elm = $(element);
       ctx = Silica.getContext($elm);
       action = $elm.data(act);
-      var actionName = action.substr(0, action.indexOf("("))
-      var models = action.substr(actionName.length).match(/(\w+)(?:\(?(\w+)\))?/g);
-      if (models)
-      {
-        for (let i = 0; i < models.length; i++) {
-          models[i] = Silica.getPropByString(ctx, models[i])
+      var idx = action.indexOf("(");
+      if (idx > 0) {
+        actionName = action.substr(0, idx)
+        models = action.substr(actionName.length).match(/(\w+)(?:\(?(\w+)\))?/g);
+        if (models)
+        {
+          for (let i = 0; i < models.length; i++) {
+            models[i] = Silica.getPropByString(ctx, models[i])
+          }
+        } else {
+          models = [];
         }
       } else {
-        models = [];
+        actionName = action;
       }
       while (!ctx.hasOwnProperty(actionName) && ctx.hasOwnProperty('$ctrl'))
       {

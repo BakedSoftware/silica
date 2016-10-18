@@ -1136,7 +1136,7 @@ $.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(f
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.9.4", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.9.5", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1690,18 +1690,23 @@ $.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(f
       }
     }
     Silica.apply(function() {
-      var $elm, action, ctx, objects, parameter;
+      var $elm, action, ctx, objects, parameter, actionName, models = [];
       $elm = $(element);
       ctx = Silica.getContext($elm);
       action = $elm.data(act);
-      var actionName = action.substr(0, action.indexOf("("));
-      var models = action.substr(actionName.length).match(/(\w+)(?:\(?(\w+)\))?/g);
-      if (models) {
-        for (var i = 0;i < models.length;i++) {
-          models[i] = Silica.getPropByString(ctx, models[i]);
+      var idx = action.indexOf("(");
+      if (idx > 0) {
+        actionName = action.substr(0, idx);
+        models = action.substr(actionName.length).match(/(\w+)(?:\(?(\w+)\))?/g);
+        if (models) {
+          for (var i = 0;i < models.length;i++) {
+            models[i] = Silica.getPropByString(ctx, models[i]);
+          }
+        } else {
+          models = [];
         }
       } else {
-        models = [];
+        actionName = action;
       }
       while (!ctx.hasOwnProperty(actionName) && ctx.hasOwnProperty("$ctrl")) {
         ctx = ctx.$ctrl;

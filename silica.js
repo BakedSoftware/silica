@@ -1136,7 +1136,7 @@ $.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(f
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.9.0", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.9.1", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1694,7 +1694,8 @@ $.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(f
       $elm = $(element);
       ctx = Silica.getContext($elm);
       action = $elm.data(act);
-      action = action.match(/(\w+)(?:\(?(\w+)\))?/g);
+      actionName = action.substr(action.indexOf(")"));
+      action = action.substr(actionName.length).match(/(\w+)(?:\(?(\w+)\))?/g);
       var models;
       if (typeof action[1] !== "undefined") {
         models = action.slice(1, action.length);

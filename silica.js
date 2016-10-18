@@ -1136,7 +1136,7 @@ $.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(f
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.9.1", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.9.2", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1694,16 +1694,13 @@ $.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(f
       $elm = $(element);
       ctx = Silica.getContext($elm);
       action = $elm.data(act);
-      actionName = action.substr(action.indexOf(")"));
-      action = action.substr(actionName.length).match(/(\w+)(?:\(?(\w+)\))?/g);
-      var models;
+      var actionName = action.substr(0, action.indexOf(")"));
+      var models = action.substr(actionName.length).match(/(\w+)(?:\(?(\w+)\))?/g);
       if (typeof action[1] !== "undefined") {
-        models = action.slice(1, action.length);
         for (var i = 0;i < models.length;i++) {
           models[i] = Silica.getPropByString(ctx, models[i]);
         }
       }
-      action = action[0];
       while (!ctx.hasOwnProperty(action) && ctx.hasOwnProperty("$ctrl")) {
         ctx = ctx.$ctrl;
       }
@@ -1713,10 +1710,10 @@ $.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(f
       if (ctx.hasOwnProperty(action) || typeof ctx[action] !== "undefined") {
         return ctx[action].apply(ctx, [$elm].concat(_toConsumableArray(models), [parameter, evnt]));
       } else {
-        if (Silica.context[action] != null) {
-          return Silica.context[action].apply(Silica.ctx, [$elm].concat(_toConsumableArray(models), [parameter, evnt]));
+        if (Silica.context[actionName] != null) {
+          return Silica.context[actionName].apply(Silica.ctx, [$elm].concat(_toConsumableArray(models), [parameter, evnt]));
         } else {
-          return console.error("Unknown action '" + action + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
+          return console.error("Unknown action '" + actionName + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
         }
       }
     }, scope);

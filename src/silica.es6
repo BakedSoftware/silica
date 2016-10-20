@@ -621,9 +621,9 @@ var Silica = {
   },
   _handle_href(evt){
     var path = this.getAttribute("href")
-    if (path === "#" || path === "" || path.indexOf("tel://") == 0)
-    {
-      return;
+    const protocolCheckRegex = /[a-zA-Z]+\:+/g;
+    if(protocolCheckRegex.exec(path)!=null) {
+        return;
     }
     evt.preventDefault();
     Silica.goTo(path);

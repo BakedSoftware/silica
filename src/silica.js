@@ -650,10 +650,10 @@ window['Silica'] = {
     }
   },
   _handle_href(evt){
-    var path = this.getAttribute("href");
-    const protocolCheckRegex = /[a-zA-Z]+\:+/g;
-    if(protocolCheckRegex.exec(path)!=null || path === "#" || path === "") {
-        return;
+    var path = this.getAttribute("href")
+    if (path === "#" || path === "" || path.indexOf("tel://") == 0)
+    {
+      return;
     }
     evt.preventDefault();
     evt.stopPropagation();

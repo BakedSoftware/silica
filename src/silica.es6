@@ -621,7 +621,7 @@ var Silica = {
   },
   _handle_href(evt){
     var path = this.getAttribute("href")
-    if (path === "#" || path === "")
+    if (path === "#" || path === "" || path.indexOf("tel://") == 0)
     {
       return;
     }

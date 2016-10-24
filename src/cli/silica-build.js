@@ -33,6 +33,7 @@ var  index_path  =  path.join(cache_path, 'index.html');
 var  index       =  fs.readFileSync(index_path, 'utf8');
 
 var include_regex = /<(\w+\b(?:.|\n)+?)data-include="'(.+?)'"(.*?)>/;
+var env_regex = /\$\{(\w+)(?:\:=(\w+))?\}/;
 var match;
 
 while ((match = include_regex.exec(index)) !== null) {
@@ -45,6 +46,19 @@ while ((match = include_regex.exec(index)) !== null) {
   var  replacement  =  "<" + tag_opening + tag_closing + ">" + fs.readFileSync(path.join(cache_path, file_name), 'utf8');
 
   index = index.replace(to_replace, replacement);
+}
+
+while ((match = env_regex.exec(index)) !== null) {
+  var to_replace = match[0];
+  var env_name = match[1];
+  var replacement = process.env[env_name] || match[2];
+
+  if (replacement === undefined) {
+    console.error("Undefined ENV variable with no default: ", env_name)
+    process.exit(1);
+  }
+
+  index = index.replace(to_replace, replacement)
 }
 
 fs.writeFileSync(path.join('build', 'index.html'), index);
@@ -69,13 +83,38 @@ function afterScriptCaller() {
     console.log("Finished after build script");
   }
 }
+const Transform = require('stream').Transform;
+
+// All Transform streams are also Duplex Streams
+const envReplaceTransform = new Transform({
+  writableObjectMode: true,
+
+  transform(chunk, encoding, callback) {
+    chunk = chunk.toString();
+
+    while ((match = env_regex.exec(chunk)) !== null) {
+      var to_replace = match[0];
+      var env_name = match[1];
+      var replacement = process.env[env_name] || match[2];
+
+      if (replacement === undefined) {
+        console.error("Undefined ENV variable with no default: ", env_name)
+        process.exit(1);
+      }
+
+      chunk = chunk.replace(to_replace, replacement);
+    }
+    // Push the data onto the readable queue.
+    callback(null, chunk);
+  }
+});
 
 browserify({debug: true})
   .transform(babelify, {presets: ["es2015"]})
   .require(path.join(cache_path, 'app.js'), { entry: true })
   .bundle()
   .on("error", function (err) { console.log("Error: " + err.message); })
-  .pipe(fs.createWriteStream(path.join('build', 'js', 'app.js')))
+  .pipe(envReplaceTransform).pipe(fs.createWriteStream(path.join('build', 'js', 'app.js')))
   .on("close", function(){
     afterScriptCaller();
   });

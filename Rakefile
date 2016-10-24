@@ -9,7 +9,7 @@ directory 'build'
 directory File.join('build', 'js')
 
 @keep_cache = false
-@production = false
+@production = true
 
 desc "Remove previous build"
 task :clean do

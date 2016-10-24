@@ -33,7 +33,7 @@ var  index_path  =  path.join(cache_path, 'index.html');
 var  index       =  fs.readFileSync(index_path, 'utf8');
 
 var include_regex = /<(\w+\b(?:.|\n)+?)data-include="'(.+?)'"(.*?)>/;
-var env_regex = /\$\{(\w+)(?:\:=(\w+))?\}/;
+var env_regex = /\$\{(\w+)(?:\:=(.+))?\}/;
 var match;
 
 while ((match = include_regex.exec(index)) !== null) {

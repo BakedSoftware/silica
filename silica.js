@@ -775,6 +775,9 @@
     function Base(el) {
       _classCallCheck(this, Base);
       this.el = el;
+      if (el.parentElement) {
+        this.$ctrl = Silica.getContext(el.parentElement);
+      }
     }
     _createClass(Base, [{key:"$", value:function(_$) {
       function $(_x) {

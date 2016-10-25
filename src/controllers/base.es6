@@ -34,6 +34,9 @@ class Base
   constructor(el)
   {
     this.el = el;
+    if (el.parentElement) {
+      this.$ctrl = Silica.getContext(el.parentElement);
+    }
   }
 
   // A convenience proxy to jQuery with the instance's element as the scope

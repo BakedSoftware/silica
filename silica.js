@@ -823,7 +823,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.10.1", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.10.3", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1395,13 +1395,13 @@
       } else {
         actionName = action;
       }
-      while (!ctx.hasOwnProperty(actionName) && ctx.hasOwnProperty("$ctrl")) {
+      while (!ctx[actionName] && ctx.hasOwnProperty("$ctrl")) {
         ctx = ctx.$ctrl;
       }
       if (element.dataset.parameter) {
         parameter = element.dataset.parameter;
       }
-      if (ctx.hasOwnProperty(actionName) || typeof ctx[actionName] !== "undefined") {
+      if (typeof ctx[actionName] !== "undefined") {
         return ctx[actionName].apply(ctx, [$elm].concat(_toConsumableArray(models), [parameter, evnt]));
       } else {
         if (Silica.context[actionName] != null) {

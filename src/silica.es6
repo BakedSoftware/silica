@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.10.1",
+  version               :  "0.10.3",
 
   // Set the root context
   setContext(contextName)
@@ -711,7 +711,7 @@ var Silica = {
       } else {
         actionName = action;
       }
-      while (!ctx.hasOwnProperty(actionName) && ctx.hasOwnProperty('$ctrl'))
+      while (!ctx[actionName] && ctx.hasOwnProperty('$ctrl'))
       {
         ctx = ctx.$ctrl;
       }
@@ -719,7 +719,7 @@ var Silica = {
         parameter = element.dataset.parameter;
       }
 
-      if (ctx.hasOwnProperty(actionName) || typeof ctx[actionName] !== 'undefined') {
+      if (typeof ctx[actionName] !== 'undefined') {
         return ctx[actionName].apply(ctx, [$elm, ...models, parameter, evnt]);
       } else if (Silica.context[actionName] != null) {
         return Silica.context[actionName].apply(Silica.ctx, [$elm, ...models, parameter, evnt]);

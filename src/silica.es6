@@ -620,9 +620,9 @@ var Silica = {
     }
   },
   _handle_href(evt){
-    var path = this.getAttribute("href")
+    var path = this.getAttribute("href");
     const protocolCheckRegex = /[a-zA-Z]+\:+/g;
-    if(protocolCheckRegex.exec(path)!=null) {
+    if(protocolCheckRegex.exec(path)!=null || path === "#" || path === "") {
         return;
     }
     evt.preventDefault();

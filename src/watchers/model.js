@@ -5,11 +5,16 @@ export default function Model() {
   var raw = (this instanceof jQuery ? this[0] : this);
   var elements = raw.querySelectorAll('[data-model]');
   var element, i, type;
+  var activeElement = document.activeElement || Silica.__activeElement;
   for (i = elements.length - 1; i >= 0; --i)
   {
     element = elements[i];
+    if (element === activeElement)
+    {
+      continue;
+    }
     type = element.type;
-    if (element !== document.activeElement && (inputTypes.indexOf(type) !== -1) )
+    if (inputTypes.indexOf(type) !== -1)
     {
       element.value = Silica._model_get_val(element);
     }

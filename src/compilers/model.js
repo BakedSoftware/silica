@@ -73,5 +73,7 @@ export default function Model(context = null) {
     if (elm.hasAttribute('x-webkit-speech')) {
       elm.onwebkitspeechchange = change;
     }
+    elm.addEventListener("focus", function() { Silica.__activeElement = this; })
+    elm.addEventListener("blur", function() { if (Silica.__activeElement === this) Silica.__activeElement = null; })
   }
 }

@@ -511,6 +511,14 @@
       if (elm.hasAttribute("x-webkit-speech")) {
         elm.onwebkitspeechchange = change;
       }
+      elm.addEventListener("focus", function() {
+        Silica.__activeElement = this;
+      });
+      elm.addEventListener("blur", function() {
+        if (Silica.__activeElement === this) {
+          Silica.__activeElement = null;
+        }
+      });
     }
   }
 }, {}], 16:[function(require, module, exports) {
@@ -823,7 +831,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.10.3", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.10.5", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1318,7 +1326,8 @@
     }
   }, _handle_href:function _handle_href(evt) {
     var path = this.getAttribute("href");
-    if (path === "#" || path === "") {
+    var protocolCheckRegex = /[a-zA-Z]+\:+/g;
+    if (protocolCheckRegex.exec(path) != null || path === "#" || path === "") {
       return;
     }
     evt.preventDefault();
@@ -1356,10 +1365,10 @@
     if (!Silica.isInDOM(element)) {
       return;
     }
-    if (!element.dataset["noPreventDefault"]) {
+    if (!element.dataset["nopreventdefault"]) {
       evnt.preventDefault();
     }
-    if (!element.dataset["noStopPropagation"]) {
+    if (!element.dataset["nostoppropagation"]) {
       evnt.stopPropagation();
     }
     var scope = document, trap_to, trapped_scope;
@@ -1699,10 +1708,14 @@
     var raw = this instanceof jQuery ? this[0] : this;
     var elements = raw.querySelectorAll("[data-model]");
     var element, i, type;
+    var activeElement = document.activeElement || Silica.__activeElement;
     for (i = elements.length - 1;i >= 0;--i) {
       element = elements[i];
+      if (element === activeElement) {
+        continue;
+      }
       type = element.type;
-      if (element !== document.activeElement && inputTypes.indexOf(type) !== -1) {
+      if (inputTypes.indexOf(type) !== -1) {
         element.value = Silica._model_get_val(element);
       } else {
         if (type === "radio") {

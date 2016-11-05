@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.10.4",
+  version               :  "0.10.5",
 
   // Set the root context
   setContext(contextName)
@@ -668,11 +668,11 @@ var Silica = {
     {
       return;
     }
-    if (!element.dataset["noPreventDefault"])
+    if (!element.dataset["nopreventdefault"])
     {
       evnt.preventDefault();
     }
-    if (!element.dataset["noStopPropagation"])
+    if (!element.dataset["nostoppropagation"])
     {
       evnt.stopPropagation();
     }

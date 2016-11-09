@@ -139,17 +139,28 @@ try {
 
 var sprite_src = path.join('src', 'images', 'sprites');
 
+function walk(dir) {
+  var results = []
+  var list = fs.readdirSync(dir)
+  list.forEach(function(file) {
+    file = dir + '/' + file
+    var stat = fs.statSync(file)
+    if (stat && stat.isDirectory()) results = results.concat(walk(file))
+    else results.push(file)
+  })
+  return results
+}
+
 function stylus_render() {
-  var  styles   =  fs.readdirSync(path.join(cache_path, 'styles')).filter(function(name) {
-    return name[0] !== '.' && name !== 'base.styl' && name !== 'fonts.styl';
+  var  styles   =  walk(path.join(cache_path, 'styles')).filter(function(name) {
+    return name[0] !== '.' && name !== 'base.styl' && name !== 'fonts.styl' && name.endsWith(".styl");
   });
 
 
   var styl_path, styl_content;
 
   for (var len = styles.length, i = 0; i < len; ++i) {
-    styl_path = path.join(cache_path, 'styles', styles[i]);
-    styl_content = fs.readFileSync(styl_path, 'utf8');
+    styl_content = fs.readFileSync(styles[i], 'utf8');
     var s = stylus(styl_content)
               .set('filename', styles[i])
               .include(require('nib').path)

@@ -138,9 +138,9 @@
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {default:obj};
   }
-  exports.default = {Directives:_directives2.default, _if:_if2.default, Show:_show2.default, Class:_class2.default, Disabled:_disabled2.default, Href:_href2.default, Style:_style2.default, Include:_include2.default, Controller:_controller2.default, Click:_click2.default, DoubleClick:_double_click2.default, Blur:_blur2.default, Focus:_focus2.default, Tabs:_tabs2.default, Model:_model2.default, Submit:_submit2.default, Src:_src2.default, Scroll:_scroll2.default, ScrollFinished:_scroll_finished2.default, 
+  exports.default = {Directives:_directives2.default, _if:_if2.default, Show:_show2.default, Class:_class2.default, Disabled:_disabled2.default, Href:_href2.default, Style:_style2.default, Include:_include2.default, Controller:_controller2.default, Click:_click2.default, DoubleClick:_double_click2.default, Blur:_blur2.default, Focus:_focus2.default, Tabs:_tabs2.default, Model:_model2.default, Submit:_submit2.default, Src:_src2.default, Scroll:_scroll2.default, ScrollFinished:_scroll_finished2.default,
   MouseDown:_mousedown2.default, MouseUp:_mouseup2.default, Generic:_genericAttribute2.default, KeyDown:_keydown2.default, TouchStart:_touchstart2.default, TouchCancel:_touchcancel2.default, TouchEnd:_touchend2.default};
-}, {"./blur.js":1, "./class.js":2, "./click.js":3, "./controller.js":5, "./directives.js":6, "./disabled.js":7, "./double_click.js":8, "./focus.js":9, "./generic-attribute.js":10, "./href.js":11, "./if.js":12, "./include.js":13, "./keydown.js":14, "./model.js":15, "./mousedown.js":16, "./mouseup.js":17, "./scroll.js":18, "./scroll_finished.js":19, "./show.js":20, "./src.js":21, "./style.js":22, "./submit.js":23, "./tabs.js":24, "./touch/touchcancel.js":25, "./touch/touchend.js":26, "./touch/touchstart.js":27}], 
+}, {"./blur.js":1, "./class.js":2, "./click.js":3, "./controller.js":5, "./directives.js":6, "./disabled.js":7, "./double_click.js":8, "./focus.js":9, "./generic-attribute.js":10, "./href.js":11, "./if.js":12, "./include.js":13, "./keydown.js":14, "./model.js":15, "./mousedown.js":16, "./mouseup.js":17, "./scroll.js":18, "./scroll_finished.js":19, "./show.js":20, "./src.js":21, "./style.js":22, "./submit.js":23, "./tabs.js":24, "./touch/touchcancel.js":25, "./touch/touchend.js":26, "./touch/touchstart.js":27}],
 5:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Controller;
@@ -831,7 +831,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.10.5", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.10.6", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {

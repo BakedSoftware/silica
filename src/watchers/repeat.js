@@ -64,6 +64,16 @@ export default function Repeat() {
 
     // Get the template
     template = Silica._repeat_templates[raw.dataset._rt_repeat_template];
+    if (newList.constructor == Object) {
+      let keys = Object.keys(newList);
+      let obj = newList;
+      newList = [];
+      let key, val;
+      for (let j = 0, len = keys.length, key = keys[j]; j < len; j++) {
+        key = keys[j];
+        newList[j] = { key: key, value: obj[key] };
+      }
+    }
 
     let count_diff = raw.childElementCount - newList.length;
     let node;

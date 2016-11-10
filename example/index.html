@@ -38,6 +38,10 @@
           </div>
         </li>
       </ul>
+
+      <ul data-repeat="state in states">
+        <li>{{state.key}} = {{state.value}}</li>
+      </ul>
     </div>
       <script src="https://code.jquery.com/jquery-2.1.4.min.js" type="text/javascript" charset="utf-8"></script>
       <script src="../silica.min.js" type="text/javascript" charset="utf-8"></script>
@@ -52,6 +56,7 @@
                 this.fonts = [{key: "Arial", name:"Super A"}, {key:"Courier",
                   name:"Old Typey"}, {key:"Operator Mono", name:"Best"}];
                 this.selectedFont = "Courier";
+                this.states = { "FL": "Florida", "CA": "California"};
                 this.users = [
                   {
                     name: "Alice",

@@ -17,6 +17,7 @@ var  fileServer    =  new serveStatic.Server('./build');
 program
   .option('-p --port [value]', "The port to listen on")
   .option('-s --styles [path]', "Directory of additional style imports relative to the src directory")
+  .option('-z --nolivereload', "Don't turn on livereload")
   .parse(process.argv);
 
 var styleIncludes = program.styles;
@@ -70,5 +71,7 @@ require('http').createServer(function (request, response) {
 
 rebuild();
 
-var server = livereload.createServer();
-server.watch(path.join(process.cwd(), "/build"));
+if (!program.nolivereload) {
+  var server = livereload.createServer();
+  server.watch(path.join(process.cwd(), "/build"));
+}

@@ -239,9 +239,16 @@
     var raw = this instanceof jQuery ? this[0] : this;
     var nodes = Silica.query(raw, "[data-disabled]");
     var node;
+    var property;
+    var negate;
     for (var i = nodes.length - 1;i >= 0;--i) {
       node = nodes[i];
-      if (Silica.getValue(node, node.dataset.disabled)) {
+      property = node.dataset.disabled;
+      negate = property[0] === "!";
+      if (negate) {
+        property = property.substr(1);
+      }
+      if (Silica._show(node, property, negate)) {
         node.setAttribute("disabled", true);
       } else {
         node.removeAttribute("disabled");
@@ -831,7 +838,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.10.8", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.10.9", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {

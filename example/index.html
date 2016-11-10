@@ -16,7 +16,7 @@
         <select data-model="selectedFont" data-repeat="font in fonts">
           <option data-model="font.key">{{font.name}}</option>
         </select>
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" data-disabled="!canSubmit">
       </form>
 
       <ul data-repeat="user in users">
@@ -110,6 +110,10 @@
                     ]
                   }
                 ];
+              }
+
+              canSubmit() {
+                return this.name && this.name.length > 0;
               }
 
               greeting() {

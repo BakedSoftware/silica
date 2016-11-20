@@ -6,8 +6,8 @@ MAINTAINER Kayle Gishen <k@bkdsw.com>
 
 RUN apk update
 
-# Install Curl for NodeJS
-RUN apk add nodejs;
+# Install NodeJS and Git
+RUN apk add nodejs git;
 
 # Download bower and silica
 RUN npm install -g bower silica

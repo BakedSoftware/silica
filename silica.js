@@ -121,12 +121,24 @@
   var _scroll2 = _interopRequireDefault(_scroll);
   var _scroll_finished = require("./scroll_finished.js");
   var _scroll_finished2 = _interopRequireDefault(_scroll_finished);
-  var _mousedown = require("./mousedown.js");
-  var _mousedown2 = _interopRequireDefault(_mousedown);
-  var _mouseup = require("./mouseup.js");
-  var _mouseup2 = _interopRequireDefault(_mouseup);
   var _genericAttribute = require("./generic-attribute.js");
   var _genericAttribute2 = _interopRequireDefault(_genericAttribute);
+  var _mousedown = require("./mousedown.js");
+  var _mousedown2 = _interopRequireDefault(_mousedown);
+  var _mouseenter = require("./mouseenter.js");
+  var _mouseenter2 = _interopRequireDefault(_mouseenter);
+  var _mouseleave = require("./mouseleave.js");
+  var _mouseleave2 = _interopRequireDefault(_mouseleave);
+  var _mousemove = require("./mousemove.js");
+  var _mousemove2 = _interopRequireDefault(_mousemove);
+  var _mouseout = require("./mouseout.js");
+  var _mouseout2 = _interopRequireDefault(_mouseout);
+  var _mouseover = require("./mouseover.js");
+  var _mouseover2 = _interopRequireDefault(_mouseover);
+  var _mouseup = require("./mouseup.js");
+  var _mouseup2 = _interopRequireDefault(_mouseup);
+  var _mousewheel = require("./mousewheel.js");
+  var _mousewheel2 = _interopRequireDefault(_mousewheel);
   var _keydown = require("./keydown.js");
   var _keydown2 = _interopRequireDefault(_keydown);
   var _touchstart = require("./touch/touchstart.js");
@@ -139,9 +151,9 @@
     return obj && obj.__esModule ? obj : {default:obj};
   }
   exports.default = {Directives:_directives2.default, _if:_if2.default, Show:_show2.default, Class:_class2.default, Disabled:_disabled2.default, Href:_href2.default, Style:_style2.default, Include:_include2.default, Controller:_controller2.default, Click:_click2.default, DoubleClick:_double_click2.default, Blur:_blur2.default, Focus:_focus2.default, Tabs:_tabs2.default, Model:_model2.default, Submit:_submit2.default, Src:_src2.default, Scroll:_scroll2.default, ScrollFinished:_scroll_finished2.default, 
-  MouseDown:_mousedown2.default, MouseUp:_mouseup2.default, Generic:_genericAttribute2.default, KeyDown:_keydown2.default, TouchStart:_touchstart2.default, TouchCancel:_touchcancel2.default, TouchEnd:_touchend2.default};
-}, {"./blur.js":1, "./class.js":2, "./click.js":3, "./controller.js":5, "./directives.js":6, "./disabled.js":7, "./double_click.js":8, "./focus.js":9, "./generic-attribute.js":10, "./href.js":11, "./if.js":12, "./include.js":13, "./keydown.js":14, "./model.js":15, "./mousedown.js":16, "./mouseup.js":17, "./scroll.js":18, "./scroll_finished.js":19, "./show.js":20, "./src.js":21, "./style.js":22, "./submit.js":23, "./tabs.js":24, "./touch/touchcancel.js":25, "./touch/touchend.js":26, "./touch/touchstart.js":27}], 
-5:[function(require, module, exports) {
+  Generic:_genericAttribute2.default, MouseDown:_mousedown2.default, MouseUp:_mouseup2.default, MouseOut:_mouseout2.default, MouseMove:_mousemove2.default, MouseWheel:_mousewheel2.default, MouseLeave:_mouseleave2.default, MouseEnter:_mouseenter2.default, MouseOver:_mouseover2.default, KeyDown:_keydown2.default, TouchStart:_touchstart2.default, TouchCancel:_touchcancel2.default, TouchEnd:_touchend2.default};
+}, {"./blur.js":1, "./class.js":2, "./click.js":3, "./controller.js":5, "./directives.js":6, "./disabled.js":7, "./double_click.js":8, "./focus.js":9, "./generic-attribute.js":10, "./href.js":11, "./if.js":12, "./include.js":13, "./keydown.js":14, "./model.js":15, "./mousedown.js":16, "./mouseenter.js":17, "./mouseleave.js":18, "./mousemove.js":19, "./mouseout.js":20, "./mouseover.js":21, "./mouseup.js":22, "./mousewheel.js":23, "./scroll.js":24, "./scroll_finished.js":25, "./show.js":26, "./src.js":27, 
+"./style.js":28, "./submit.js":29, "./tabs.js":30, "./touch/touchcancel.js":31, "./touch/touchend.js":32, "./touch/touchstart.js":33}], 5:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Controller;
   function Controller(ctx) {
@@ -544,6 +556,76 @@
   }
 }, {}], 17:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
+  exports.default = MouseEnter;
+  function MouseEnter() {
+    var nodes = Silica.query(this, "[data-mouseenter]");
+    var node;
+    for (var i = nodes.length - 1;i >= 0;--i) {
+      node = nodes[i];
+      node._rt_live = true;
+      node.onmouseenter = function(evt) {
+        Silica._call(this, evt, "mouseenter");
+      };
+    }
+  }
+}, {}], 18:[function(require, module, exports) {
+  Object.defineProperty(exports, "__esModule", {value:true});
+  exports.default = MouseLeave;
+  function MouseLeave() {
+    var nodes = Silica.query(this, "[data-mouseleave]");
+    var node;
+    for (var i = nodes.length - 1;i >= 0;--i) {
+      node = nodes[i];
+      node._rt_live = true;
+      node.onmouseleave = function(evt) {
+        Silica._call(this, evt, "mouseleave");
+      };
+    }
+  }
+}, {}], 19:[function(require, module, exports) {
+  Object.defineProperty(exports, "__esModule", {value:true});
+  exports.default = MouseMove;
+  function MouseMove() {
+    var nodes = Silica.query(this, "[data-mousemove]");
+    var node;
+    for (var i = nodes.length - 1;i >= 0;--i) {
+      node = nodes[i];
+      node._rt_live = true;
+      node.onmousemove = function(evt) {
+        Silica._call(this, evt, "mousemove");
+      };
+    }
+  }
+}, {}], 20:[function(require, module, exports) {
+  Object.defineProperty(exports, "__esModule", {value:true});
+  exports.default = MouseOut;
+  function MouseOut() {
+    var nodes = Silica.query(this, "[data-mouseout]");
+    var node;
+    for (var i = nodes.length - 1;i >= 0;--i) {
+      node = nodes[i];
+      node._rt_live = true;
+      node.onmouseout = function(evt) {
+        Silica._call(this, evt, "mouseout");
+      };
+    }
+  }
+}, {}], 21:[function(require, module, exports) {
+  Object.defineProperty(exports, "__esModule", {value:true});
+  exports.default = MouseOver;
+  function MouseOver() {
+    var nodes = Silica.query(this, "[data-mouseover]");
+    var node;
+    for (var i = nodes.length - 1;i >= 0;--i) {
+      node = nodes[i];
+      node._rt_live = true;
+      node.onmouseover = function(evt) {
+        Silica._call(this, evt, "mouseover");
+      };
+    }
+  }
+}, {}], 22:[function(require, module, exports) {
+  Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = MouseUp;
   function MouseUp() {
     var nodes = Silica.query(this, "[data-mouseup]");
@@ -556,7 +638,21 @@
       };
     }
   }
-}, {}], 18:[function(require, module, exports) {
+}, {}], 23:[function(require, module, exports) {
+  Object.defineProperty(exports, "__esModule", {value:true});
+  exports.default = MouseWheel;
+  function MouseWheel() {
+    var nodes = Silica.query(this, "[data-mousewheel]");
+    var node;
+    for (var i = nodes.length - 1;i >= 0;--i) {
+      node = nodes[i];
+      node._rt_live = true;
+      node.onmousewheel = function(evt) {
+        Silica._call(this, evt, "mousewheel");
+      };
+    }
+  }
+}, {}], 24:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Scroll;
   function Scroll() {
@@ -570,7 +666,7 @@
       };
     }
   }
-}, {}], 19:[function(require, module, exports) {
+}, {}], 25:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = ScrollFinished;
   function ScrollFinished() {
@@ -596,7 +692,7 @@
       _loop(i);
     }
   }
-}, {}], 20:[function(require, module, exports) {
+}, {}], 26:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Show;
   function Show() {
@@ -639,7 +735,7 @@
       }
     }
   }
-}, {}], 21:[function(require, module, exports) {
+}, {}], 27:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Src;
   function Src() {
@@ -651,7 +747,7 @@
       node.src = Silica.getValue(node, node.dataset.src) || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
     }
   }
-}, {}], 22:[function(require, module, exports) {
+}, {}], 28:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Style;
   function Style() {
@@ -663,7 +759,7 @@
       node.setAttribute("style", Silica.getValue(node, node.dataset.style));
     }
   }
-}, {}], 23:[function(require, module, exports) {
+}, {}], 29:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Submit;
   function Submit() {
@@ -680,7 +776,7 @@
       node._rt_live = true;
     }
   }
-}, {}], 24:[function(require, module, exports) {
+}, {}], 30:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Tabs;
   function Tabs() {
@@ -715,7 +811,7 @@
       return $elm.replaceWith(Silica.compile($target));
     });
   }
-}, {}], 25:[function(require, module, exports) {
+}, {}], 31:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = TouchCancel;
   function TouchCancel() {
@@ -729,7 +825,7 @@
       };
     }
   }
-}, {}], 26:[function(require, module, exports) {
+}, {}], 32:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = TouchEnd;
   function TouchEnd() {
@@ -743,7 +839,7 @@
       };
     }
   }
-}, {}], 27:[function(require, module, exports) {
+}, {}], 33:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = TouchStart;
   function TouchStart() {
@@ -757,7 +853,7 @@
       };
     }
   }
-}, {}], 28:[function(require, module, exports) {
+}, {}], 34:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   var _createClass = function() {
     function defineProperties(target, props) {
@@ -809,7 +905,7 @@
   }();
   Base.watchers = {};
   exports.default = Base;
-}, {}], 29:[function(require, module, exports) {
+}, {}], 35:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   var _base = require("./base");
   var _base2 = _interopRequireDefault(_base);
@@ -818,7 +914,7 @@
   }
   Controllers = {Base:_base2.default};
   exports.default = Controllers;
-}, {"./base":28}], 30:[function(require, module, exports) {
+}, {"./base":34}], 36:[function(require, module, exports) {
   var _controllers = require("./controllers/controllers");
   var _controllers2 = _interopRequireDefault(_controllers);
   var _compilers = require("./compilers/compilers");
@@ -838,7 +934,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.10.9", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.0", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1593,7 +1689,7 @@
   }, compilers:_compilers2.default, watchers:_watchers2.default};
   Silica.Controllers = _controllers2.default;
   window.Silica = Silica;
-}, {"./compilers/compilers":4, "./controllers/controllers":29, "./watchers/watchers":36}], 31:[function(require, module, exports) {
+}, {"./compilers/compilers":4, "./controllers/controllers":35, "./watchers/watchers":42}], 37:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Class;
   function Class() {
@@ -1636,7 +1732,7 @@
       }
     }
   }
-}, {}], 32:[function(require, module, exports) {
+}, {}], 38:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = _If;
   function _If() {
@@ -1706,7 +1802,7 @@
       }
     }
   }
-}, {}], 33:[function(require, module, exports) {
+}, {}], 39:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Model;
   var inputTimeRegexp = /date|time/i;
@@ -1753,7 +1849,7 @@
       }
     }
   }
-}, {}], 34:[function(require, module, exports) {
+}, {}], 40:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Repeat;
   var _controller = require("../compilers/controller.js");
@@ -1865,7 +1961,7 @@
       }
     }
   }
-}, {"../compilers/controller.js":5}], 35:[function(require, module, exports) {
+}, {"../compilers/controller.js":5}], 41:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Show;
   function Show() {
@@ -1903,7 +1999,7 @@
       }
     }
   }
-}, {}], 36:[function(require, module, exports) {
+}, {}], 42:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   var _if = require("./if.js");
   var _if2 = _interopRequireDefault(_if);
@@ -1929,7 +2025,7 @@
     return obj && obj.__esModule ? obj : {default:obj};
   }
   exports.default = {_If:_if2.default, Repeat:_repeat2.default, Show:_show2.default, Class:_class2.default, Model:_model2.default, Disabled:_disabled2.default, Href:_href2.default, Style:_style2.default, Src:_src2.default, Generic:_genericAttribute2.default};
-}, {"../compilers/disabled.js":7, "../compilers/generic-attribute.js":10, "../compilers/href.js":11, "../compilers/src.js":21, "../compilers/style.js":22, "./class.js":31, "./if.js":32, "./model.js":33, "./repeat.js":34, "./show.js":35}]}, {}, [30]);
+}, {"../compilers/disabled.js":7, "../compilers/generic-attribute.js":10, "../compilers/href.js":11, "../compilers/src.js":27, "../compilers/style.js":28, "./class.js":37, "./if.js":38, "./model.js":39, "./repeat.js":40, "./show.js":41}]}, {}, [36]);
 $.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(function(text) {
   return function(elem) {
     return $.trim(elem.innerHTML.toLowerCase()) === text.toLowerCase();

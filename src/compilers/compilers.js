@@ -17,9 +17,18 @@ import Submit from "./submit.js"
 import Src from "./src.js"
 import Scroll from "./scroll.js"
 import ScrollFinished from "./scroll_finished.js"
-import MouseDown from "./mousedown.js"
-import MouseUp from "./mouseup.js"
 import Generic from "./generic-attribute.js"
+
+// Mouse Events
+import MouseDown from "./mousedown.js"
+import MouseEnter from "./mouseenter.js"
+import MouseLeave from "./mouseleave.js"
+import MouseMove from "./mousemove.js"
+import MouseOut from "./mouseout.js"
+import MouseOver from "./mouseover.js"
+import MouseUp from "./mouseup.js"
+import MouseWheel from "./mousewheel.js"
+
 // Key Events
 import KeyDown from "./keydown.js"
 //Touch Events
@@ -47,9 +56,16 @@ export default {
   Src,
   Scroll,
   ScrollFinished,
+  Generic,
+  // Mouse Events
   MouseDown,
   MouseUp,
-  Generic,
+  MouseOut,
+  MouseMove,
+  MouseWheel,
+  MouseLeave,
+  MouseEnter,
+  MouseOver,
   // Key Events
   KeyDown,
   //Touch Events

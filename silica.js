@@ -934,7 +934,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.0", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.1", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1737,6 +1737,7 @@
   exports.default = _If;
   function _If() {
     var comment, compiled, element, elements, i, isVisible, k, negate, raw, _i, _len, _ref;
+    var wrapper = document.createElement("div");
     _ref = Silica._ifs;
     for (k in _ref) {
       elements = _ref[k];
@@ -1774,7 +1775,12 @@
                 var subNode = undefined;
                 for (var j = subNodes.length - 1;j >= 0;--j) {
                   subNode = subNodes[j];
-                  prop = subNode.dataset["if"];
+                  if (subNode.nodeType === 8 && !subNode.dataset) {
+                    wrapper.innerHTML = subNode.data;
+                    prop = wrapper.firstChild.dataset["if"];
+                  } else {
+                    prop = subNode.dataset["if"];
+                  }
                   list = Silica._shws[prop];
                   Silica._shws[prop] = (_ref1 = list != null ? list.filter(function(obj) {
                     return!obj == subNode;

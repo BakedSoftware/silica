@@ -1,5 +1,6 @@
 export default function _If() {
   var comment, compiled, element, elements, i, isVisible, k, negate, raw, _i, _len, _ref;
+  var wrapper = document.createElement("div");
   _ref = Silica._ifs;
   for (k in _ref) {
     elements = _ref[k];
@@ -39,7 +40,15 @@ export default function _If() {
             {
               var $e, list, prop, _ref1;
               subNode = subNodes[j];
-              prop = subNode.dataset['if'];
+              if (subNode.nodeType === 8 && !subNode.dataset)
+              {
+                wrapper.innerHTML = subNode.data;
+                prop = wrapper.firstChild.dataset['if'];
+              }
+              else
+              {
+                prop = subNode.dataset['if'];
+              }
               list = Silica._shws[prop];
               Silica._shws[prop] = (_ref1 = list != null ? list.filter(function(obj) {
                 return !obj == subNode;

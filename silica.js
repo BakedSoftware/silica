@@ -51,7 +51,7 @@
       if (raw.dataset._rt_hard_klass == null) {
         raw.dataset._rt_hard_klass = raw.className;
       }
-      klass = Silica.getValue(raw, raw.dataset.class, null, [node, node.dataset.parameter]);
+      klass = Silica.getValue(raw, raw.dataset.class, null, null);
       if (klass) {
         raw.classList.add(klass);
       }
@@ -934,7 +934,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.1", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.2", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1692,44 +1692,46 @@
 }, {"./compilers/compilers":4, "./controllers/controllers":35, "./watchers/watchers":42}], 37:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Class;
+  function updater(element) {
+    var hardClass = element.dataset._rt_hard_klass;
+    if (hardClass && hardClass.length > 0) {
+      element.className = hardClass;
+    } else {
+      if (hardClass == "") {
+        element.className = "";
+      } else {
+        element.dataset._rt_hard_klass = element.className;
+      }
+    }
+    var klass = Silica.getValue(element, element.dataset.class, null, [element, element.dataset.parameter]);
+    if (klass) {
+      if (klass instanceof Array) {
+        element.classList.add.apply(element.classList, klass);
+      } else {
+        element.classList.add(klass);
+      }
+    }
+    if (element.dataset.show != null) {
+      var key = element.dataset.show;
+      var negate = key[0] == "!";
+      isVisible = Silica._show($(element), key, negate);
+      if (isVisible && element.classList.contains("hidden")) {
+        element.classList.remove("hidden");
+      } else {
+        if (!isVisible && !element.classList.contains("hidden")) {
+          element.classList.add("hidden");
+        }
+      }
+    }
+  }
   function Class() {
     var raw = this instanceof jQuery ? this[0] : this;
     var elements = raw.querySelectorAll("[data-class]");
-    var element;
-    var klass;
-    var hardClass;
+    if (raw.dataset.class) {
+      updater(raw);
+    }
     for (var i = elements.length - 1;i >= 0;--i) {
-      element = elements[i];
-      hardClass = element.dataset._rt_hard_klass;
-      if (hardClass && hardClass.length > 0) {
-        element.className = hardClass;
-      } else {
-        if (hardClass == "") {
-          element.className = "";
-        } else {
-          element.dataset._rt_hard_klass = element.className;
-        }
-      }
-      klass = Silica.getValue(element, element.dataset.class, null, [element, element.dataset.parameter]);
-      if (klass) {
-        if (klass instanceof Array) {
-          element.classList.add.apply(element.classList, klass);
-        } else {
-          element.classList.add(klass);
-        }
-      }
-      if (element.dataset.show != null) {
-        var key = element.dataset.show;
-        var negate = key[0] == "!";
-        isVisible = Silica._show($(element), key, negate);
-        if (isVisible && element.classList.contains("hidden")) {
-          element.classList.remove("hidden");
-        } else {
-          if (!isVisible && !element.classList.contains("hidden")) {
-            element.classList.add("hidden");
-          }
-        }
-      }
+      updater(elements[i]);
     }
   }
 }, {}], 38:[function(require, module, exports) {

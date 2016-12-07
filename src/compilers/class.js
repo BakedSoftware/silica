@@ -10,7 +10,7 @@ export default function Class() {
     {
       raw.dataset._rt_hard_klass = raw.className;
     }
-    klass = Silica.getValue(raw, raw.dataset.class, null, [node, node.dataset.parameter]);
+    klass = Silica.getValue(raw, raw.dataset.class, null, null);
     if (klass)
     {
       raw.classList.add(klass);

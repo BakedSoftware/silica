@@ -31,6 +31,7 @@ import MouseWheel from "./mousewheel.js"
 
 // Key Events
 import KeyDown from "./keydown.js"
+import KeyUp from "./keyup.js"
 //Touch Events
 import TouchStart from "./touch/touchstart.js"
 import TouchCancel from "./touch/touchcancel.js"
@@ -68,6 +69,7 @@ export default {
   MouseOver,
   // Key Events
   KeyDown,
+  KeyUp,
   //Touch Events
   TouchStart,
   TouchCancel,

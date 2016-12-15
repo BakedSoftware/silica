@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.11.3",
+  version               :  "0.11.4",
 
   // Set the root context
   setContext(contextName)
@@ -874,32 +874,43 @@ var Silica = {
     var isSingle = attributes.length == 1;
     var nodes = raw.getElementsByTagName(type);
     var filtered = [];
-    for (let i = nodes.length - 1; i >=0; --i)
+    if (attributes.length > 0)
     {
-      let node = nodes.item(i);
-      if (!node._rt_live)
+      for (let i = nodes.length - 1; i >=0; --i)
       {
-        for (let j = attributes.length - 1; j >=0; --j)
+        let node = nodes.item(i);
+        if (!node._rt_live)
         {
-          if (node.hasAttribute(attributes[j].replace(/\[|\]/g, "")))
+          for (let j = attributes.length - 1; j >=0; --j)
           {
-            filtered.push(node);
+            if (node.hasAttribute(attributes[j].replace(/\[|\]/g, "")))
+            {
+              filtered.push(node);
+              break;
+            }
+          }
+        }
+      }
+      if (raw.tagName === type && !raw.rt_live)
+      {
+        let attribute;
+        for (let i = attributes.length - 1; i >=0; --i)
+        {
+          attribute = attributes[i];
+          if (raw.hasAttribute(attribute.substring(1, attribute.length-1)))
+          {
+            filtered.push(raw);
             break;
           }
         }
       }
     }
-    if (raw.tagName === type && !raw.rt_live)
+    else
     {
-      let attribute;
-      for (let i = attributes.length - 1; i >=0; --i)
+      filtered = nodes;
+      if (raw.tagName === type)
       {
-        attribute = attributes[i];
-        if (raw.hasAttribute(attribute.substring(1, attribute.length-1)))
-        {
-          filtered.push(root);
-          break;
-        }
+        filtered.push(raw);
       }
     }
     return filtered;

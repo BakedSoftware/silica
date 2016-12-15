@@ -948,7 +948,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.3", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.4", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1650,25 +1650,32 @@
     var isSingle = attributes.length == 1;
     var nodes = raw.getElementsByTagName(type);
     var filtered = [];
-    for (var i = nodes.length - 1;i >= 0;--i) {
-      var node = nodes.item(i);
-      if (!node._rt_live) {
-        for (var j = attributes.length - 1;j >= 0;--j) {
-          if (node.hasAttribute(attributes[j].replace(/\[|\]/g, ""))) {
-            filtered.push(node);
+    if (attributes.length > 0) {
+      for (var i = nodes.length - 1;i >= 0;--i) {
+        var node = nodes.item(i);
+        if (!node._rt_live) {
+          for (var j = attributes.length - 1;j >= 0;--j) {
+            if (node.hasAttribute(attributes[j].replace(/\[|\]/g, ""))) {
+              filtered.push(node);
+              break;
+            }
+          }
+        }
+      }
+      if (raw.tagName === type && !raw.rt_live) {
+        var attribute = undefined;
+        for (var _i4 = attributes.length - 1;_i4 >= 0;--_i4) {
+          attribute = attributes[_i4];
+          if (raw.hasAttribute(attribute.substring(1, attribute.length - 1))) {
+            filtered.push(raw);
             break;
           }
         }
       }
-    }
-    if (raw.tagName === type && !raw.rt_live) {
-      var attribute = undefined;
-      for (var _i4 = attributes.length - 1;_i4 >= 0;--_i4) {
-        attribute = attributes[_i4];
-        if (raw.hasAttribute(attribute.substring(1, attribute.length - 1))) {
-          filtered.push(root);
-          break;
-        }
+    } else {
+      filtered = nodes;
+      if (raw.tagName === type) {
+        filtered.push(raw);
       }
     }
     return filtered;

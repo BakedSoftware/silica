@@ -237,11 +237,36 @@
         var obj = Silica.directives[k];
         var nodes = Silica.queryOfType(this, k);
         var wrapper = document.createElement("div");
+        var watchers = obj.controller.watchers;
         for (var i = nodes.length - 1;i >= 0;--i) {
           wrapper.innerHTML = obj.template;
           var newChild = wrapper.firstChild;
           var node = nodes[i];
+          if (node.hasAttributes()) {
+            var attrs = node.attributes;
+            for (var j = attrs.length - 1;j >= 0;j--) {
+              newChild.setAttribute(attrs[i].name, attrs[i].value);
+            }
+          }
+          for (var _j in node.dataset) {
+            newChild.dataset[_j] = node.dataset[_j];
+          }
+          newChild._rt_ctrl = new obj.controller(newChild);
+          newChild._rt_ctrl.$ctrl = Silica.getContext(node);
+          Silica.cacheTemplates(newChild);
+          Silica.interpolate(newChild, newChild._rt_ctrl, false);
           node.parentNode.replaceChild(newChild, node);
+          var v = undefined;
+          for (w in watchers) {
+            v = watchers[w];
+            if (!Silica._watch[w]) {
+              Silica._watch[w] = [];
+            }
+            Silica._watch[w].push([newChild._rt_ctrl, v]);
+          }
+          if (typeof newChild._rt_ctrl.onLoad === "function") {
+            newChild._rt_ctrl.onLoad();
+          }
         }
       }
     }
@@ -948,7 +973,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.4", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.5", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {

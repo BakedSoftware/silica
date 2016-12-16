@@ -6,7 +6,7 @@ export default function directives() {
       let obj = Silica.directives[k];
       let nodes = Silica.queryOfType(this, k);
       let wrapper = document.createElement("div");
-      let watchers = obj.controller.watchers;
+
       for (let i = nodes.length - 1; i >= 0; --i)
       {
         // A node can only be used once, so create a new instance for each
@@ -32,6 +32,7 @@ export default function directives() {
         node.parentNode.replaceChild(newChild, node);
 
         // Remove old watchers if rebuilding a controller for a node
+        let watchers = obj.controller.watchers;
         let v;
         for (w in watchers) {
           v = watchers[w];

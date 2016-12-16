@@ -237,7 +237,6 @@
         var obj = Silica.directives[k];
         var nodes = Silica.queryOfType(this, k);
         var wrapper = document.createElement("div");
-        var watchers = obj.controller.watchers;
         for (var i = nodes.length - 1;i >= 0;--i) {
           wrapper.innerHTML = obj.template;
           var newChild = wrapper.firstChild;
@@ -256,6 +255,7 @@
           Silica.cacheTemplates(newChild);
           Silica.interpolate(newChild, newChild._rt_ctrl, false);
           node.parentNode.replaceChild(newChild, node);
+          var watchers = obj.controller.watchers;
           var v = undefined;
           for (w in watchers) {
             v = watchers[w];
@@ -973,7 +973,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.5", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.6", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {

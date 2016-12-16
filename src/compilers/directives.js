@@ -18,7 +18,7 @@ export default function directives() {
           let attrs = node.attributes;
           for(let j = attrs.length - 1; j >= 0; j--)
           {
-            newChild.setAttribute(attrs[i].name, attrs[i].value);
+            newChild.setAttribute(attrs[j].name, attrs[j].value);
           }
         }
         for (let j in node.dataset)

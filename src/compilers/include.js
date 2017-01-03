@@ -1,6 +1,6 @@
 export default function Include() {
   var raw = (this instanceof jQuery ? this[0] : this);
-  var nodes = Silica.query(raw, '[data-style]');
+  var nodes = Silica.query(raw, '[data-include]');
   var node, partial;
   for (let i = nodes.length - 1; i >= 0; --i)
   {

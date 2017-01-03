@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.11.7",
+  version               :  "0.11.8",
 
   // Set the root context
   setContext(contextName)
@@ -808,17 +808,14 @@ var Silica = {
       }
       */
     }
-    if (!raw.rt_live)
+    let attribute;
+    for (let i = attributes.length - 1; i >=0; --i)
     {
-      let attribute;
-      for (let i = attributes.length - 1; i >=0; --i)
+      attribute = attributes[i];
+      if (raw.hasAttribute(attribute.substring(1, attribute.length-1)))
       {
-        attribute = attributes[i];
-        if (raw.hasAttribute(attribute.substring(1, attribute.length-1)))
-        {
-          filtered.push(raw);
-          break;
-        }
+        filtered.push(raw);
+        break;
       }
     }
     return filtered;
@@ -879,19 +876,16 @@ var Silica = {
       for (let i = nodes.length - 1; i >=0; --i)
       {
         let node = nodes.item(i);
-        if (!node._rt_live)
+        for (let j = attributes.length - 1; j >=0; --j)
         {
-          for (let j = attributes.length - 1; j >=0; --j)
+          if (node.hasAttribute(attributes[j].replace(/\[|\]/g, "")))
           {
-            if (node.hasAttribute(attributes[j].replace(/\[|\]/g, "")))
-            {
-              filtered.push(node);
-              break;
-            }
+            filtered.push(node);
+            break;
           }
         }
       }
-      if (raw.tagName === type && !raw.rt_live)
+      if (raw.nodeName === type.toUpperCase())
       {
         let attribute;
         for (let i = attributes.length - 1; i >=0; --i)

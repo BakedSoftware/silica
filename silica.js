@@ -449,7 +449,7 @@
   exports.default = Include;
   function Include() {
     var raw = this instanceof jQuery ? this[0] : this;
-    var nodes = Silica.query(raw, "[data-style]");
+    var nodes = Silica.query(raw, "[data-include]");
     var node, partial;
     for (var i = nodes.length - 1;i >= 0;--i) {
       node = nodes[i];
@@ -973,7 +973,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.7", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.8", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1620,14 +1620,12 @@
         filtered.push(node);
       }
     }
-    if (!raw.rt_live) {
-      var attribute = undefined;
-      for (var _i3 = attributes.length - 1;_i3 >= 0;--_i3) {
-        attribute = attributes[_i3];
-        if (raw.hasAttribute(attribute.substring(1, attribute.length - 1))) {
-          filtered.push(raw);
-          break;
-        }
+    var attribute = undefined;
+    for (var _i3 = attributes.length - 1;_i3 >= 0;--_i3) {
+      attribute = attributes[_i3];
+      if (raw.hasAttribute(attribute.substring(1, attribute.length - 1))) {
+        filtered.push(raw);
+        break;
       }
     }
     return filtered;
@@ -1678,16 +1676,14 @@
     if (attributes.length > 0) {
       for (var i = nodes.length - 1;i >= 0;--i) {
         var node = nodes.item(i);
-        if (!node._rt_live) {
-          for (var j = attributes.length - 1;j >= 0;--j) {
-            if (node.hasAttribute(attributes[j].replace(/\[|\]/g, ""))) {
-              filtered.push(node);
-              break;
-            }
+        for (var j = attributes.length - 1;j >= 0;--j) {
+          if (node.hasAttribute(attributes[j].replace(/\[|\]/g, ""))) {
+            filtered.push(node);
+            break;
           }
         }
       }
-      if (raw.tagName === type && !raw.rt_live) {
+      if (raw.nodeName === type.toUpperCase()) {
         var attribute = undefined;
         for (var _i4 = attributes.length - 1;_i4 >= 0;--_i4) {
           attribute = attributes[_i4];

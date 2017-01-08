@@ -6,7 +6,6 @@ export default function Model(context = null) {
   var elements = Silica.query(this, 'input[data-model]', 'select[data-model]', 'textarea[data-model]', 'option[data-model]');
   for (let i = elements.length - 1; i >= 0; i--)
   {
-    //ctx = context != null ? context : Silica.getContext($elm);
     elm = elements[i];
     ctx = Silica.getContext(elm);
     model = elm.dataset.model;

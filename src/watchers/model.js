@@ -2,8 +2,7 @@ var inputTimeRegexp = /date|time/i;
 var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select", "select-one"]
 
 export default function Model() {
-  var raw = (this instanceof jQuery ? this[0] : this);
-  var elements = raw.querySelectorAll('[data-model]');
+  var elements = this.querySelectorAll('[data-model]');
   var element, i, type;
   var activeElement = document.activeElement || Silica.__activeElement;
   for (i = elements.length - 1; i >= 0; --i)

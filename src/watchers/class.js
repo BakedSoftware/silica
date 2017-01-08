@@ -20,7 +20,7 @@ function updater(element) {
   if (element.dataset.show != null) {
     var key = element.dataset.show;
     var negate = key[0] == "!";
-    isVisible = Silica._show($(element), key, negate);
+    isVisible = Silica._show(element, key, negate);
     if (isVisible && element.classList.contains("hidden")) {
       element.classList.remove("hidden");
     } else {
@@ -32,10 +32,9 @@ function updater(element) {
 }
 
 export default function Class() {
-  var raw = (this instanceof jQuery ? this[0] : this);
-  var elements = raw.querySelectorAll('[data-class]');
-  if (raw.dataset.class) {
-    updater(raw);
+  var elements = this.querySelectorAll('[data-class]');
+  if (this.dataset.class) {
+    updater(this);
   }
   for (var i = elements.length - 1; i >= 0; --i) {
     updater(elements[i]);

@@ -1,12 +1,11 @@
 export default function Show(){
   var nodes = Silica.query(this, "[data-show]");
   var node;
-  var $elm, isVisible, negate, raw, val;
+  var isVisible, negate, raw, val;
   for (var i = nodes.length - 1; i >= 0; --i)
   {
     node = nodes[i];
-    $elm = $(node);
-    raw = val = $elm.data('show');
+    raw = val = node.dataset.show;
     negate = val[0] === '!';
     if (negate) {
       val = val.substr(1);
@@ -14,18 +13,17 @@ export default function Show(){
     if (!Silica._shws[raw]) {
       Silica._shws[raw] = [];
     }
-    if (Silica._shws[raw].some(function(obj) { return $(obj).is($elm);}))
+    if (Silica._shws[raw].some(function(obj) { return obj == node;}))
     {
       continue;
     }
-    $elm[0].onremove = function() {
-      var list, _ref = $elm[0];
-      list = Silica._shws[raw];
+    node.onremove = function() {
+      var list = Silica._shws[raw];
       if (list !== undefined && list !== null)
       {
         Silica._shws[raw] =  list.filter(function(obj)
             {
-              return $elm[0] !== _ref;
+              return obj !== node;
             });
       }
       else
@@ -33,12 +31,12 @@ export default function Show(){
         Silica._shws[raw] = [];
       }
     };
-    isVisible = Silica._show($elm, val, negate);
+    isVisible = Silica._show(node, val, negate);
     Silica._shws[raw].push(node);
     if (isVisible) {
-      $elm.removeClass('hidden');
+      node.classList.remove('hidden');
     } else {
-      $elm.addClass('hidden');
+      node.classList.add('hidden');
     }
   }
 }

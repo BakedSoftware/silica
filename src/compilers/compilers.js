@@ -11,7 +11,6 @@ import Click from "./click.js"
 import DoubleClick from "./double_click.js"
 import Blur from "./blur.js"
 import Focus from "./focus.js"
-import Tabs from "./tabs.js"
 import Model from "./model.js"
 import Submit from "./submit.js"
 import Src from "./src.js"
@@ -51,7 +50,6 @@ export default {
   DoubleClick,
   Blur,
   Focus,
-  Tabs,
   Model,
   Submit,
   Src,

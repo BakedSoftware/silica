@@ -1,6 +1,5 @@
 export default function Submit() {
-  var raw = (this instanceof jQuery ? this[0] : this);
-  var nodes = Silica.query(raw, '[data-submit]');
+  var nodes = Silica.query(this, '[data-submit]');
   var node;
   var handler = function(evt)
   {

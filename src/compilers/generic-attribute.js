@@ -1,6 +1,5 @@
 export default function Href() {
-  var raw = (this instanceof jQuery ? this[0] : this);
-  var nodes = Silica.query(raw, '[data-silica]');
+  var nodes = Silica.query(this, '[data-silica]');
   var node;
   var comps, attribute, valueKey;
   var params, paramsKeys;
@@ -35,5 +34,5 @@ export default function Href() {
       node.innerHTML = Silica.getValue(node, valueKey, null, params);
     }
   }
-  Silica._capture_links(raw);
+  Silica._capture_links(this);
 }

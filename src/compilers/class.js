@@ -1,19 +1,18 @@
 export default function Class() {
-  var raw = (this instanceof jQuery ? this[0] : this);
-  var nodes = Silica.query(raw, "[data-class]");
+  var nodes = Silica.query(this, "[data-class]");
   var node;
   var klass;
 
-  if (raw.nodeType != 9 && raw.dataset.class)
+  if (this.nodeType != 9 && this.dataset.class)
   {
-    if (raw.dataset._rt_hard_klass == null)
+    if (this.dataset._rt_hard_klass == null)
     {
-      raw.dataset._rt_hard_klass = raw.className;
+      this.dataset._rt_hard_klass = this.className;
     }
-    klass = Silica.getValue(raw, raw.dataset.class, null, null);
+    klass = Silica.getValue(this, this.dataset.class, null, null);
     if (klass)
     {
-      raw.classList.add(klass);
+      this.classList.add(klass);
     }
   }
 

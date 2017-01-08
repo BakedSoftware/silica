@@ -19,7 +19,7 @@ var Silica = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.11.8",
+  version               :  "0.12.0",
 
   // Set the root context
   setContext(contextName)
@@ -65,20 +65,16 @@ var Silica = {
       Silica._appRoot = element;
     }
     var func, k, _ref;
-    if (!(element instanceof jQuery))
+    if (element == document)
     {
-      element = $(element);
-    }
-    if (element[0] == document)
-    {
-      element[0] = document.body.parentElement;
+      element = document.body.parentElement;
       context = context || {};
     }
     else
     {
       context = context || Silica.getContext(element);
     }
-    Silica.cacheTemplates(element[0]);
+    Silica.cacheTemplates(element);
     Silica.interpolate(element, context, flush);
     for (let key in Silica.compilers)
     {
@@ -125,7 +121,7 @@ var Silica = {
         node.dataset._rt_repeat_template  =  hash;
         context                           =  {};
         context.$ctrl                     =  Silica.getContext(node);
-        Silica._repeat_templates[hash]    =  Silica.compile($(Silica._repeat_templates[hash]), false, context, true, false)[0];
+        Silica._repeat_templates[hash]    =  Silica.compile(Silica._repeat_templates[hash], false, context, true, false);
         node.innerHTML                    =  "";
       }
     }
@@ -431,20 +427,20 @@ var Silica = {
       hook.call(ctx, old_value, value);
     }
   },
-  evaluateExpression(expr, $elm, ctx = {}) {
+  evaluateExpression(expr, elm, ctx = {}) {
     var filter, filterKey, filterOptions, value;
     if (!expr) {
       return;
     }
     filter = null;
-    if (expr.match('|')) {
+    if (expr.indexOf('|') !== -1) {
       expr = expr.split('|');
-      filter = $.trim(expr[1]);
-      expr = $.trim(expr[0]);
+      filter = expr[1].trim();
+      expr = expr[0].trim();
     }
     if (!ctx.$ctrl)
     {
-      ctx.$ctrl = Silica.getContext($elm);
+      ctx.$ctrl = Silica.getContext(elm);
     }
 
     //Expr refers to a global property so it must be in window context
@@ -465,8 +461,7 @@ var Silica = {
   },
 
   // Convert  mustache expressions into model bindings
-  interpolate($elm, context = null, flush = true) {
-    var element = ($elm instanceof jQuery ? $elm[0] : $elm); //TODO: Remove jQuery
+  interpolate(element, context = null, flush = true) {
     var elements = [];
     var children = element.childNodes;
     var text, match, expr, comps, property, fmt, filter, evald;
@@ -545,9 +540,8 @@ var Silica = {
   addDirective(key, obj) {
     Silica.directives[key] = obj;
   },
-  getContext(element) {
-    var $elm, constructor, ctrl, k, v, _ref, raw, ctx, model, needsModel;
-    raw = element instanceof jQuery ? element[0] : element; //TODO: remove jQuery
+  getContext(raw) {
+    var constructor, ctrl, k, v, _ref, raw, ctx, model, needsModel;
     while (true)
     {
       if (raw._rt_ctx) {
@@ -645,7 +639,7 @@ var Silica = {
     }
   },
   _show(element, expr, negate) {
-    var $elm, ctx, isVisible;
+    var ctx, isVisible;
     isVisible = true;
     if (expr.indexOf(Silica.contextName) === 0) {
       isVisible = Silica.getPropByString(Silica.context, expr.substr(Silica.contextName.length + 1));
@@ -692,10 +686,9 @@ var Silica = {
     }
     Silica.apply(function()
     {
-      var $elm, action, ctx, objects, parameter, actionName, models = [];
-      $elm = $(element);
-      ctx = Silica.getContext($elm);
-      action = $elm.data(act);
+      var action, ctx, objects, parameter, actionName, models = [];
+      ctx = Silica.getContext(element);
+      action = element.dataset[act];
       var idx = action.indexOf("(");
       if (idx > 0) {
         actionName = action.substr(0, idx)
@@ -720,11 +713,11 @@ var Silica = {
       }
 
       if (typeof ctx[actionName] !== 'undefined') {
-        return ctx[actionName].apply(ctx, [$elm, ...models, parameter, evnt]);
+        return ctx[actionName].apply(ctx, [element, ...models, parameter, evnt]);
       } else if (Silica.context[actionName] != null) {
-        return Silica.context[actionName].apply(Silica.ctx, [$elm, ...models, parameter, evnt]);
+        return Silica.context[actionName].apply(Silica.ctx, [element, ...models, parameter, evnt]);
       } else {
-        return console.error("Unknown action '" + actionName + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
+        return console.error("Unknown action '" + actionName + "' for " + element.outerHTML + " in " + ctx.constructor.name);
       }
     }, scope);
   },
@@ -746,10 +739,9 @@ var Silica = {
       return value;
     }
   },
-  findComments(root)
+  findComments(raw)
   {
     var arr = [];
-    var raw = root instanceof jQuery ? root[0] : root;
     for (var i = raw.childNodes.length - 1; i >= 0; --i)
     {
       var node = raw.childNodes[i];
@@ -782,8 +774,7 @@ var Silica = {
     while((child=child.parentNode)&&child!==ancestor);
     return !!child;
   },
-  query(root, ...attributes) {
-    var raw = (root instanceof jQuery ? root[0] : root);
+  query(raw, ...attributes) {
     if (raw == document) {
       raw = document.firstElementChild;
     }
@@ -800,7 +791,7 @@ var Silica = {
       if (!node._rt_live)
       {
       */
-        if (!Silica.isInRepeat(root, node))
+        if (!Silica.isInRepeat(raw, node))
         {
           filtered.push(node);
         }
@@ -862,9 +853,8 @@ var Silica = {
     return filtered;
   },
 
-  queryOfType(root, type, ...attributes)
+  queryOfType(raw, type, ...attributes)
   {
-    var raw = (root instanceof jQuery ? root[0] : root);
     if (raw == document) {
       raw = document.firstElementChild;
     }

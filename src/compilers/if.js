@@ -48,15 +48,15 @@ export default function _if() {
       // Remove subnodes registered with Silica
       let subNodes = Silica.queryWithComments(node, '[data-if]');
       let subNode;
+      var list, prop, _ref;
       for (let j = subNodes.length - 1; j >= 0; --j)
       {
         subNode = subNodes[j];
-        var $e, list, prop, _ref;
         prop = subNode.dataset['if'];
         list = Silica._shws[prop];
-        Silica._shws[prop] = (_ref = list != null ? list.filter(function(obj) {
-          return !$(obj).is($e);
-        }) : void 0) != null ? _ref : [];
+        Silica._shws[prop] = (list != null ? list.filter(function(obj) {
+          return obj != subNode;
+        }) : []);
       }
       subNodes = Silica.query(this, "[data-controller]");
       for (let j = subNodes.length - 1; j >= 0; --j)

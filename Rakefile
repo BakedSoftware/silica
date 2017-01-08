@@ -9,7 +9,7 @@ directory 'build'
 directory File.join('build', 'js')
 
 @keep_cache = false
-@production = false
+@production = true
 
 desc "Remove previous build"
 task :clean do
@@ -29,7 +29,6 @@ task :es6 => [:clean, "build", "build/js"] do
   FileUtils.mkdir cache_path unless File.exists? cache_path
   system("babel src --out-dir compiled")
   system("cp src/spark-md5.js #{cache_path}/spark-md5.js")
-  system("cp src/containsRegex.jquery.js #{cache_path}/containsRegex.jquery.js")
   system("browserify ./compiled/silica.js -o #{cache_path}/bundle.js")
   js_files = Dir.glob(File.join(cache_path, '**', '*.js'))
   app_path = bust_cache(:silica, File.join('build', 'js', 'silica.js'))

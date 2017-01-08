@@ -1,6 +1,5 @@
 export default function Disabled() {
-  var raw = (this instanceof jQuery ? this[0] : this);
-  var nodes = Silica.query(raw, '[data-disabled]');
+  var nodes = Silica.query(this, '[data-disabled]');
   var node;
   var property;
   var negate;

@@ -4,7 +4,7 @@ import Compilers from './compilers/compilers';
 // Import the watchers
 import Watchers from './watchers/watchers';
 
-var Silica = {
+window.Silica = {
   context               :  window,
   contextName           :  '',
   directives            :  {},
@@ -948,5 +948,4 @@ var Silica = {
   watchers: Watchers
 };
 
-Silica.Controllers = Controllers;
-window.Silica = Silica;
+window.Silica.Controllers = Controllers;

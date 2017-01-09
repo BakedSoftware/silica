@@ -12,6 +12,7 @@
     "commander": "^2.9.0",
     "finalhandler": "^0.4.1",
     "fs-extra": "^0.30.0",
+    "google-closure-compiler-js": "^20161201.0.0",
     "livereload": "^0.4.1",
     "nib": "^1.1.0",
     "node-sprite-generator": "^0.10.2",

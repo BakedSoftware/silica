@@ -19,9 +19,7 @@ export default function _If() {
         isVisible = Silica._show(element, k, negate);
         if (isVisible) {
           if (element.nodeType === 8) {
-            // Following contains jQuery remants, needs removal, compile
-            // returns jqueyr wrapped node
-            compiled = Silica.compile(element.nodeValue, false, Silica.getContext(element))[0];
+            compiled = Silica.compile(element.nodeValue, false, Silica.getContext(element));
             element.parentNode.insertBefore(compiled, element);
             element.remove();
             Silica._ifs[raw][i] = compiled;
@@ -38,7 +36,7 @@ export default function _If() {
             let subNode;
             for (let j = subNodes.length -1; j >= 0; --j)
             {
-              var $e, list, prop, _ref1;
+              var list, prop, _ref1;
               subNode = subNodes[j];
               if (subNode.nodeType === 8 && !subNode.dataset)
               {

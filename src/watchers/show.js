@@ -1,10 +1,9 @@
 export default function Show() {
-  var element, elements, i, isVisible, k, negate, raw;
-  raw = this instanceof jQuery ? this[0] : this;
-  elements = raw.querySelectorAll("[data-show]");
-  if(raw.dataset.show){
+  var element, elements, i, isVisible, k, negate;
+  elements = this.querySelectorAll("[data-show]");
+  if(this.dataset.show){
     if (elements.length == 0) {
-      elements = [raw];
+      elements = [this];
     } else {
       let a = [];
       for (let i = elements.length - 1; i >= 0; i--)

@@ -1,6 +1,6 @@
 export default function Controller(ctx, force = false, storeWatchers = true) {
+  var node, constructor, ctrl, k, v, _ref, model;
   var nodes = Silica.query(this, "[data-controller]")
-    var node, $elm, constructor, ctrl, k, v, _ref, model;
   for (let i = nodes.length - 1; i >= 0; --i)
   {
     node = nodes[i];
@@ -9,14 +9,13 @@ export default function Controller(ctx, force = false, storeWatchers = true) {
     }
     lastCtrl = node._rt_ctrl;
     delete node._rt_ctrl;
-    $elm = $(node);
-    constructor = $elm.data('controller');
+    constructor = node.dataset.controller;
     if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
     {
-      let parent = $elm.parent()[0];
+      let parent = node.parentNode;
       if (parent)
       {
-        model = Silica.getValue($elm.parent()[0],  _ref[2]);
+        model = Silica.getValue(parent,  _ref[2]);
         if (model == null) {
           storeWatchers = false;
         }
@@ -32,7 +31,7 @@ export default function Controller(ctx, force = false, storeWatchers = true) {
     constructor = _ref[1];
     constructor = eval(constructor);
     if (!constructor) {
-      return console.error("Unknown Controller: " + ($elm.data('controller')));
+      return console.error("Unknown Controller: " + (node.dataset.controller));
     }
     if (typeof model !== 'undefined')
     {

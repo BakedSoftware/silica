@@ -1,6 +1,5 @@
 export default function Style() {
-  var raw = (this instanceof jQuery ? this[0] : this);
-  var nodes = Silica.query(raw, '[data-style]');
+  var nodes = Silica.query(this, '[data-style]');
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
   {

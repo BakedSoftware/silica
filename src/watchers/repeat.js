@@ -1,7 +1,7 @@
 import ControllerCompiler from '../compilers/controller.js'
 
 export default function Repeat() {
-  var $elm, changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
+  var changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
   var elements = Silica.querySorted(this, '[data-repeat]');
   let raw, cache_display;
   for (let i =0, length = elements.length; i < length; ++i)

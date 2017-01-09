@@ -43,17 +43,16 @@
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Class;
   function Class() {
-    var raw = this instanceof jQuery ? this[0] : this;
-    var nodes = Silica.query(raw, "[data-class]");
+    var nodes = Silica.query(this, "[data-class]");
     var node;
     var klass;
-    if (raw.nodeType != 9 && raw.dataset.class) {
-      if (raw.dataset._rt_hard_klass == null) {
-        raw.dataset._rt_hard_klass = raw.className;
+    if (this.nodeType != 9 && this.dataset.class) {
+      if (this.dataset._rt_hard_klass == null) {
+        this.dataset._rt_hard_klass = this.className;
       }
-      klass = Silica.getValue(raw, raw.dataset.class, null, null);
+      klass = Silica.getValue(this, this.dataset.class, null, null);
       if (klass) {
-        raw.classList.add(klass);
+        this.classList.add(klass);
       }
     }
     for (var i = nodes.length - 1;i >= 0;--i) {
@@ -109,8 +108,6 @@
   var _blur2 = _interopRequireDefault(_blur);
   var _focus = require("./focus.js");
   var _focus2 = _interopRequireDefault(_focus);
-  var _tabs = require("./tabs.js");
-  var _tabs2 = _interopRequireDefault(_tabs);
   var _model = require("./model.js");
   var _model2 = _interopRequireDefault(_model);
   var _submit = require("./submit.js");
@@ -152,17 +149,17 @@
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {default:obj};
   }
-  exports.default = {Directives:_directives2.default, _if:_if2.default, Show:_show2.default, Class:_class2.default, Disabled:_disabled2.default, Href:_href2.default, Style:_style2.default, Include:_include2.default, Controller:_controller2.default, Click:_click2.default, DoubleClick:_double_click2.default, Blur:_blur2.default, Focus:_focus2.default, Tabs:_tabs2.default, Model:_model2.default, Submit:_submit2.default, Src:_src2.default, Scroll:_scroll2.default, ScrollFinished:_scroll_finished2.default, 
-  Generic:_genericAttribute2.default, MouseDown:_mousedown2.default, MouseUp:_mouseup2.default, MouseOut:_mouseout2.default, MouseMove:_mousemove2.default, MouseWheel:_mousewheel2.default, MouseLeave:_mouseleave2.default, MouseEnter:_mouseenter2.default, MouseOver:_mouseover2.default, KeyDown:_keydown2.default, KeyUp:_keyup2.default, TouchStart:_touchstart2.default, TouchCancel:_touchcancel2.default, TouchEnd:_touchend2.default};
+  exports.default = {Directives:_directives2.default, _if:_if2.default, Show:_show2.default, Class:_class2.default, Disabled:_disabled2.default, Href:_href2.default, Style:_style2.default, Include:_include2.default, Controller:_controller2.default, Click:_click2.default, DoubleClick:_double_click2.default, Blur:_blur2.default, Focus:_focus2.default, Model:_model2.default, Submit:_submit2.default, Src:_src2.default, Scroll:_scroll2.default, ScrollFinished:_scroll_finished2.default, Generic:_genericAttribute2.default, 
+  MouseDown:_mousedown2.default, MouseUp:_mouseup2.default, MouseOut:_mouseout2.default, MouseMove:_mousemove2.default, MouseWheel:_mousewheel2.default, MouseLeave:_mouseleave2.default, MouseEnter:_mouseenter2.default, MouseOver:_mouseover2.default, KeyDown:_keydown2.default, KeyUp:_keyup2.default, TouchStart:_touchstart2.default, TouchCancel:_touchcancel2.default, TouchEnd:_touchend2.default};
 }, {"./blur.js":1, "./class.js":2, "./click.js":3, "./controller.js":5, "./directives.js":6, "./disabled.js":7, "./double_click.js":8, "./focus.js":9, "./generic-attribute.js":10, "./href.js":11, "./if.js":12, "./include.js":13, "./keydown.js":14, "./keyup.js":15, "./model.js":16, "./mousedown.js":17, "./mouseenter.js":18, "./mouseleave.js":19, "./mousemove.js":20, "./mouseout.js":21, "./mouseover.js":22, "./mouseup.js":23, "./mousewheel.js":24, "./scroll.js":25, "./scroll_finished.js":26, "./show.js":27, 
-"./src.js":28, "./style.js":29, "./submit.js":30, "./tabs.js":31, "./touch/touchcancel.js":32, "./touch/touchend.js":33, "./touch/touchstart.js":34}], 5:[function(require, module, exports) {
+"./src.js":28, "./style.js":29, "./submit.js":30, "./touch/touchcancel.js":31, "./touch/touchend.js":32, "./touch/touchstart.js":33}], 5:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Controller;
   function Controller(ctx) {
     var force = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
     var storeWatchers = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+    var node, constructor, ctrl, k, v, _ref, model;
     var nodes = Silica.query(this, "[data-controller]");
-    var node, $elm, constructor, ctrl, k, v, _ref, model;
     for (var i = nodes.length - 1;i >= 0;--i) {
       node = nodes[i];
       if (!force && node._rt_ctrl !== undefined) {
@@ -170,12 +167,11 @@
       }
       lastCtrl = node._rt_ctrl;
       delete node._rt_ctrl;
-      $elm = $(node);
-      constructor = $elm.data("controller");
+      constructor = node.dataset.controller;
       if (typeof(_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== "undefined") {
-        var parent = $elm.parent()[0];
+        var parent = node.parentNode;
         if (parent) {
-          model = Silica.getValue($elm.parent()[0], _ref[2]);
+          model = Silica.getValue(parent, _ref[2]);
           if (model == null) {
             storeWatchers = false;
           }
@@ -189,7 +185,7 @@
       constructor = _ref[1];
       constructor = eval(constructor);
       if (!constructor) {
-        return console.error("Unknown Controller: " + $elm.data("controller"));
+        return console.error("Unknown Controller: " + node.dataset.controller);
       }
       if (typeof model !== "undefined") {
         ctrl = new constructor(node, model);
@@ -251,7 +247,7 @@
             newChild.dataset[_j] = node.dataset[_j];
           }
           newChild._rt_ctrl = new obj.controller(newChild);
-          newChild._rt_ctrl.$ctrl = Silica.getContext(node);
+          newChild._rt_ctrl.$ctrl = Silica.getContext(node.parentNode);
           Silica.cacheTemplates(newChild);
           Silica.interpolate(newChild, newChild._rt_ctrl, false);
           node.parentNode.replaceChild(newChild, node);
@@ -275,8 +271,7 @@
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Disabled;
   function Disabled() {
-    var raw = this instanceof jQuery ? this[0] : this;
-    var nodes = Silica.query(raw, "[data-disabled]");
+    var nodes = Silica.query(this, "[data-disabled]");
     var node;
     var property;
     var negate;
@@ -326,8 +321,7 @@
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Href;
   function Href() {
-    var raw = this instanceof jQuery ? this[0] : this;
-    var nodes = Silica.query(raw, "[data-silica]");
+    var nodes = Silica.query(this, "[data-silica]");
     var node;
     var comps, attribute, valueKey;
     var params, paramsKeys;
@@ -355,20 +349,19 @@
         node.innerHTML = Silica.getValue(node, valueKey, null, params);
       }
     }
-    Silica._capture_links(raw);
+    Silica._capture_links(this);
   }
 }, {}], 11:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Href;
   function Href() {
-    var raw = this instanceof jQuery ? this[0] : this;
-    var nodes = Silica.query(raw, "[data-href]");
+    var nodes = Silica.query(this, "[data-href]");
     var node;
     for (var i = nodes.length - 1;i >= 0;--i) {
       node = nodes[i];
       node.setAttribute("href", Silica.getValue(node, node.dataset.href));
     }
-    Silica._capture_links(raw);
+    Silica._capture_links(this);
   }
 }, {}], 12:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
@@ -411,35 +404,37 @@
         }
       } else {
         if (node.nodeType !== 8) {
-          var subNodes = Silica.queryWithComments(node, "[data-if]");
-          var subNode = undefined;
-          for (var j = subNodes.length - 1;j >= 0;--j) {
-            subNode = subNodes[j];
-            var $e, list, prop, _ref;
-            prop = subNode.dataset["if"];
-            list = Silica._shws[prop];
-            Silica._shws[prop] = (_ref = list != null ? list.filter(function(obj) {
-              return!$(obj).is($e);
-            }) : void 0) != null ? _ref : [];
-          }
-          subNodes = Silica.query(this, "[data-controller]");
-          var _loop = function _loop(_j) {
-            subNode = subNodes[_j];
-            var ctrl = _this._rt_ctrl;
-            var k = undefined, list = undefined, _ref = undefined;
-            for (k in ctrl != null ? ctrl.watchers : void 0) {
-              list = Silica._watch[k];
-              Silica._watch[k] = list != null ? list.filter(function(obj) {
-                return obj[0] !== ctrl;
+          var list, prop, _ref;
+          (function() {
+            var subNodes = Silica.queryWithComments(node, "[data-if]");
+            var subNode = undefined;
+            for (var j = subNodes.length - 1;j >= 0;--j) {
+              subNode = subNodes[j];
+              prop = subNode.dataset["if"];
+              list = Silica._shws[prop];
+              Silica._shws[prop] = list != null ? list.filter(function(obj) {
+                return obj != subNode;
               }) : [];
             }
-          };
-          for (var _j = subNodes.length - 1;_j >= 0;--_j) {
-            _loop(_j);
-          }
-          comment = document.createComment(node.outerHTML);
-          Silica._ifs[raw].push(comment);
-          node.parentNode.replaceChild(comment, node);
+            subNodes = Silica.query(_this, "[data-controller]");
+            var _loop = function _loop(_j) {
+              subNode = subNodes[_j];
+              var ctrl = _this._rt_ctrl;
+              var k = undefined, list = undefined, _ref = undefined;
+              for (k in ctrl != null ? ctrl.watchers : void 0) {
+                list = Silica._watch[k];
+                Silica._watch[k] = list != null ? list.filter(function(obj) {
+                  return obj[0] !== ctrl;
+                }) : [];
+              }
+            };
+            for (var _j = subNodes.length - 1;_j >= 0;--_j) {
+              _loop(_j);
+            }
+            comment = document.createComment(node.outerHTML);
+            Silica._ifs[raw].push(comment);
+            node.parentNode.replaceChild(comment, node);
+          })();
         }
       }
     }
@@ -447,21 +442,29 @@
 }, {}], 13:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Include;
+  function loadPartial(url, element) {
+    var xhr = new XMLHttpRequest;
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        element.innerHTML = xhr.responseText;
+        Silica.compile(element);
+        var ctx = Silica.getContext(element);
+        if (ctx.onLoad && typeof ctx.onLoad === "function") {
+          ctx.onLoad(element);
+        }
+      }
+    };
+    xhr.open("GET", url, true);
+    xhr.send(null);
+  }
   function Include() {
-    var raw = this instanceof jQuery ? this[0] : this;
-    var nodes = Silica.query(raw, "[data-include]");
+    var nodes = Silica.query(this, "[data-include]");
     var node, partial;
     for (var i = nodes.length - 1;i >= 0;--i) {
       node = nodes[i];
       partial = eval(node.dataset.include);
       delete node.dataset.include;
-      $(node).load(partial, function() {
-        Silica.compile(this);
-        var ctx = Silica.getContext(this);
-        if (ctx.onLoad && typeof ctx.onLoad === "function") {
-          ctx.onLoad(this);
-        }
-      });
+      loadPartial(partial, node);
     }
   }
 }, {}], 14:[function(require, module, exports) {
@@ -737,11 +740,10 @@
   function Show() {
     var nodes = Silica.query(this, "[data-show]");
     var node;
-    var $elm, isVisible, negate, raw, val;
+    var isVisible, negate, raw, val;
     for (var i = nodes.length - 1;i >= 0;--i) {
       node = nodes[i];
-      $elm = $(node);
-      raw = val = $elm.data("show");
+      raw = val = node.dataset.show;
       negate = val[0] === "!";
       if (negate) {
         val = val.substr(1);
@@ -750,27 +752,26 @@
         Silica._shws[raw] = [];
       }
       if (Silica._shws[raw].some(function(obj) {
-        return $(obj).is($elm);
+        return obj == node;
       })) {
         continue;
       }
-      $elm[0].onremove = function() {
-        var list, _ref = $elm[0];
-        list = Silica._shws[raw];
+      node.onremove = function() {
+        var list = Silica._shws[raw];
         if (list !== undefined && list !== null) {
           Silica._shws[raw] = list.filter(function(obj) {
-            return $elm[0] !== _ref;
+            return obj !== node;
           });
         } else {
           Silica._shws[raw] = [];
         }
       };
-      isVisible = Silica._show($elm, val, negate);
+      isVisible = Silica._show(node, val, negate);
       Silica._shws[raw].push(node);
       if (isVisible) {
-        $elm.removeClass("hidden");
+        node.classList.remove("hidden");
       } else {
-        $elm.addClass("hidden");
+        node.classList.add("hidden");
       }
     }
   }
@@ -778,8 +779,7 @@
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Src;
   function Src() {
-    var raw = this instanceof jQuery ? this[0] : this;
-    var nodes = Silica.queryOfType(raw, "img", "[data-src]");
+    var nodes = Silica.queryOfType(this, "img", "[data-src]");
     var node;
     for (var i = nodes.length - 1;i >= 0;--i) {
       node = nodes[i];
@@ -790,8 +790,7 @@
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Style;
   function Style() {
-    var raw = this instanceof jQuery ? this[0] : this;
-    var nodes = Silica.query(raw, "[data-style]");
+    var nodes = Silica.query(this, "[data-style]");
     var node;
     for (var i = nodes.length - 1;i >= 0;--i) {
       node = nodes[i];
@@ -802,8 +801,7 @@
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Submit;
   function Submit() {
-    var raw = this instanceof jQuery ? this[0] : this;
-    var nodes = Silica.query(raw, "[data-submit]");
+    var nodes = Silica.query(this, "[data-submit]");
     var node;
     var handler = function handler(evt) {
       Silica._call(this, evt, "submit");
@@ -817,41 +815,6 @@
   }
 }, {}], 31:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
-  exports.default = Tabs;
-  function Tabs() {
-    var li, pane, template;
-    li = '<li><a href="#" data-click="open"></a></li>';
-    pane = '<div class="tab-pane"></div>';
-    template = '<div class="tabbable"><ul class="nav nav-tabs"></ul><div class="tab-content"></div></div>';
-    return $("*[data-tabs]", this).each(function() {
-      var $elm, $target, tabCtrl;
-      $elm = $(this);
-      $target = $(template);
-      $target.addClass($elm.attr("class"));
-      tabCtrl = {open:function open(el) {
-        $(".active", $target).removeClass("active");
-        $(el).parent().addClass("active");
-        return $(".tab-pane[title='" + $(el).parent().attr("title") + "']", $target).addClass("active");
-      }};
-      $target[0]._rt_ctrl = tabctrl;
-      $("*[data-pane]", $elm).each(function() {
-        var $link, $pane, newPane, title;
-        $pane = $(this);
-        $link = $(li);
-        title = $pane.attr("title");
-        $link.attr("title", title);
-        $("a", $link).html(title);
-        $("ul.nav", $target).append($link);
-        newPane = $(pane).append($pane.children());
-        newPane.attr("title", title);
-        return $(".tab-content", $target).append(newPane);
-      });
-      tabCtrl.open($("li:first-child > a", $target));
-      return $elm.replaceWith(Silica.compile($target));
-    });
-  }
-}, {}], 32:[function(require, module, exports) {
-  Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = TouchCancel;
   function TouchCancel() {
     var nodes = Silica.query(this, "[data-touchcancel]");
@@ -864,7 +827,7 @@
       };
     }
   }
-}, {}], 33:[function(require, module, exports) {
+}, {}], 32:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = TouchEnd;
   function TouchEnd() {
@@ -878,7 +841,7 @@
       };
     }
   }
-}, {}], 34:[function(require, module, exports) {
+}, {}], 33:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = TouchStart;
   function TouchStart() {
@@ -892,7 +855,7 @@
       };
     }
   }
-}, {}], 35:[function(require, module, exports) {
+}, {}], 34:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   var _createClass = function() {
     function defineProperties(target, props) {
@@ -929,22 +892,14 @@
         this.$ctrl = Silica.getContext(el.parentElement);
       }
     }
-    _createClass(Base, [{key:"$", value:function(_$) {
-      function $(_x) {
-        return _$.apply(this, arguments);
-      }
-      $.toString = function() {
-        return _$.toString();
-      };
-      return $;
-    }(function(selector) {
-      return $(selector, this.el);
-    })}]);
+    _createClass(Base, [{key:"$", value:function $(selector) {
+      return this.el.querySelectorAll(selector);
+    }}]);
     return Base;
   }();
   Base.watchers = {};
   exports.default = Base;
-}, {}], 36:[function(require, module, exports) {
+}, {}], 35:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   var _base = require("./base");
   var _base2 = _interopRequireDefault(_base);
@@ -953,7 +908,7 @@
   }
   Controllers = {Base:_base2.default};
   exports.default = Controllers;
-}, {"./base":35}], 37:[function(require, module, exports) {
+}, {"./base":34}], 36:[function(require, module, exports) {
   var _controllers = require("./controllers/controllers");
   var _controllers2 = _interopRequireDefault(_controllers);
   var _compilers = require("./compilers/compilers");
@@ -973,7 +928,7 @@
       return Array.from(arr);
     }
   }
-  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.11.8", setContext:function setContext(contextName) {
+  var Silica = {context:window, contextName:"", directives:{}, filters:{}, router:{}, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:false, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:true, version:"0.12.0", setContext:function setContext(contextName) {
     this.contextName = contextName;
     this.context = window[contextName];
   }, setRouter:function setRouter(router) {
@@ -1014,16 +969,13 @@
       Silica._appRoot = element;
     }
     var func, k, _ref;
-    if (!(element instanceof jQuery)) {
-      element = $(element);
-    }
-    if (element[0] == document) {
-      element[0] = document.body.parentElement;
+    if (element == document) {
+      element = document.body.parentElement;
       context = context || {};
     } else {
       context = context || Silica.getContext(element);
     }
-    Silica.cacheTemplates(element[0]);
+    Silica.cacheTemplates(element);
     Silica.interpolate(element, context, flush);
     for (var key in Silica.compilers) {
       if (!(onlySafe & key[0] === "_")) {
@@ -1061,7 +1013,7 @@
         node.dataset._rt_repeat_template = hash;
         context = {};
         context.$ctrl = Silica.getContext(node);
-        Silica._repeat_templates[hash] = Silica.compile($(Silica._repeat_templates[hash]), false, context, true, false)[0];
+        Silica._repeat_templates[hash] = Silica.compile(Silica._repeat_templates[hash], false, context, true, false);
         node.innerHTML = "";
       }
     }
@@ -1325,20 +1277,20 @@
     if (hook) {
       hook.call(ctx, old_value, value);
     }
-  }, evaluateExpression:function evaluateExpression(expr, $elm) {
+  }, evaluateExpression:function evaluateExpression(expr, elm) {
     var ctx = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
     var filter, filterKey, filterOptions, value;
     if (!expr) {
       return;
     }
     filter = null;
-    if (expr.match("|")) {
+    if (expr.indexOf("|") !== -1) {
       expr = expr.split("|");
-      filter = $.trim(expr[1]);
-      expr = $.trim(expr[0]);
+      filter = expr[1].trim();
+      expr = expr[0].trim();
     }
     if (!ctx.$ctrl) {
-      ctx.$ctrl = Silica.getContext($elm);
+      ctx.$ctrl = Silica.getContext(elm);
     }
     if (expr.charCodeAt(0) <= 90) {
       ctx = window;
@@ -1352,10 +1304,9 @@
       value = filter ? filter(value, filterOptions, ctx) : value;
     }
     return value;
-  }, interpolate:function interpolate($elm) {
+  }, interpolate:function interpolate(element) {
     var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
     var flush = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
-    var element = $elm instanceof jQuery ? $elm[0] : $elm;
     var elements = [];
     var children = element.childNodes;
     var text, match, expr, comps, property, fmt, filter, evald;
@@ -1393,9 +1344,8 @@
     Silica.filters[key] = func;
   }, addDirective:function addDirective(key, obj) {
     Silica.directives[key] = obj;
-  }, getContext:function getContext(element) {
-    var $elm, constructor, ctrl, k, v, _ref, raw, ctx, model, needsModel;
-    raw = element instanceof jQuery ? element[0] : element;
+  }, getContext:function getContext(raw) {
+    var constructor, ctrl, k, v, _ref, raw, ctx, model, needsModel;
     while (true) {
       if (raw._rt_ctx) {
         return raw._rt_ctx;
@@ -1487,7 +1437,7 @@
       }
     }
   }, _show:function _show(element, expr, negate) {
-    var $elm, ctx, isVisible;
+    var ctx, isVisible;
     isVisible = true;
     if (expr.indexOf(Silica.contextName) === 0) {
       isVisible = Silica.getPropByString(Silica.context, expr.substr(Silica.contextName.length + 1));
@@ -1528,10 +1478,9 @@
       }
     }
     Silica.apply(function() {
-      var $elm, action, ctx, objects, parameter, actionName, models = [];
-      $elm = $(element);
-      ctx = Silica.getContext($elm);
-      action = $elm.data(act);
+      var action, ctx, objects, parameter, actionName, models = [];
+      ctx = Silica.getContext(element);
+      action = element.dataset[act];
       var idx = action.indexOf("(");
       if (idx > 0) {
         actionName = action.substr(0, idx);
@@ -1553,12 +1502,12 @@
         parameter = element.dataset.parameter;
       }
       if (typeof ctx[actionName] !== "undefined") {
-        return ctx[actionName].apply(ctx, [$elm].concat(_toConsumableArray(models), [parameter, evnt]));
+        return ctx[actionName].apply(ctx, [element].concat(_toConsumableArray(models), [parameter, evnt]));
       } else {
         if (Silica.context[actionName] != null) {
-          return Silica.context[actionName].apply(Silica.ctx, [$elm].concat(_toConsumableArray(models), [parameter, evnt]));
+          return Silica.context[actionName].apply(Silica.ctx, [element].concat(_toConsumableArray(models), [parameter, evnt]));
         } else {
-          return console.error("Unknown action '" + actionName + "' for " + $elm[0].outerHTML + " in " + ctx.constructor.name);
+          return console.error("Unknown action '" + actionName + "' for " + element.outerHTML + " in " + ctx.constructor.name);
         }
       }
     }, scope);
@@ -1578,9 +1527,8 @@
     } else {
       return value;
     }
-  }, findComments:function findComments(root) {
+  }, findComments:function findComments(raw) {
     var arr = [];
-    var raw = root instanceof jQuery ? root[0] : root;
     for (var i = raw.childNodes.length - 1;i >= 0;--i) {
       var node = raw.childNodes[i];
       if (node.nodeType === 8) {
@@ -1603,8 +1551,7 @@
     while ((child = child.parentNode) && child !== ancestor) {
     }
     return!!child;
-  }, query:function query(root) {
-    var raw = root instanceof jQuery ? root[0] : root;
+  }, query:function query(raw) {
     if (raw == document) {
       raw = document.firstElementChild;
     }
@@ -1616,7 +1563,7 @@
     var filtered = [];
     for (var i = nodes.length - 1;i >= 0;--i) {
       var node = nodes.item(i);
-      if (!Silica.isInRepeat(root, node)) {
+      if (!Silica.isInRepeat(raw, node)) {
         filtered.push(node);
       }
     }
@@ -1662,8 +1609,7 @@
       }
     }
     return filtered;
-  }, queryOfType:function queryOfType(root, type) {
-    var raw = root instanceof jQuery ? root[0] : root;
+  }, queryOfType:function queryOfType(raw, type) {
     if (raw == document) {
       raw = document.firstElementChild;
     }
@@ -1731,7 +1677,7 @@
   }, compilers:_compilers2.default, watchers:_watchers2.default};
   Silica.Controllers = _controllers2.default;
   window.Silica = Silica;
-}, {"./compilers/compilers":4, "./controllers/controllers":36, "./watchers/watchers":43}], 38:[function(require, module, exports) {
+}, {"./compilers/compilers":4, "./controllers/controllers":35, "./watchers/watchers":42}], 37:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Class;
   function updater(element) {
@@ -1756,7 +1702,7 @@
     if (element.dataset.show != null) {
       var key = element.dataset.show;
       var negate = key[0] == "!";
-      isVisible = Silica._show($(element), key, negate);
+      isVisible = Silica._show(element, key, negate);
       if (isVisible && element.classList.contains("hidden")) {
         element.classList.remove("hidden");
       } else {
@@ -1767,16 +1713,15 @@
     }
   }
   function Class() {
-    var raw = this instanceof jQuery ? this[0] : this;
-    var elements = raw.querySelectorAll("[data-class]");
-    if (raw.dataset.class) {
-      updater(raw);
+    var elements = this.querySelectorAll("[data-class]");
+    if (this.dataset.class) {
+      updater(this);
     }
     for (var i = elements.length - 1;i >= 0;--i) {
       updater(elements[i]);
     }
   }
-}, {}], 39:[function(require, module, exports) {
+}, {}], 38:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = _If;
   function _If() {
@@ -1799,7 +1744,7 @@
           isVisible = Silica._show(element, k, negate);
           if (isVisible) {
             if (element.nodeType === 8) {
-              compiled = Silica.compile(element.nodeValue, false, Silica.getContext(element))[0];
+              compiled = Silica.compile(element.nodeValue, false, Silica.getContext(element));
               element.parentNode.insertBefore(compiled, element);
               element.remove();
               Silica._ifs[raw][i] = compiled;
@@ -1812,7 +1757,7 @@
             }
           } else {
             if (element.nodeType !== 8) {
-              var $e, list, prop, _ref1;
+              var list, prop, _ref1;
               var ctrl, list, _ref1, _results;
               (function() {
                 var subNodes = Silica.queryWithComments(element, "[data-if]");
@@ -1852,14 +1797,13 @@
       }
     }
   }
-}, {}], 40:[function(require, module, exports) {
+}, {}], 39:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Model;
   var inputTimeRegexp = /date|time/i;
   var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select", "select-one"];
   function Model() {
-    var raw = this instanceof jQuery ? this[0] : this;
-    var elements = raw.querySelectorAll("[data-model]");
+    var elements = this.querySelectorAll("[data-model]");
     var element, i, type;
     var activeElement = document.activeElement || Silica.__activeElement;
     for (i = elements.length - 1;i >= 0;--i) {
@@ -1899,7 +1843,7 @@
       }
     }
   }
-}, {}], 41:[function(require, module, exports) {
+}, {}], 40:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Repeat;
   var _controller = require("../compilers/controller.js");
@@ -1908,7 +1852,7 @@
     return obj && obj.__esModule ? obj : {default:obj};
   }
   function Repeat() {
-    var $elm, changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
+    var changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
     var elements = Silica.querySorted(this, "[data-repeat]");
     var raw = undefined, cache_display = undefined;
     for (var i = 0, length = elements.length;i < length;++i) {
@@ -2011,16 +1955,15 @@
       }
     }
   }
-}, {"../compilers/controller.js":5}], 42:[function(require, module, exports) {
+}, {"../compilers/controller.js":5}], 41:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   exports.default = Show;
   function Show() {
-    var element, elements, i, isVisible, k, negate, raw;
-    raw = this instanceof jQuery ? this[0] : this;
-    elements = raw.querySelectorAll("[data-show]");
-    if (raw.dataset.show) {
+    var element, elements, i, isVisible, k, negate;
+    elements = this.querySelectorAll("[data-show]");
+    if (this.dataset.show) {
       if (elements.length == 0) {
-        elements = [raw];
+        elements = [this];
       } else {
         var a = [];
         for (var _i = elements.length - 1;_i >= 0;_i--) {
@@ -2049,7 +1992,7 @@
       }
     }
   }
-}, {}], 43:[function(require, module, exports) {
+}, {}], 42:[function(require, module, exports) {
   Object.defineProperty(exports, "__esModule", {value:true});
   var _if = require("./if.js");
   var _if2 = _interopRequireDefault(_if);
@@ -2075,28 +2018,7 @@
     return obj && obj.__esModule ? obj : {default:obj};
   }
   exports.default = {_If:_if2.default, Repeat:_repeat2.default, Show:_show2.default, Class:_class2.default, Model:_model2.default, Disabled:_disabled2.default, Href:_href2.default, Style:_style2.default, Src:_src2.default, Generic:_genericAttribute2.default};
-}, {"../compilers/disabled.js":7, "../compilers/generic-attribute.js":10, "../compilers/href.js":11, "../compilers/src.js":28, "../compilers/style.js":29, "./class.js":38, "./if.js":39, "./model.js":40, "./repeat.js":41, "./show.js":42}]}, {}, [37]);
-$.extend($.expr[":"], {containsExact:$.expr.createPseudo ? $.expr.createPseudo(function(text) {
-  return function(elem) {
-    return $.trim(elem.innerHTML.toLowerCase()) === text.toLowerCase();
-  };
-}) : function(elem, i, match) {
-  return $.trim(elem.innerHTML.toLowerCase()) === match[3].toLowerCase();
-}, containsExactCase:$.expr.createPseudo ? $.expr.createPseudo(function(text) {
-  return function(elem) {
-    return $.trim(elem.innerHTML) === text;
-  };
-}) : function(elem, i, match) {
-  return $.trim(elem.innerHTML) === match[3];
-}, containsRegex:$.expr.createPseudo ? $.expr.createPseudo(function(text) {
-  var reg = /^\/((?:\\\/|[^\/])+)\/([mig]{0,3})$/.exec(text);
-  return function(elem) {
-    return reg ? RegExp(reg[1], reg[2]).test($.trim(elem.textContent)) : false;
-  };
-}) : function(elem, i, match) {
-  var reg = /^\/((?:\\\/|[^\/])+)\/([mig]{0,3})$/.exec(match[3]);
-  return reg ? RegExp(reg[1], reg[2]).test($.trim(elem.innerHTML)) : false;
-}});
+}, {"../compilers/disabled.js":7, "../compilers/generic-attribute.js":10, "../compilers/href.js":11, "../compilers/src.js":28, "../compilers/style.js":29, "./class.js":37, "./if.js":38, "./model.js":39, "./repeat.js":40, "./show.js":41}]}, {}, [36]);
 (function(factory) {
   if (typeof exports === "object") {
     module.exports = factory();

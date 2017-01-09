@@ -39,10 +39,10 @@ class Base
     }
   }
 
-  // A convenience proxy to jQuery with the instance's element as the scope
+  // A convenience proxy to querySelectorAll with the instance's element as the scope
   $(selector)
   {
-    return $(selector, this.el);
+    return this.el.querySelectorAll(selector);
   }
 
   /*

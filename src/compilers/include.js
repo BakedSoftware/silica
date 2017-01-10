@@ -10,9 +10,9 @@ function loadPartial(url, element)
       element.innerHTML = xhr.responseText;
       Silica.compile(element);
       var ctx = Silica.getContext(element);
-      if (ctx.onLoad && typeof ctx.onLoad === "function")
+      if (ctx['onLoad'] && typeof ctx['onLoad'] === "function")
       {
-        ctx.onLoad(element);
+        ctx['onLoad'](element);
       }
     }
   };

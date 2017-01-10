@@ -19,7 +19,7 @@ window['Silica'] = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.12.1",
+  version               :  "0.12.2",
 
   // Set the root context
   setContext(contextName)
@@ -609,8 +609,8 @@ window['Silica'] = {
             }
             Silica._watch[k].push([ctrl, v]);
           }
-          if (typeof ctrl.onLoad === "function") {
-            ctrl.onLoad();
+          if (typeof ctrl['onLoad'] === "function") {
+            ctrl['onLoad']();
           }
         }
         return ctrl;

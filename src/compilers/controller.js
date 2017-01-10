@@ -82,8 +82,8 @@ export default function Controller(ctx, force = false, storeWatchers = true) {
         Silica._watch[k].push([ctrl, v]);
       }
     }
-    if (typeof ctrl.onLoad === "function") {
-      ctrl.onLoad();
+    if (typeof ctrl['onLoad'] === "function") {
+      ctrl['onLoad']();
     }
   }
 }

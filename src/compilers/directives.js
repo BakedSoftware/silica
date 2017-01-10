@@ -39,8 +39,8 @@ export default function directives() {
         }
         Silica._watch[w].push([newChild._rt_ctrl, v]);
       }
-      if (typeof newChild._rt_ctrl.onLoad === "function") {
-        newChild._rt_ctrl.onLoad();
+      if (typeof newChild._rt_ctrl['onLoad'] === "function") {
+        newChild._rt_ctrl['onLoad']();
       }
     }
   }

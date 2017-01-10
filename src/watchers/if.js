@@ -26,8 +26,8 @@ export default function _If() {
           Silica._ifs[raw][i] = compiled;
           let _ref;
           if ((_ref = Silica.getContext(compiled)) != null) {
-            if (typeof _ref.onLoad === "function" && _ref.el == compiled) {
-              _ref.onLoad();
+            if (typeof _ref['onLoad'] === "function" && _ref['el'] == compiled) {
+              _ref['onLoad']();
             }
           }
         }

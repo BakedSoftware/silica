@@ -27,8 +27,8 @@ export default function Include() {
   for (let i = nodes.length - 1; i >= 0; --i)
   {
     node = nodes[i];
-    partial = eval(node.dataset.include);
-    delete node.dataset.include;
+    partial = eval(node.dataset['include']);
+    delete node.dataset['include'];
     loadPartial(partial, node);
   }
 }

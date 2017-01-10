@@ -1,5 +1,5 @@
 import BaseController from './base'
 Controllers = {
-  Base: BaseController
+  'Base': BaseController
 };
 export default Controllers;

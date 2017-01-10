@@ -4,6 +4,6 @@ export default function Style() {
   for (let i = nodes.length - 1; i >= 0; --i)
   {
     node = nodes[i];
-    node.setAttribute("style", Silica.getValue(node, node.dataset.style));
+    node.setAttribute("style", Silica.getValue(node, node.dataset['style']));
   }
 }

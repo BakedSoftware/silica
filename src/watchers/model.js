@@ -1,6 +1,7 @@
 var inputTimeRegexp = /date|time/i;
 var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select", "select-one"]
 
+/** @this Element */
 export default function Model() {
   var elements = this.querySelectorAll('[data-model]');
   var element, i, type;
@@ -21,13 +22,13 @@ export default function Model() {
     {
       val = element.value;
       if (val.search(/[0-9]/) != -1) {
-        val = parseInt(val);
+        val = parseInt(val, 10);
       }
-      element.checked = Silica.getValue(element, element.dataset.model) === val;
+      element.checked = Silica.getValue(element, element.dataset['model']) === val;
     }
     else if (type === 'checkbox')
     {
-      element.checked = Silica.getValue(element, element.dataset.model);
+      element.checked = Silica.getValue(element, element.dataset['model']);
     }
     else if (element.nodeName === 'SPAN' || element.nodeName === "PRE" || element.nodeName === "DIV" || element.nodeName === "P")
     {

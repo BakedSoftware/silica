@@ -4,12 +4,12 @@ import Compilers from './compilers/compilers';
 // Import the watchers
 import Watchers from './watchers/watchers';
 
-window.Silica = {
+window['Silica'] = {
   context               :  window,
   contextName           :  '',
   directives            :  {},
   filters               :  {},
-  router                :  {},
+  'router'              :  null,
   _ifs                  :  {}, // Stores the registered ifs
   _shws                 :  {}, // Stores the registered shows
   _klass                :  {}, // Stores the registered css class
@@ -30,13 +30,13 @@ window.Silica = {
 
   setRouter(router)
   {
-    this.router = router;
+    Silica['router'] = router;
     window.onhashchange = () => {
-      this.apply(() => this.router.route(location.hash));
+      this.apply(() => Silica['router']['route'](location.hash));
     };
-    if (Silica.usePushState) {
+    if (Silica['usePushState']) {
       window.onpopstate = () => {
-        this.apply(() => this.router.route(Silica.usePushState ? location.pathname : location.hash));
+        this.apply(() => Silica['router']['route'](Silica['usePushState'] ? location.pathname : location.hash));
       };
     }
   },
@@ -44,16 +44,16 @@ window.Silica = {
   goTo(pathname)
   {
     var route;
-    if (Silica.usePushState) {
-      history.pushState(null, null, pathname);
+    if (Silica['usePushState']) {
+      history.pushState(null, "", pathname);
       route = pathname;
     } else {
       window.location.hash = "#" + pathname;
       route = window.location.hash;
     }
-    if (Silica.router) {
+    if (Silica['router']) {
       Silica.apply(function() {
-        Silica.router.route(route);
+        Silica['router']['route'](route);
       });
     }
   },
@@ -65,6 +65,10 @@ window.Silica = {
       Silica._appRoot = element;
     }
     var func, k, _ref;
+    if (element.nodeType == 8) //Check if it is a comment
+    {
+      return;
+    }
     if (element == document)
     {
       element = document.body.parentElement;
@@ -110,7 +114,7 @@ window.Silica = {
       node = nodes[i];
       if (!node.dataset._rt_repeat_template)
       {
-        hash                              =  SparkMD5.hash(node.innerHTML);
+        hash                              =  md5(node.innerHTML);
         if (node.children.length === 1) {
           Silica._repeat_templates[hash]   =  node.firstElementChild;
         } else {
@@ -159,12 +163,10 @@ window.Silica = {
       let funcs;
       let func;
       for (let key in Silica._watch) {
-        if (Silica._watch.hasOwnProperty(key)) {
-          funcs = Silica._watch[key];
-          for (let i = funcs.length - 1; i >= 0; --i) {
-            func = funcs[i];
-            func[1].apply(func[0]);
-          }
+        funcs = Silica._watch[key];
+        for (let i = funcs.length - 1; i >= 0; --i) {
+          func = funcs[i];
+          func[1].apply(func[0]);
         }
       }
     } else {
@@ -221,7 +223,7 @@ window.Silica = {
         // association is an array of length 2 where first element is the object
         // and the second is the function on the object to execute when value
         // changes
-        for (association of funcs)
+        for (let i = funcs.length - 1, association = funcs[i]; i >= 0; association = funcs[--i])
         {
           //Get the current value
           val = Silica.getPropByString(association[0], property);
@@ -398,7 +400,7 @@ window.Silica = {
     }
     else
     {
-      if (!obj.hasOwnProperty(paths[0]) && obj.hasOwnProperty('$ctrl'))
+      if (!obj.hasOwnProperty(paths[0]) && obj.$ctrl)
       {
         ctx = obj.$ctrl;
       } else {
@@ -465,6 +467,16 @@ window.Silica = {
     var elements = [];
     var children = element.childNodes;
     var text, match, expr, comps, property, fmt, filter, evald;
+
+    /** @type {NodeFilter} */
+    var nodeFilter = /** @type {NodeFilter} */ (function(node) {
+      // Logic to determine whether to accept, reject or skip node
+      // In this case, only accept nodes that have content
+      // matching the interpolation pattern
+      if (Silica.interpolationPattern.test(node.data)) {
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
     var nodeIterator = document.createNodeIterator(
       // Node to use as root
       element,
@@ -474,15 +486,7 @@ window.Silica = {
 
       // Object containing the function to use for the acceptNode method
       // of the NodeFilter
-      { acceptNode: function(node) {
-          // Logic to determine whether to accept, reject or skip node
-          // In this case, only accept nodes that have content
-          // matching the interpolation pattern
-          if (Silica.interpolationPattern.test(node.data)) {
-            return NodeFilter.FILTER_ACCEPT;
-          }
-        }
-      },
+      nodeFilter,
       false
     );
 
@@ -541,7 +545,11 @@ window.Silica = {
     Silica.directives[key] = obj;
   },
   getContext(raw) {
-    var constructor, ctrl, k, v, _ref, raw, ctx, model, needsModel;
+    var ctrl, k, v, _ref, raw, ctx, model, needsModel;
+    /** @type {string} */
+    var constructorName;
+    /** @type {function(new:Object, !Element, ?Object=)} */
+    var constructor;
     while (true)
     {
       if (raw._rt_ctx) {
@@ -550,17 +558,17 @@ window.Silica = {
         return raw._rt_ctrl;
       } else if (raw.nodeName === 'BODY') {
         return Silica.context;
-      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && raw.dataset && raw.dataset.controller) {
-        constructor = raw.dataset.controller;
-        if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
+      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && raw.dataset && raw.dataset['controller']) {
+        constructorName = raw.dataset['controller'];
+        if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
         {
           needsModel = true;
           model = Silica.getValue(raw.parentNode,  _ref[2]);
         }
-        constructor = _ref[1];
-        constructor = eval(constructor);
+        constructorName = _ref[1];
+        constructor = /** @type {function(new:Object, !Element, ?Object=)} */ (eval(constructorName));
         if (!constructor) {
-          return console.error("Unknown Controller: " + raw.dataset.controller);
+          return console.error("Unknown Controller: " + raw.dataset['controller']);
         }
         if (typeof model !== "undefined") {
           ctrl = new constructor(raw, model);
@@ -570,7 +578,7 @@ window.Silica = {
 
         if (!needsModel ^ (model != null)) {
           // Remove old wathcers if rebuilding a controller for a node
-          let watchers = constructor.watchers;
+          let watchers = constructor['watchers'];
           if (raw._rt_ctrl && watchers && Object.keys(watchers).length > 0) {
             for (k in watchers) {
               v = watchers[k];
@@ -593,7 +601,7 @@ window.Silica = {
           raw._rt_live = true;
           raw._rt_ctrl = ctrl;
 
-          _ref = constructor.watchers;
+          _ref = constructor['watchers'];
           for (k in _ref) {
             v = _ref[k];
             if (!Silica._watch[k]) {
@@ -671,7 +679,7 @@ window.Silica = {
       evnt.stopPropagation();
     }
     var scope = document, trap_to, trapped_scope;
-    if ((trap_to = element.dataset.trap) != null) {
+    if ((trap_to = element.dataset['trap']) != null) {
       if (trap_to.toLowerCase() === "true") {
         scope = element;
       } else {
@@ -704,12 +712,12 @@ window.Silica = {
       } else {
         actionName = action;
       }
-      while (!ctx[actionName] && ctx.hasOwnProperty('$ctrl'))
+      while (!ctx[actionName] && ctx.$ctrl)
       {
         ctx = ctx.$ctrl;
       }
-      if (element.dataset.parameter) {
-        parameter = element.dataset.parameter;
+      if (element.dataset['parameter']) {
+        parameter = element.dataset['parameter'];
       }
 
       if (typeof ctx[actionName] !== 'undefined') {
@@ -732,7 +740,7 @@ window.Silica = {
     }
     filterOptions = filter && filter.length > 1 ? eval(filter[1]) : null;
     filter = filterKey ? Silica.filters[filterKey] : null;
-    value = Silica.getValue(raw, raw.dataset.model);
+    value = Silica.getValue(raw, raw.dataset['model']);
     if (filter && value != null) {
       return filter(value, filterOptions);
     } else {
@@ -771,7 +779,7 @@ window.Silica = {
     return false;
   },
   isDescendent(ancestor, child) {
-    while((child=child.parentNode)&&child!==ancestor);
+    while((child=child.parentNode)&&child!==ancestor){}
     return !!child;
   },
   query(raw, ...attributes) {
@@ -826,9 +834,11 @@ window.Silica = {
       {
         // Convert the comment back to live version to check attributes
         temp.innerHTML = node.nodeValue;
-        if (temp.firstElementChild.hasAttributes(attributes.join(",")))
+        for (var j = attributes.length - 1, attr = attributes[j]; j >= 0; attr=attributes[--j])
+        if (temp.firstElementChild.hasAttribute(attr))
         {
           filtered.push(node);
+          break;
         }
       }
     }
@@ -906,7 +916,7 @@ window.Silica = {
         let node = nodes[i];
         if (node._rt_ctrl) {
           ctrl = node._rt_ctrl;
-          for (k in ctrl.constructor.watchers)
+          for (k in ctrl.constructor['watchers'])
           {
             list = Silica._watch[k];
             Silica._watch[k] = (list != null ? list.filter(function(obj) {
@@ -938,4 +948,23 @@ window.Silica = {
   watchers: Watchers
 };
 
-window.Silica.Controllers = Controllers;
+// Tell closure compiler which symbols are exported
+window['Silica']['Controllers']        =  Controllers;
+window['Silica']['addDirective']       =  Silica.addDirective;
+window['Silica']['addFilter']          =  Silica.addFilter;
+window['Silica']['apply']              =  Silica.apply;
+window['Silica']['compile']            =  Silica.compile;
+window['Silica']['debounce']           =  Silica.debounce;
+window['Silica']['flush']              =  Silica.flush;
+window['Silica']['getPropByString']    =  Silica.getPropByString;
+window['Silica']['getValue']           =  Silica.getValue;
+window['Silica']['goTo']               =  Silica.goTo;
+window['Silica']['query']              =  Silica.query;
+window['Silica']['queryOfType']        =  Silica.queryOfType;
+window['Silica']['querySorted']        =  Silica.querySorted;
+window['Silica']['queryWithComments']  =  Silica.queryWithComments;
+window['Silica']['router']             =  Silica.router;
+window['Silica']['setContext']         =  Silica.setContext;
+window['Silica']['setPropByString']    =  Silica.setPropByString;
+window['Silica']['setRouter']          =  Silica.setRouter;
+window['Silica']['usePushState']       =  Silica.usePushState;

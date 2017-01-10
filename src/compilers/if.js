@@ -1,3 +1,4 @@
+/** @this Element */
 export default function _if() {
   var nodes = Silica.queryWithComments(this, '[data-if]');
   var isVisible, negate, raw, val, node;

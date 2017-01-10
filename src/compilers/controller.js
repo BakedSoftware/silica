@@ -1,6 +1,14 @@
 export default function Controller(ctx, force = false, storeWatchers = true) {
-  var node, constructor, ctrl, k, v, _ref, model;
+  var ctrl, k, v, _ref, model;
+  /** @type (Node|Element) */
+  var node;
+  /** @type {string} */
+  var constructorName;
+  /** @type {function(new:Object, !Element, ?Object=)} */
+  var constructor;
+
   var nodes = Silica.query(this, "[data-controller]")
+
   for (let i = nodes.length - 1; i >= 0; --i)
   {
     node = nodes[i];
@@ -9,8 +17,8 @@ export default function Controller(ctx, force = false, storeWatchers = true) {
     }
     lastCtrl = node._rt_ctrl;
     delete node._rt_ctrl;
-    constructor = node.dataset.controller;
-    if (typeof (_ref = constructor.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
+    constructorName = node.dataset['controller'];
+    if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
     {
       let parent = node.parentNode;
       if (parent)
@@ -28,10 +36,10 @@ export default function Controller(ctx, force = false, storeWatchers = true) {
         }
       }
     }
-    constructor = _ref[1];
-    constructor = eval(constructor);
+    constructorName = _ref[1];
+    constructor = /** @type {function(new:Object, !Element, ?Object=)} */ (eval(constructorName));
     if (!constructor) {
-      return console.error("Unknown Controller: " + (node.dataset.controller));
+      return console.error("Unknown Controller: " + (node.dataset['controller']));
     }
     if (typeof model !== 'undefined')
     {
@@ -43,7 +51,7 @@ export default function Controller(ctx, force = false, storeWatchers = true) {
     }
 
     // Remove old watchers if rebuilding a controller for a node
-    let watchers = constructor.watchers;
+    let watchers = constructor['watchers'];
     if (lastCtrl && watchers && Object.keys(watchers).length > 0) {
       for (k in watchers) {
         v = watchers[k];

@@ -1,15 +1,16 @@
+/** @this Element */
 export default function Class() {
   var nodes = Silica.query(this, "[data-class]");
   var node;
   var klass;
 
-  if (this.nodeType != 9 && this.dataset.class)
+  if (this.nodeType != 9 && this.dataset['class'])
   {
     if (this.dataset._rt_hard_klass == null)
     {
       this.dataset._rt_hard_klass = this.className;
     }
-    klass = Silica.getValue(this, this.dataset.class, null, null);
+    klass = Silica.getValue(this, this.dataset['class'], null, null);
     if (klass)
     {
       this.classList.add(klass);
@@ -22,7 +23,7 @@ export default function Class() {
     if (node.dataset._rt_hard_klass == null) {
       node.dataset._rt_hard_klass = node.className.split('hidden').join(" ").trim();
     }
-    klass = Silica.getValue(node, node.dataset.class, null, [node, node.dataset.parameter]);
+    klass = Silica.getValue(node, node.dataset['class'], null, [node, node.dataset['parameter']]);
     if (klass)
     {
       node.classList.add(klass);

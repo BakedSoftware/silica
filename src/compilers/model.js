@@ -1,6 +1,7 @@
 var inputTimeRegexp = /date|time/i;
 var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select", "select-one"]
 
+/** @this Element */
 export default function Model(context = null) {
   var elm, change, ctx, model, val;
   var elements = Silica.query(this, 'input[data-model]', 'select[data-model]', 'textarea[data-model]', 'option[data-model]');
@@ -8,14 +9,14 @@ export default function Model(context = null) {
   {
     elm = elements[i];
     ctx = Silica.getContext(elm);
-    model = elm.dataset.model;
+    model = elm.dataset['model'];
     let type = elm.type;
     if (inputTypes.indexOf(type) !== -1) {
       elm.value = Silica.getValue(elm, model, ctx);
     } else if (type === 'radio') {
       val = elm.value;
       if (val.match(/[0-9]/)) {
-        val = parseInt(val);
+        val = parseInt(val, 10);
       }
       elm.checked = Silica.getValue(elm, model, ctx) === val;
     } else if (type === 'checkbox') {
@@ -25,10 +26,10 @@ export default function Model(context = null) {
     }
     change = function() {
       var obj, _ref, _ref1, _ref2;
-      var val = this.value, ctx = Silica.getContext(this), model = this.dataset.model;
+      var val = this.value, ctx = Silica.getContext(this), model = this.dataset['model'];
       if (this.type === 'radio') {
         if (val.match(/[0-9]/)) {
-          val = parseInt(val);
+          val = parseInt(val, 10);
         }
       } else if (this.type === 'checkbox') {
         val = this.checked;
@@ -36,7 +37,7 @@ export default function Model(context = null) {
       if (Silica.isInApply) {
         obj = (_ref = this._rt_ctx) != null ? _ref : ctx;
         Silica.setPropByString(obj, model, val);
-      } else if ((_ref = this.dataset.trap) != null) {
+      } else if ((_ref = this.dataset['trap']) != null) {
         obj = (_ref1 = this._rt_ctx) != null ? _ref1 : ctx;
         let scope;
         if (_ref.toLowerCase() === "true")

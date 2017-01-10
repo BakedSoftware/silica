@@ -1,7 +1,8 @@
+/** @this Element */
 export default function Show() {
   var element, elements, i, isVisible, k, negate;
   elements = this.querySelectorAll("[data-show]");
-  if(this.dataset.show){
+  if(this.dataset['show']){
     if (elements.length == 0) {
       elements = [this];
     } else {
@@ -19,7 +20,7 @@ export default function Show() {
       continue;
     }
 
-    k = element.dataset.show;
+    k = element.dataset['show'];
     negate = k[0] === "!";
     if (negate) {
       k = k.substr(1);

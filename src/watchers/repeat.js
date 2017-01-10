@@ -7,7 +7,7 @@ export default function Repeat() {
   for (let i =0, length = elements.length; i < length; ++i)
   {
     raw = elements[i];
-    repeat = raw.dataset.repeat.split(/\s+in\s+/);
+    repeat = raw.dataset['repeat'].split(/\s+in\s+/);
     list = repeat[1];
     model = repeat[0];
     ctx = Silica.getContext(raw);
@@ -26,7 +26,7 @@ export default function Repeat() {
       newList = Silica.getValue(raw, list);
     }
 
-    newListHash = SparkMD5.hash(JSON.stringify(newList, function(key, value){
+    newListHash = md5(JSON.stringify(newList, function(key, value){
       //Keys starting with an underscore (char code 95) will be ignored
       if (key.constructor == String && (key == '__elm' || key == '$ctrl' || key.charCodeAt(0) === 95))
       {

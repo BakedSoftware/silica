@@ -6,7 +6,7 @@ export default function Disabled() {
   for (let i = nodes.length - 1; i >= 0; --i)
   {
     node = nodes[i];
-    property = node.dataset.disabled;
+    property = node.dataset['disabled'];
     negate = property[0] === "!";
     if (negate) {
       property = property.substr(1);

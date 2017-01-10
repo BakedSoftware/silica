@@ -1,3 +1,4 @@
+/** @this Element */
 export default function ScrollFinished() {
   var nodes = Silica.query(this, "[data-scroll-finished]");
   var node;
@@ -12,7 +13,7 @@ export default function ScrollFinished() {
     }, 50);
 
     node.onscroll = function(evt) {
-      if (this.dataset.scroll) {
+      if (this.dataset['scroll']) {
         Silica._call(this, evt, 'scroll');
       }
       onscrollfinished(element, evt);

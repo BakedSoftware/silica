@@ -42,6 +42,7 @@
       <ul data-repeat="state in states">
         <li>{{state.key}} = {{state.value}}</li>
       </ul>
+      <my-element></my-element>
     </div>
       <script src="../silica.min.js" type="text/javascript" charset="utf-8"></script>
       <script type="text/javascript" charset="utf-8">
@@ -145,7 +146,19 @@
               }
             }
           };
+          Ex.Router = class {
+            constructor(){}
+            route(loc){console.log("location is now", loc);}
+          };
+          var ct = class TestCntrl extends Silica.Controllers.Base {
+            onClick(){Silica.goTo("/something"); }
+          };
+          Silica.usePushState = false;
+          Silica.addDirective("my-element", {
+            template: "<div data-click='onClick'>this is my custom element</div>",
+            controller: ct });
           Silica.setContext("Ex");
+          Silica.setRouter(new Ex.Router);
           Silica.compile(document);
         }());
       </script>

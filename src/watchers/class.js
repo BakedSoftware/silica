@@ -9,7 +9,7 @@ function updater(element) {
       element.dataset._rt_hard_klass = element.className;
     }
   }
-  var klass = Silica.getValue(element, element.dataset.class, null, [element, element.dataset.parameter]);
+  var klass = Silica.getValue(element, element.dataset['class'], null, [element, element.dataset['parameter']]);
   if (klass) {
     if (klass instanceof Array) {
       element.classList.add.apply(element.classList, klass);
@@ -17,8 +17,8 @@ function updater(element) {
       element.classList.add(klass);
     }
   }
-  if (element.dataset.show != null) {
-    var key = element.dataset.show;
+  if (element.dataset['show'] != null) {
+    var key = element.dataset['show'];
     var negate = key[0] == "!";
     isVisible = Silica._show(element, key, negate);
     if (isVisible && element.classList.contains("hidden")) {
@@ -31,9 +31,10 @@ function updater(element) {
   }
 }
 
+/** @this Element */
 export default function Class() {
   var elements = this.querySelectorAll('[data-class]');
-  if (this.dataset.class) {
+  if (this.dataset['class']) {
     updater(this);
   }
   for (var i = elements.length - 1; i >= 0; --i) {

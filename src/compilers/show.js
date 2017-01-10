@@ -5,7 +5,7 @@ export default function Show(){
   for (var i = nodes.length - 1; i >= 0; --i)
   {
     node = nodes[i];
-    raw = val = node.dataset.show;
+    raw = val = node.dataset['show'];
     negate = val[0] === '!';
     if (negate) {
       val = val.substr(1);

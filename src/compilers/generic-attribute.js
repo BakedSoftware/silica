@@ -6,10 +6,10 @@ export default function Href() {
   for (let i = nodes.length - 1; i >= 0; --i)
   {
     node       =  nodes[i];
-    comps      =  node.dataset.silica.split("=");
+    comps      =  node.dataset['silica'].split("=");
     if (comps.length !== 2)
     {
-      console.error("Invalid generic binding", node.dataset.silica, "for node", node);
+      console.error("Invalid generic binding", node.dataset['silica'], "for node", node);
       return
     }
 

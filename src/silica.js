@@ -19,7 +19,7 @@ window['Silica'] = {
   _appRoot              :  null,
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.12.3",
+  version               :  "0.12.4",
 
   // Set the root context
   setContext(contextName)

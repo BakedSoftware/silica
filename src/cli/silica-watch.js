@@ -21,7 +21,7 @@ program
   .option('-d --done [script]', "Path to a script to run after build")
   .parse(process.argv);
 
-var  afterScript    =  programe.done;
+var  afterScript    =  program.done;
 var  styleIncludes  =  program.styles;
 
 var child_callback = function (error, stdout, stderr) {

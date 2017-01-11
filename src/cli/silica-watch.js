@@ -18,9 +18,11 @@ program
   .option('-p --port [value]', "The port to listen on")
   .option('-s --styles [path]', "Directory of additional style imports relative to the src directory")
   .option('-z --nolivereload', "Don't turn on livereload")
+  .option('-d --done [script]', "Path to a script to run after build")
   .parse(process.argv);
 
-var styleIncludes = program.styles;
+var  afterScript    =  programe.done;
+var  styleIncludes  =  program.styles;
 
 var child_callback = function (error, stdout, stderr) {
   console.log(stdout);
@@ -48,6 +50,9 @@ var rebuild = function() {
   var cmd = 'silica build';
   if (styleIncludes && styleIncludes.length > 0) {
     cmd += " -s " + styleIncludes
+  }
+  if (afterScript && afterScript.length > 0) {
+    cmd += " -d " + afterScript
   }
   exec(cmd, child_callback);
 };

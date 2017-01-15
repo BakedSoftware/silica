@@ -4,7 +4,8 @@ const  childProcess     =  require('child_process');
 
 childProcess.execSync("rm -rf build_cache");
 childProcess.execSync("rm -rf build");
-childProcess.execSync("mkdir ./{build,build_cache}")
+childProcess.execSync("mkdir ./build");
+childProcess.execSync("mkdir ./build_cache");
 childProcess.execSync("cp -r src build_cache/");
 childProcess.execSync("rm -rf build_cache/src/cli");
 childProcess.execSync("rm -rf build_cache/src/externs.js");

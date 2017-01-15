@@ -254,9 +254,18 @@ window['Silica'] = {
     // properties since no flush has executed.
     Silica.isInApply = true;
     // Execute the function
-    func.call();
-    // Clear mark
-    Silica.isInApply = false;
+    try
+    {
+      func.call();
+    }
+    catch (err)
+    {
+      console.error(err);
+    }
+    finally {
+      // Clear mark
+      Silica.isInApply = false;
+    }
 
     // Compute the differences
     // TODO: Store the new values as the old values for the next round

@@ -167,7 +167,7 @@ function directives$$module$build_cache$src$compilers$directives() {
 module$build_cache$src$compilers$directives.default = directives$$module$build_cache$src$compilers$directives;
 var module$build_cache$src$compilers$if = {};
 function _if$$module$build_cache$src$compilers$if() {
-  for (var $nodes$$ = Silica.queryWithComments(this, "[data-if]"), $isVisible$$, $raw$$, $list$jscomp$1_val$$, $node$$, $temp$$ = document.createElement("div"), $$jscomp$loop$20$$ = {}, $i$$ = $nodes$$.length - 1;0 <= $i$$;$$jscomp$loop$20$$ = {subNode:$$jscomp$loop$20$$.subNode}, --$i$$) {
+  for (var $nodes$$ = Silica.queryWithComments(this, "[data-if]"), $isVisible$$, $raw$$, $list$jscomp$1_val$$, $node$$, $temp$$ = document.createElement("div"), $$jscomp$loop$21$$ = {}, $i$$ = $nodes$$.length - 1;0 <= $i$$;$$jscomp$loop$21$$ = {subNode:$$jscomp$loop$21$$.subNode}, --$i$$) {
     if ($node$$ = $nodes$$[$i$$], 8 === $node$$.nodeType ? ($temp$$.innerHTML = $node$$.nodeValue, $raw$$ = $list$jscomp$1_val$$ = $temp$$.firstElementChild.dataset["if"]) : $raw$$ = $list$jscomp$1_val$$ = $node$$.dataset["if"], ($isVisible$$ = "!" === $list$jscomp$1_val$$[0]) && ($list$jscomp$1_val$$ = $list$jscomp$1_val$$.substr(1)), Silica._ifs[$raw$$] || (Silica._ifs[$raw$$] = []), $isVisible$$ = Silica._show($node$$, $list$jscomp$1_val$$, $isVisible$$)) {
       if (8 !== $node$$.nodeType ? Silica._ifs[$raw$$].push($node$$) : ($isVisible$$ = $temp$$.firstElementChild, Silica._ifs[$raw$$].push($isVisible$$), $node$$.parentElement.insertBefore($isVisible$$, $node$$), $node$$.remove(), $node$$ = $isVisible$$), null != ($_ref$$ = Silica.getContext($node$$)) && "function" === typeof $_ref$$.onLoad && $_ref$$.el === $node$$) {
         $_ref$$.onLoad();
@@ -175,26 +175,26 @@ function _if$$module$build_cache$src$compilers$if() {
     } else {
       if (8 !== $node$$.nodeType) {
         $isVisible$$ = Silica.queryWithComments($node$$, "[data-if]");
-        $$jscomp$loop$20$$.subNode = void 0;
-        for (var $$jscomp$loop$21_prop$$, $_ref$$, $j$2_j$$ = $isVisible$$.length - 1;0 <= $j$2_j$$;--$j$2_j$$) {
-          $$jscomp$loop$20$$.subNode = $isVisible$$[$j$2_j$$], $$jscomp$loop$21_prop$$ = $$jscomp$loop$20$$.subNode.dataset["if"], $list$jscomp$1_val$$ = Silica._shws[$$jscomp$loop$21_prop$$], Silica._shws[$$jscomp$loop$21_prop$$] = null != $list$jscomp$1_val$$ ? $list$jscomp$1_val$$.filter(function($$jscomp$loop$20$$) {
+        $$jscomp$loop$21$$.subNode = void 0;
+        for (var $$jscomp$loop$22_prop$$, $_ref$$, $j$2_j$$ = $isVisible$$.length - 1;0 <= $j$2_j$$;--$j$2_j$$) {
+          $$jscomp$loop$21$$.subNode = $isVisible$$[$j$2_j$$], $$jscomp$loop$22_prop$$ = $$jscomp$loop$21$$.subNode.dataset["if"], $list$jscomp$1_val$$ = Silica._shws[$$jscomp$loop$22_prop$$], Silica._shws[$$jscomp$loop$22_prop$$] = null != $list$jscomp$1_val$$ ? $list$jscomp$1_val$$.filter(function($$jscomp$loop$21$$) {
             return function($obj$$) {
-              return $obj$$ != $$jscomp$loop$20$$.subNode;
+              return $obj$$ != $$jscomp$loop$21$$.subNode;
             };
-          }($$jscomp$loop$20$$)) : [];
+          }($$jscomp$loop$21$$)) : [];
         }
         $isVisible$$ = Silica.query(this, "[data-controller]");
-        $$jscomp$loop$21_prop$$ = {};
-        for ($j$2_j$$ = $isVisible$$.length - 1;0 <= $j$2_j$$;$$jscomp$loop$21_prop$$ = {ctrl$3:$$jscomp$loop$21_prop$$.ctrl$3}, --$j$2_j$$) {
-          $$jscomp$loop$20$$.subNode = $isVisible$$[$j$2_j$$];
-          $$jscomp$loop$21_prop$$.ctrl$3 = this._rt_ctrl;
+        $$jscomp$loop$22_prop$$ = {};
+        for ($j$2_j$$ = $isVisible$$.length - 1;0 <= $j$2_j$$;$$jscomp$loop$22_prop$$ = {ctrl$3:$$jscomp$loop$22_prop$$.ctrl$3}, --$j$2_j$$) {
+          $$jscomp$loop$21$$.subNode = $isVisible$$[$j$2_j$$];
+          $$jscomp$loop$22_prop$$.ctrl$3 = this._rt_ctrl;
           var $k$4$$ = void 0;
-          for ($k$4$$ in null != $$jscomp$loop$21_prop$$.ctrl$3 ? $$jscomp$loop$21_prop$$.ctrl$3.watchers : void 0) {
-            $list$jscomp$1_val$$ = Silica._watch[$k$4$$], Silica._watch[$k$4$$] = null != $list$jscomp$1_val$$ ? $list$jscomp$1_val$$.filter(function($$jscomp$loop$21$$) {
+          for ($k$4$$ in null != $$jscomp$loop$22_prop$$.ctrl$3 ? $$jscomp$loop$22_prop$$.ctrl$3.watchers : void 0) {
+            $list$jscomp$1_val$$ = Silica._watch[$k$4$$], Silica._watch[$k$4$$] = null != $list$jscomp$1_val$$ ? $list$jscomp$1_val$$.filter(function($$jscomp$loop$22$$) {
               return function($obj$$) {
-                return $obj$$[0] !== $$jscomp$loop$21$$.ctrl$3;
+                return $obj$$[0] !== $$jscomp$loop$22$$.ctrl$3;
               };
-            }($$jscomp$loop$21_prop$$)) : [];
+            }($$jscomp$loop$22_prop$$)) : [];
           }
         }
         comment = document.createComment($node$$.outerHTML);
@@ -391,19 +391,19 @@ function Scroll$$module$build_cache$src$compilers$scroll() {
 module$build_cache$src$compilers$scroll.default = Scroll$$module$build_cache$src$compilers$scroll;
 var module$build_cache$src$compilers$scroll_finished = {};
 function ScrollFinished$$module$build_cache$src$compilers$scroll_finished() {
-  for (var $nodes$$ = Silica.query(this, "[data-scroll-finished]"), $node$$, $$jscomp$loop$22$$ = {}, $i$$ = $nodes$$.length - 1;0 <= $i$$;$$jscomp$loop$22$$ = {element:$$jscomp$loop$22$$.element}, --$i$$) {
+  for (var $nodes$$ = Silica.query(this, "[data-scroll-finished]"), $node$$, $$jscomp$loop$23$$ = {}, $i$$ = $nodes$$.length - 1;0 <= $i$$;$$jscomp$loop$23$$ = {element:$$jscomp$loop$23$$.element}, --$i$$) {
     $node$$ = $nodes$$[$i$$];
     $node$$._rt_live = !0;
-    $$jscomp$loop$22$$.element = this;
+    $$jscomp$loop$23$$.element = this;
     var $onscrollfinished$$ = Silica.debounce(function($element$$, $evt$$) {
       Silica._call($element$$, $evt$$, "scroll-finished");
     }, 50);
-    $node$$.onscroll = function($$jscomp$loop$22$$) {
+    $node$$.onscroll = function($$jscomp$loop$23$$) {
       return function($evt$$) {
         this.dataset.scroll && Silica._call(this, $evt$$, "scroll");
-        $onscrollfinished$$($$jscomp$loop$22$$.element, $evt$$);
+        $onscrollfinished$$($$jscomp$loop$23$$.element, $evt$$);
       };
-    }($$jscomp$loop$22$$);
+    }($$jscomp$loop$23$$);
   }
 }
 module$build_cache$src$compilers$scroll_finished.default = ScrollFinished$$module$build_cache$src$compilers$scroll_finished;
@@ -577,9 +577,9 @@ function _If$$module$build_cache$src$watchers$if() {
     $elements$$ = $_ref$$[$k$$];
     $raw$$ = $k$$;
     ($negate$$ = "!" === $k$$[0]) && ($k$$ = $k$$.substr(1));
-    var $$jscomp$loop$23$$ = {};
+    var $$jscomp$loop$24$$ = {};
     $i$$ = $_i$$ = 0;
-    for ($_len$$ = $elements$$.length;$_i$$ < $_len$$;$$jscomp$loop$23$$ = {subNode:$$jscomp$loop$23$$.subNode}, $i$$ = ++$_i$$) {
+    for ($_len$$ = $elements$$.length;$_i$$ < $_len$$;$$jscomp$loop$24$$ = {subNode:$$jscomp$loop$24$$.subNode}, $i$$ = ++$_i$$) {
       if ($_ref$5_element$$ = $elements$$[$i$$], $_ref$5_element$$ == this || Silica.isDescendent(this, $_ref$5_element$$)) {
         if ($comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$ = Silica._show($_ref$5_element$$, $k$$, $negate$$)) {
           if (8 === $_ref$5_element$$.nodeType && ($comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$ = document.createElement("div"), $comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$.innerHTML = $_ref$5_element$$.nodeValue, $comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$ = Silica.compile($comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$.firstElementChild, !1, Silica.getContext($_ref$5_element$$)), $_ref$5_element$$.parentNode.insertBefore($comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$, 
@@ -589,23 +589,23 @@ function _If$$module$build_cache$src$watchers$if() {
         } else {
           if (8 !== $_ref$5_element$$.nodeType) {
             $comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$ = Silica.queryWithComments($_ref$5_element$$, "[data-if]");
-            $$jscomp$loop$23$$.subNode = void 0;
+            $$jscomp$loop$24$$.subNode = void 0;
             for (var $j$6_j$$ = $comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$.length - 1;0 <= $j$6_j$$;--$j$6_j$$) {
               var $list$$, $prop$$, $_ref1$$;
-              $$jscomp$loop$23$$.subNode = $comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$[$j$6_j$$];
-              8 !== $$jscomp$loop$23$$.subNode.nodeType || $$jscomp$loop$23$$.subNode.dataset ? $prop$$ = $$jscomp$loop$23$$.subNode.dataset["if"] : ($wrapper$$.innerHTML = $$jscomp$loop$23$$.subNode.data, $prop$$ = $wrapper$$.firstChild.dataset["if"]);
+              $$jscomp$loop$24$$.subNode = $comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$[$j$6_j$$];
+              8 !== $$jscomp$loop$24$$.subNode.nodeType || $$jscomp$loop$24$$.subNode.dataset ? $prop$$ = $$jscomp$loop$24$$.subNode.dataset["if"] : ($wrapper$$.innerHTML = $$jscomp$loop$24$$.subNode.data, $prop$$ = $wrapper$$.firstChild.dataset["if"]);
               $list$$ = Silica._shws[$prop$$];
-              Silica._shws[$prop$$] = null != ($_ref1$$ = null != $list$$ ? $list$$.filter(function($$jscomp$loop$23$$) {
+              Silica._shws[$prop$$] = null != ($_ref1$$ = null != $list$$ ? $list$$.filter(function($$jscomp$loop$24$$) {
                 return function($obj$$) {
-                  return !$obj$$ == $$jscomp$loop$23$$.subNode;
+                  return !$obj$$ == $$jscomp$loop$24$$.subNode;
                 };
-              }($$jscomp$loop$23$$)) : void 0) ? $_ref1$$ : [];
+              }($$jscomp$loop$24$$)) : void 0) ? $_ref1$$ : [];
             }
             $comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$ = Silica.query($_ref$5_element$$, "[data-controller]");
             for ($j$6_j$$ = $comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$.length - 1;0 <= $j$6_j$$;--$j$6_j$$) {
               var $ctrl$$;
-              $$jscomp$loop$23$$.subNode = $comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$[$j$6_j$$];
-              $ctrl$$ = $$jscomp$loop$23$$.subNode._rt_ctrl;
+              $$jscomp$loop$24$$.subNode = $comment$jscomp$1_compiled_isVisible$jscomp$3_subNodes$jscomp$1_temp$$[$j$6_j$$];
+              $ctrl$$ = $$jscomp$loop$24$$.subNode._rt_ctrl;
               for ($k$$ in null != $ctrl$$ ? $ctrl$$.constructor.watchers : void 0) {
                 $list$$ = Silica._watch[$k$$], Silica._watch[$k$$] = null != $list$$ ? $list$$.filter(function($obj$$) {
                   return $obj$$[0] !== $ctrl$$;
@@ -725,7 +725,7 @@ module$build_cache$src$watchers$model.default = Model$$module$build_cache$src$wa
 var module$build_cache$src$watchers$watchers = {}, $jscompDefaultExport$$module$build_cache$src$watchers$watchers = {_If:module$build_cache$src$watchers$if.default, Repeat:module$build_cache$src$watchers$repeat.default, Show:module$build_cache$src$watchers$show.default, Class:module$build_cache$src$watchers$class.default, Model:module$build_cache$src$watchers$model.default, Disabled:module$build_cache$src$compilers$disabled.default, Href:module$build_cache$src$compilers$href.default, Style:module$build_cache$src$compilers$style.default, 
 Src:module$build_cache$src$compilers$src.default, Generic:module$build_cache$src$compilers$generic_attribute.default};
 module$build_cache$src$watchers$watchers.default = $jscompDefaultExport$$module$build_cache$src$watchers$watchers;
-window.Silica = {context:window, contextName:"", directives:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.12.4", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.12.5", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -782,6 +782,8 @@ window.Silica = {context:window, contextName:"", directives:{}, filters:{}, rout
     }, $wait$$);
     $callNow$$ && $func$$.apply($context$$, $args$$);
   };
+}, defer:function $window$Silica$defer$($func$$) {
+  Silica._defers.push($func$$);
 }, flush:function $window$Silica$flush$($element$$, $onlySafe$$, $changed$$, $skipSchedule$$) {
   $element$$ = void 0 === $element$$ ? document.body.parentElement : $element$$;
   $onlySafe$$ = void 0 === $onlySafe$$ ? !1 : $onlySafe$$;
@@ -796,9 +798,9 @@ window.Silica = {context:window, contextName:"", directives:{}, filters:{}, rout
   $element$$ == document && ($element$$ = document.body.parentElement);
   Silica.isInFlush = !$skipSchedule$$;
   if (null === $changed$$ && Silica._isReady) {
-    var $funcs_watchers$$, $func$jscomp$5_key$$;
-    for ($func$jscomp$5_key$$ in Silica._watch) {
-      $funcs_watchers$$ = Silica._watch[$func$jscomp$5_key$$];
+    var $funcs_watchers$$, $func$jscomp$6_key$$;
+    for ($func$jscomp$6_key$$ in Silica._watch) {
+      $funcs_watchers$$ = Silica._watch[$func$jscomp$6_key$$];
       for (var $i$11_k$$ = $funcs_watchers$$.length - 1;0 <= $i$11_k$$;--$i$11_k$$) {
         $changed$$ = $funcs_watchers$$[$i$11_k$$], $changed$$[1].apply($changed$$[0]);
       }
@@ -812,13 +814,13 @@ window.Silica = {context:window, contextName:"", directives:{}, filters:{}, rout
         $funcs_watchers$$ = Silica._watch[$i$11_k$$], $i$$ = $funcs_watchers$$.length - 1;
       }
       for (;0 <= $i$$;--$i$$) {
-        $func$jscomp$5_key$$ = $funcs_watchers$$[$i$$], $func$jscomp$5_key$$[1].apply($func$jscomp$5_key$$[0]);
+        $func$jscomp$6_key$$ = $funcs_watchers$$[$i$$], $func$jscomp$6_key$$[1].apply($func$jscomp$6_key$$[0]);
       }
     }
   }
   $funcs_watchers$$ = Silica.watchers;
   for (var $k$12$$ in $funcs_watchers$$) {
-    $onlySafe$$ && "_" === $k$12$$[0] || ($func$jscomp$5_key$$ = $funcs_watchers$$[$k$12$$], $func$jscomp$5_key$$.apply($element$$));
+    $onlySafe$$ && "_" === $k$12$$[0] || ($func$jscomp$6_key$$ = $funcs_watchers$$[$k$12$$], $func$jscomp$6_key$$.apply($element$$));
   }
   Silica.isInFlush = $skipSchedule$$;
   !0 !== Silica._scheduledFlush || $skipSchedule$$ || (Silica._scheduledFlush = !1, window.setTimeout(function() {
@@ -842,8 +844,13 @@ window.Silica = {context:window, contextName:"", directives:{}, filters:{}, rout
     }
   }
   Silica.isInApply = !0;
-  $finalChanges_func$$.call();
-  Silica.isInApply = !1;
+  try {
+    $finalChanges_func$$.call();
+  } catch ($err$$) {
+    console.error($err$$);
+  } finally {
+    Silica.isInApply = !1;
+  }
   $association_changes$$ = {};
   $_ref1$$ = Silica._watch;
   for ($k$$ in $_ref1$$) {
@@ -877,7 +884,12 @@ window.Silica = {context:window, contextName:"", directives:{}, filters:{}, rout
       $finalChanges_func$$[$k$$] = $funcs$jscomp$1_v$$;
     }
   }
-  return Silica.flush($element$$, !1, $finalChanges_func$$);
+  Silica.flush($element$$, !1, $finalChanges_func$$);
+  for ($element$$ = Silica._defers.length - 1;0 <= $element$$;$element$$--) {
+    Silica._defers[$element$$].call();
+  }
+  Silica._defers = [];
+  return Silica;
 }, getPropByString:function $window$Silica$getPropByString$($obj$$, $context$$, $params$$) {
   if (!$context$$) {
     return $obj$$;
@@ -1102,12 +1114,12 @@ window.Silica = {context:window, contextName:"", directives:{}, filters:{}, rout
     $$jscomp$restParams$$[$$jscomp$restIndex_filtered$$ - 1] = arguments[$$jscomp$restIndex_filtered$$];
   }
   $raw$$ == document && ($raw$$ = document.firstElementChild);
-  for (var $attribute$jscomp$1_nodes$$ = $raw$$.querySelectorAll($$jscomp$restParams$$.join(",")), $$jscomp$restIndex_filtered$$ = [], $i$14_i$$ = $attribute$jscomp$1_nodes$$.length - 1;0 <= $i$14_i$$;--$i$14_i$$) {
-    var $node$$ = $attribute$jscomp$1_nodes$$.item($i$14_i$$);
+  for (var $attribute$jscomp$1_nodes$$ = $raw$$.querySelectorAll($$jscomp$restParams$$.join(",")), $$jscomp$restIndex_filtered$$ = [], $i$15_i$$ = $attribute$jscomp$1_nodes$$.length - 1;0 <= $i$15_i$$;--$i$15_i$$) {
+    var $node$$ = $attribute$jscomp$1_nodes$$.item($i$15_i$$);
     Silica.isInRepeat($raw$$, $node$$) || $$jscomp$restIndex_filtered$$.push($node$$);
   }
-  for ($i$14_i$$ = $$jscomp$restParams$$.length - 1;0 <= $i$14_i$$;--$i$14_i$$) {
-    if ($attribute$jscomp$1_nodes$$ = $$jscomp$restParams$$[$i$14_i$$], $raw$$.hasAttribute($attribute$jscomp$1_nodes$$.substring(1, $attribute$jscomp$1_nodes$$.length - 1))) {
+  for ($i$15_i$$ = $$jscomp$restParams$$.length - 1;0 <= $i$15_i$$;--$i$15_i$$) {
+    if ($attribute$jscomp$1_nodes$$ = $$jscomp$restParams$$[$i$15_i$$], $raw$$.hasAttribute($attribute$jscomp$1_nodes$$.substring(1, $attribute$jscomp$1_nodes$$.length - 1))) {
       $$jscomp$restIndex_filtered$$.push($raw$$);
       break;
     }
@@ -1148,8 +1160,8 @@ window.Silica = {context:window, contextName:"", directives:{}, filters:{}, rout
   $raw$$ == document && ($raw$$ = document.firstElementChild);
   var $attribute$jscomp$2_nodes$$ = $raw$$.getElementsByTagName($type$$), $$jscomp$restIndex$jscomp$3_filtered$$ = [];
   if (0 < $$jscomp$restParams$$.length) {
-    for (var $i$18_i$$ = $attribute$jscomp$2_nodes$$.length - 1;0 <= $i$18_i$$;--$i$18_i$$) {
-      for (var $node$$ = $attribute$jscomp$2_nodes$$.item($i$18_i$$), $j$$ = $$jscomp$restParams$$.length - 1;0 <= $j$$;--$j$$) {
+    for (var $i$19_i$$ = $attribute$jscomp$2_nodes$$.length - 1;0 <= $i$19_i$$;--$i$19_i$$) {
+      for (var $node$$ = $attribute$jscomp$2_nodes$$.item($i$19_i$$), $j$$ = $$jscomp$restParams$$.length - 1;0 <= $j$$;--$j$$) {
         if ($node$$.hasAttribute($$jscomp$restParams$$[$j$$].replace(/\[|\]/g, ""))) {
           $$jscomp$restIndex$jscomp$3_filtered$$.push($node$$);
           break;
@@ -1157,8 +1169,8 @@ window.Silica = {context:window, contextName:"", directives:{}, filters:{}, rout
       }
     }
     if ($raw$$.nodeName === $type$$.toUpperCase()) {
-      for ($i$18_i$$ = $$jscomp$restParams$$.length - 1;0 <= $i$18_i$$;--$i$18_i$$) {
-        if ($attribute$jscomp$2_nodes$$ = $$jscomp$restParams$$[$i$18_i$$], $raw$$.hasAttribute($attribute$jscomp$2_nodes$$.substring(1, $attribute$jscomp$2_nodes$$.length - 1))) {
+      for ($i$19_i$$ = $$jscomp$restParams$$.length - 1;0 <= $i$19_i$$;--$i$19_i$$) {
+        if ($attribute$jscomp$2_nodes$$ = $$jscomp$restParams$$[$i$19_i$$], $raw$$.hasAttribute($attribute$jscomp$2_nodes$$.substring(1, $attribute$jscomp$2_nodes$$.length - 1))) {
           $$jscomp$restIndex$jscomp$3_filtered$$.push($raw$$);
           break;
         }
@@ -1170,8 +1182,8 @@ window.Silica = {context:window, contextName:"", directives:{}, filters:{}, rout
   return $$jscomp$restIndex$jscomp$3_filtered$$;
 }, removeFromDOM:function $window$Silica$removeFromDOM$($e$$) {
   for (var $removeWatchers$$ = function $$removeWatchers$$$($nodes$$) {
-    for (var $i$19$$ = $nodes$$.length - 1;0 <= $i$19$$;--$i$19$$) {
-      var $node$$ = $nodes$$[$i$19$$];
+    for (var $i$20$$ = $nodes$$.length - 1;0 <= $i$20$$;--$i$20$$) {
+      var $node$$ = $nodes$$[$i$20$$];
       if ($node$$._rt_ctrl) {
         for (k in ctrl = $node$$._rt_ctrl, ctrl.constructor.watchers) {
           list = Silica._watch[k], Silica._watch[k] = null != list ? list.filter(function($obj$$) {
@@ -1196,6 +1208,7 @@ window.Silica.addFilter = Silica.addFilter;
 window.Silica.apply = Silica.apply;
 window.Silica.compile = Silica.compile;
 window.Silica.debounce = Silica.debounce;
+window.Silica.defer = Silica.defer;
 window.Silica.flush = Silica.flush;
 window.Silica.getPropByString = Silica.getPropByString;
 window.Silica.getValue = Silica.getValue;

@@ -17,9 +17,10 @@ window['Silica'] = {
   _repeat_templates     :  {}, // Stores a map between repeats and their templates
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
+  _defers               :  [],
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.12.4",
+  version               :  "0.12.5",
 
   // Set the root context
   setContext(contextName)
@@ -144,6 +145,15 @@ window['Silica'] = {
       timeout = setTimeout(later, wait);
       if (callNow) func.apply(context, args);
     };
+  },
+
+  /**
+   * Defer takes a function which will be executed once after the next apply
+   * @param {function()} func
+   */
+  defer(func)
+  {
+    Silica._defers.push(func);
   },
 
   flush(element = document.body.parentElement, onlySafe = false, changed = null, skipSchedule = false)
@@ -325,7 +335,13 @@ window['Silica'] = {
         finalChanges[k] = v;
       }
     }
-    return Silica.flush(element, false, finalChanges);
+    Silica.flush(element, false, finalChanges);
+    for (let i = Silica._defers.length - 1; i >= 0; i--)
+    {
+      Silica._defers[i].call();
+    }
+    Silica._defers = [];
+    return Silica;
   },
 
   // Walk through an object to get the specified property.
@@ -964,6 +980,7 @@ window['Silica']['addFilter']          =  Silica.addFilter;
 window['Silica']['apply']              =  Silica.apply;
 window['Silica']['compile']            =  Silica.compile;
 window['Silica']['debounce']           =  Silica.debounce;
+window['Silica']['defer']              =  Silica.defer;
 window['Silica']['flush']              =  Silica.flush;
 window['Silica']['getPropByString']    =  Silica.getPropByString;
 window['Silica']['getValue']           =  Silica.getValue;

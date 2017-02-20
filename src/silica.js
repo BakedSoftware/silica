@@ -20,7 +20,7 @@ window['Silica'] = {
   _defers               :  [],
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.12.5",
+  version               :  "0.12.6",
 
   // Set the root context
   setContext(contextName)
@@ -725,7 +725,7 @@ window['Silica'] = {
       var idx = action.indexOf("(");
       if (idx > 0) {
         actionName = action.substr(0, idx)
-        models = action.substr(actionName.length).match(/(\w+)(?:\(?(\w+)\))?/g);
+        models = action.substr(actionName.length).match(/((?:\w|\.)+)(?:\(?(\w+)\))?/g);
         if (models)
         {
           for (let i = 0; i < models.length; i++) {

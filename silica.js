@@ -725,7 +725,7 @@ module$build_cache$src$watchers$model.default = Model$$module$build_cache$src$wa
 var module$build_cache$src$watchers$watchers = {}, $jscompDefaultExport$$module$build_cache$src$watchers$watchers = {_If:module$build_cache$src$watchers$if.default, Repeat:module$build_cache$src$watchers$repeat.default, Show:module$build_cache$src$watchers$show.default, Class:module$build_cache$src$watchers$class.default, Model:module$build_cache$src$watchers$model.default, Disabled:module$build_cache$src$compilers$disabled.default, Href:module$build_cache$src$compilers$href.default, Style:module$build_cache$src$compilers$style.default, 
 Src:module$build_cache$src$compilers$src.default, Generic:module$build_cache$src$compilers$generic_attribute.default};
 module$build_cache$src$watchers$watchers.default = $jscompDefaultExport$$module$build_cache$src$watchers$watchers;
-window.Silica = {context:window, contextName:"", directives:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.12.5", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.12.6", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1065,7 +1065,7 @@ window.Silica = {context:window, contextName:"", directives:{}, filters:{}, rout
       $action_i$$ = $element$$.dataset[$act$$];
       $actionName_idx$$ = $action_i$$.indexOf("(");
       if (0 < $actionName_idx$$) {
-        if ($actionName_idx$$ = $action_i$$.substr(0, $actionName_idx$$), $models$$ = $action_i$$.substr($actionName_idx$$.length).match(/(\w+)(?:\(?(\w+)\))?/g)) {
+        if ($actionName_idx$$ = $action_i$$.substr(0, $actionName_idx$$), $models$$ = $action_i$$.substr($actionName_idx$$.length).match(/((?:\w|\.)+)(?:\(?(\w+)\))?/g)) {
           for ($action_i$$ = 0;$action_i$$ < $models$$.length;$action_i$$++) {
             $models$$[$action_i$$] = Silica.getPropByString($ctx$$, $models$$[$action_i$$]);
           }

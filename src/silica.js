@@ -22,7 +22,7 @@ window['Silica'] = {
   _includeCache         :  {},
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.12.7",
+  version               :  "0.12.8",
 
   // Set the root context
   setContext(contextName)

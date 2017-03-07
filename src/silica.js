@@ -8,6 +8,7 @@ window['Silica'] = {
   context               :  window,
   contextName           :  '',
   directives            :  {},
+  components            :  {},
   filters               :  {},
   'router'              :  null,
   _ifs                  :  {}, // Stores the registered ifs
@@ -18,9 +19,10 @@ window['Silica'] = {
   _isReady              :  false, // Keeps track if app is ready
   _appRoot              :  null,
   _defers               :  [],
+  _includeCache         :  {},
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.12.6",
+  version               :  "0.12.7",
 
   // Set the root context
   setContext(contextName)

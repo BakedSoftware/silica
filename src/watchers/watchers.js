@@ -9,6 +9,7 @@ import Href from '../compilers/href.js';
 import Style from '../compilers/style.js';
 import Src from '../compilers/src.js';
 import Generic from '../compilers/generic-attribute.js';
+import Include from '../compilers/include.js';
 
 export default {
   _If: _If,
@@ -20,5 +21,6 @@ export default {
   Href: Href,
   Style: Style,
   Src: Src,
-  Generic: Generic
+  Generic: Generic,
+  Include: Include
 };

@@ -43,8 +43,11 @@
         <li>{{state.key}} = {{state.value}}</li>
       </ul>
       <my-element></my-element>
+
+      <h3>Embedded Page: {{embeddedPage}}</h3>
+      <div data-include="embeddedPage"></div>
     </div>
-      <script src="../silica.min.js" type="text/javascript" charset="utf-8"></script>
+      <script src="silica.min.js" type="text/javascript" charset="utf-8"></script>
       <script type="text/javascript" charset="utf-8">
         (function(){
           'use strict';
@@ -53,6 +56,7 @@
               constructor(el) {
                 super(el)
                 this.name = null;
+                this.embeddedPage = "./include.html",
                 this.fonts = [{key: "Arial", name:"Super A"}, {key:"Courier",
                   name:"Old Typey"}, {key:"Operator Mono", name:"Best"}];
                 this.selectedFont = "Courier";
@@ -130,6 +134,12 @@
 
               printGrade(_, grade, klass, user) {
                 console.log(user.name, "received", grade, "for", klass.name);
+              }
+              showFirstPage(){
+                this.embeddedPage = "./include.html";
+              }
+              showPage2(){
+                this.embeddedPage = "./include2.html";
               }
             },
 

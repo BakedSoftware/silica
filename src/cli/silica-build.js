@@ -18,6 +18,7 @@ program
 var  afterScript    =  program.done;
 var  styleIncludes  =  program.styles;
 var  cache_path     =  'build_cache';
+var  env_regex      =  /\$\{(\w+)(?:\:=(.+))?\}/;
 
 console.log("Starting Build")
 
@@ -29,39 +30,69 @@ fs.mkdirSync(path.join('build', 'js'));
 fs.mkdirSync(path.join('build', 'css'));
 fs.copySync('src', cache_path);
 
-var  index_path  =  path.join(cache_path, 'index.html');
-var  index       =  fs.readFileSync(index_path, 'utf8');
-
-var include_regex = /<(\w+\b(?:.|\n)+?)data-include="'(.+?)'"(.*?)>/;
-var env_regex = /\$\{(\w+)(?:\:=(.+))?\}/;
-var match;
-
-while ((match = include_regex.exec(index)) !== null) {
-
-  var  to_replace   =  match[0];
-  var  tag_opening  =  match[1];
-  var  file_name    =  match[2];
-  var  tag_closing  =  match[3];
-
-  var  replacement  =  "<" + tag_opening + tag_closing + ">" + fs.readFileSync(path.join(cache_path, file_name), 'utf8');
-
-  index = index.replace(to_replace, replacement);
+function walk(dir) {
+  var results = []
+  var list = fs.readdirSync(dir)
+  list.forEach(function(file) {
+    file = path.join(dir, file);
+    var stat = fs.statSync(file);
+    if (stat && stat.isDirectory()) results = results.concat(walk(file))
+    else results.push(file)
+  });
+  return results
 }
 
-while ((match = env_regex.exec(index)) !== null) {
-  var to_replace = match[0];
-  var env_name = match[1];
-  var replacement = process.env[env_name] || match[2];
+function preprocessView(readPath, writePath)
+{
+  var content         =  fs.readFileSync(readPath, 'utf8');
+  var include_regex   =  /<(\w+\b(?:.|\n)+?)data-include="'(.+?)'"(.*?)>/;
+  var match;
 
-  if (replacement === undefined) {
-    console.error("Undefined ENV variable with no default: ", env_name)
-    process.exit(1);
+  while ((match = include_regex.exec(content)) !== null) {
+
+    var  to_replace   =  match[0];
+    var  tag_opening  =  match[1];
+    var  file_name    =  match[2];
+    var  tag_closing  =  match[3];
+
+    var  replacement  =  "<" + tag_opening + tag_closing + ">" + fs.readFileSync(path.join(cache_path, file_name), 'utf8');
+
+    content = content.replace(to_replace, replacement);
   }
 
-  index = index.replace(to_replace, replacement)
+  while ((match = env_regex.exec(content)) !== null) {
+    var to_replace = match[0];
+    var env_name = match[1];
+    var replacement = process.env[env_name] || match[2];
+
+    if (replacement === undefined) {
+      console.error("Undefined ENV variable with no default: ", env_name)
+      process.exit(1);
+    }
+
+    content = content.replace(to_replace, replacement)
+  }
+
+  var dir = path.dirname(writePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  fs.writeFileSync(writePath, content);
 }
 
-fs.writeFileSync(path.join('build', 'index.html'), index);
+console.log("Preprocessing views...");
+
+// Check the index file
+preprocessView(path.join(cache_path, 'index.html'), path.join('build', 'index.html'));
+
+// Check all other views
+var views = walk(path.join(cache_path, 'views'));
+for (var i = 0, len = views.length; i < len; i++) {
+  var writeTo = views[i].split(path.sep);
+  writeTo.shift();
+  preprocessView(views[i], path.join('build', writeTo.join(path.sep)));
+}
+console.log("Preprocess Finished");
 
 var asyncLock = 0;
 
@@ -139,17 +170,6 @@ try {
 
 var sprite_src = path.join('src', 'images', 'sprites');
 
-function walk(dir) {
-  var results = []
-  var list = fs.readdirSync(dir)
-  list.forEach(function(file) {
-    file = dir + '/' + file
-    var stat = fs.statSync(file)
-    if (stat && stat.isDirectory()) results = results.concat(walk(file))
-    else results.push(file)
-  })
-  return results
-}
 
 function stylus_render() {
   var  styles   =  walk(path.join(cache_path, 'styles')).filter(function(name) {

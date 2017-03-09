@@ -2,9 +2,12 @@ function handleClick(evt)
 {
   for (let node of Silica._clickOutElements)
   {
-    if (evt.target != node && !Silica.isDescendent(node, evt.target))
+    if (node.offsetWidth > 0 || node.offsetHeight > 0)
     {
-      Silica._call(node, evt, 'clickOutside');
+      if (evt.target != node && !Silica.isDescendent(node, evt.target))
+      {
+        Silica._call(node, evt, 'clickOutside');
+      }
     }
   }
 }

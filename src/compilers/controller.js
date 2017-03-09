@@ -1,5 +1,5 @@
 export default function Controller(ctx, force = false, storeWatchers = true) {
-  var ctrl, k, v, _ref, model;
+  var ctrl, k, v, _ref, model, lastCtrl;
   /** @type (Node|Element) */
   var node;
   /** @type {string} */

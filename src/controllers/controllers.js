@@ -1,5 +1,5 @@
 import BaseController from './base'
-Controllers = {
+var Controllers = {
   'Base': BaseController
 };
 export default Controllers;

@@ -1,7 +1,8 @@
 export default function _If() {
-  var comment, compiled, element, elements, i, isVisible, k, negate, raw, _i, _len, _ref;
+  var comment, compiled, elements, i, isVisible, k, negate, raw, _len, _ref;
   var wrapper = document.createElement("div");
   _ref = Silica._ifs;
+  console.log("Entering If watcher")
   for (k in _ref) {
     elements = _ref[k];
     raw = k;
@@ -9,20 +10,23 @@ export default function _If() {
     if (negate) {
       k = k.substr(1);
     }
-    for (i = _i = 0, _len = elements.length; _i < _len; i = ++_i) {
-      element = elements[i];
+    for (i = 0, _len = elements.length; i < _len; ++i) {
+      let element = elements[i];
       if (element != this && !Silica.isDescendent(this, element))
       {
         continue;
       }
       isVisible = Silica._show(element, k, negate);
-      if (isVisible) {
-        if (element.nodeType === 8) {
+      if (isVisible)
+      {
+        let p = element.parentNode;
+        if (element.nodeType === 8 && p != null) {
+          console.log("parent is", p);
           let temp = document.createElement("div");
           temp.innerHTML = element.nodeValue;
-          compiled = Silica.compile(temp.firstElementChild, false, Silica.getContext(element));
-          element.parentNode.insertBefore(compiled, element);
-          element.remove();
+          compiled = Silica.compile(temp.firstElementChild, false, Silica.getContext(element.parentElement));
+          console.log("parent is now", element.parentNode);
+          element.parentNode.replaceChild(compiled, element);
           Silica._ifs[raw][i] = compiled;
           let _ref;
           if ((_ref = Silica.getContext(compiled)) != null) {
@@ -31,7 +35,9 @@ export default function _If() {
             }
           }
         }
-      } else {
+      }
+      else
+      {
         if (element.nodeType !== 8) {
           let subNodes = Silica.queryWithComments(element, '[data-if]');
           let subNode;
@@ -67,11 +73,11 @@ export default function _If() {
             }
           }
           comment = document.createComment(element.outerHTML);
-          comment.parentElement = element.parentElement;
-          Silica._ifs[raw][i] = comment;
           element.parentNode.replaceChild(comment, element);
+          Silica._ifs[raw][i] = comment;
         }
       }
     }
   }
+  console.log("Exiting if watcher");
 }

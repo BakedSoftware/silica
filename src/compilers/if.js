@@ -1,7 +1,7 @@
 /** @this Element */
 export default function _if() {
   var nodes = Silica.queryWithComments(this, '[data-if]');
-  var isVisible, negate, raw, val, node;
+  var isVisible, negate, raw, val, node, comment;
   var temp = document.createElement("div");
   for (let i = nodes.length - 1; i >=0; --i)
   {

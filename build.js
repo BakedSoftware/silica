@@ -26,7 +26,7 @@ closureCompiler.run(function(exitCode, stdOut, stdErr){
   if (stdErr.length) {
     console.error(stdErr);
   }
-  fs.appendFileSync("build/silica.min.js", stdOut);
+  fs.appendFileSync("build/silica.min.js", "!function(){\n\"use strict\";\n"+stdOut+"}.call(window);");
 });
 
 // Build debug version
@@ -40,5 +40,5 @@ closureCompiler.run(function(exitCode, stdOut, stdErr){
   if (stdErr.length) {
     console.error(stdErr);
   }
-  fs.appendFileSync("build/silica.js", stdOut);
+  fs.appendFileSync("build/silica.js", "!function(){\n\"use strict\";\n"+stdOut+"}.call(window);");
 });

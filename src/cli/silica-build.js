@@ -28,16 +28,20 @@ fs.removeSync('build', true);
 fs.mkdirSync('build');
 fs.mkdirSync(path.join('build', 'js'));
 fs.mkdirSync(path.join('build', 'css'));
+fs.mkdirSync(path.join('build', 'views'));
 fs.copySync('src', cache_path);
 
 function walk(dir) {
   var results = []
   var list = fs.readdirSync(dir)
   list.forEach(function(file) {
-    file = path.join(dir, file);
-    var stat = fs.statSync(file);
-    if (stat && stat.isDirectory()) results = results.concat(walk(file))
-    else results.push(file)
+    if (file[0] != '.')
+    {
+      file = path.join(dir, file);
+      var stat = fs.statSync(file);
+      if (stat && stat.isDirectory()) results = results.concat(walk(file))
+      else results.push(file)
+    }
   });
   return results
 }

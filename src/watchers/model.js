@@ -4,7 +4,7 @@ var inputTypes = ["text", "file", "number", "email", "password", "tel", "search"
 /** @this Element */
 export default function Model() {
   var elements = this.querySelectorAll('[data-model]');
-  var element, i, type;
+  var element, i, type, val;
   var activeElement = document.activeElement || Silica.__activeElement;
   for (i = elements.length - 1; i >= 0; --i)
   {

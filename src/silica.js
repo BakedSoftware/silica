@@ -20,9 +20,10 @@ window['Silica'] = {
   _appRoot              :  null,
   _defers               :  [],
   _includeCache         :  {},
+  _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.14.0",
+  version               :  "0.15.0",
 
   // Set the root context
   setContext(contextName)

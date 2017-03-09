@@ -8,6 +8,7 @@ import Style from "./style.js";
 import Include from "./include.js";
 import Controller from "./controller.js";
 import Click from "./click.js";
+import ClickOutside from "./clickoutside.js";
 import DoubleClick from "./double_click.js";
 import Blur from "./blur.js";
 import Focus from "./focus.js";
@@ -47,6 +48,7 @@ export default {
   Include: Include,
   Controller: Controller,
   Click: Click,
+  ClickOutside: ClickOutside,
   DoubleClick: DoubleClick,
   Blur: Blur,
   Focus: Focus,

@@ -32,7 +32,7 @@ export default function directives() {
       // Remove old watchers if rebuilding a controller for a node
       let watchers = obj.controller['watchers'];
       let v;
-      for (w in watchers) {
+      for (let w in watchers) {
         v = watchers[w];
         if (!Silica._watch[w]) {
           Silica._watch[w] = [];

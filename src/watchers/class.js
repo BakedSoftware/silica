@@ -20,7 +20,7 @@ function updater(element) {
   if (element.dataset['show'] != null) {
     var key = element.dataset['show'];
     var negate = key[0] == "!";
-    isVisible = Silica._show(element, key, negate);
+    let isVisible = Silica._show(element, key, negate);
     if (isVisible && element.classList.contains("hidden")) {
       element.classList.remove("hidden");
     } else {

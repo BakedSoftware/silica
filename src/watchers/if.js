@@ -18,7 +18,7 @@ export default function _If() {
       isVisible = Silica._show(element, k, negate);
       if (isVisible)
       {
-        if (element.nodeType === 8 && p != null) {
+        if (element.nodeType === 8) {
           let temp = document.createElement("div");
           temp.innerHTML = element.nodeValue;
           compiled = Silica.compile(temp.firstElementChild, false, Silica.getContext(element.parentElement));

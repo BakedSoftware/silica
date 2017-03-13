@@ -18,7 +18,7 @@ program
 var  afterScript    =  program.done;
 var  styleIncludes  =  program.styles;
 var  cache_path     =  'build_cache';
-var  env_regex      =  /\$\{(\w+)(?:\:=(.+))?\}/;
+var  env_regex      =  /\$\{(\w+)(?:\:=(.+?))?\}/;
 
 console.log("Starting Build")
 

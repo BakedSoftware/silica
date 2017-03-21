@@ -63,7 +63,10 @@ export default function Include() {
     // Don't try include empty url
     if (!url || url === "")
     {
-      delete node.dataset['sio2IncludedUrl'];
+      if (node.dataset.hasOwnProperty('sio2IncludedUrl'))
+      {
+        delete node.dataset['sio2IncludedUrl'];
+      }
       clearContent(node);
       continue;
     }

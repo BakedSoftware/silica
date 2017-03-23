@@ -148,7 +148,7 @@ browserify({debug: true})
   .transform(babelify, {presets: ["es2015"]})
   .require(path.join(cache_path, 'app.js'), { entry: true })
   .bundle()
-  .on("error", function (err) { console.log("Error: " + err.message); })
+  .on("error", function (err) { console.log("Error: " + err.message); process.exit(1); })
   .pipe(envReplaceTransform).pipe(fs.createWriteStream(path.join('build', 'js', 'app.js')))
   .on("close", function(){
     afterScriptCaller();
@@ -161,6 +161,7 @@ var  total_css        =  "";
 function stylus_callback(err, css) {
   if (err) {
     console.log(err);
+    process.exit(1);
   } else {
     total_css += css;
   }

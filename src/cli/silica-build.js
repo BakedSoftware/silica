@@ -9,6 +9,7 @@ const  path             =  require('path');
 const  program          =  require('commander');
 const  spawnSync        =  require('child_process').spawnSync;
 const  stylus           =  require('stylus');
+const  ClosureCompiler  =  require('google-closure-compiler').compiler;
 
 program
   .option('-d --done [script]', "The path to a script to run after build")
@@ -29,7 +30,7 @@ fs.mkdirSync('build');
 fs.mkdirSync(path.join('build', 'js'));
 fs.mkdirSync(path.join('build', 'css'));
 fs.mkdirSync(path.join('build', 'views'));
-fs.copySync('src', cache_path);
+fs.copySync('src', path.join(cache_path, 'src'));
 
 function walk(dir) {
   var results = []
@@ -59,7 +60,7 @@ function preprocessView(readPath, writePath)
     var  file_name    =  match[2];
     var  tag_closing  =  match[3];
 
-    var  replacement  =  "<" + tag_opening + tag_closing + ">" + fs.readFileSync(path.join(cache_path, file_name), 'utf8');
+    var  replacement  =  "<" + tag_opening + tag_closing + ">" + fs.readFileSync(path.join(cache_path, 'src', file_name), 'utf8');
 
     content = content.replace(to_replace, replacement);
   }
@@ -87,12 +88,13 @@ function preprocessView(readPath, writePath)
 console.log("Preprocessing views...");
 
 // Check the index file
-preprocessView(path.join(cache_path, 'index.html'), path.join('build', 'index.html'));
+preprocessView(path.join(cache_path, 'src', 'index.html'), path.join('build', 'index.html'));
 
 // Check all other views
-var views = walk(path.join(cache_path, 'views'));
+var views = walk(path.join(cache_path, 'src', 'views'));
 for (var i = 0, len = views.length; i < len; i++) {
   var writeTo = views[i].split(path.sep);
+  writeTo.shift();
   writeTo.shift();
   preprocessView(views[i], path.join('build', writeTo.join(path.sep)));
 }
@@ -121,12 +123,7 @@ function afterScriptCaller() {
 const Transform = require('stream').Transform;
 
 // All Transform streams are also Duplex Streams
-const envReplaceTransform = new Transform({
-  writableObjectMode: true,
-
-  transform(chunk, encoding, callback) {
-    chunk = chunk.toString();
-
+function envReplaceTransform(chunk) {
     while ((match = env_regex.exec(chunk)) !== null) {
       var to_replace = match[0];
       var env_name = match[1];
@@ -139,23 +136,42 @@ const envReplaceTransform = new Transform({
 
       chunk = chunk.replace(to_replace, replacement);
     }
-    // Push the data onto the readable queue.
-    callback(null, chunk);
+  return chunk
+}
+
+var flags = {
+  js: 'build_cache/**/*.js',
+  language_in: 'ECMASCRIPT6',
+  language_out: 'ECMASCRIPT5',
+  compilation_level: 'ADVANCED',
+  externs: 'src/externs.js'
+};
+
+// Build debug version
+flags['compilation_level']  =  'SIMPLE';
+flags['debug']              =  true;
+flags['formatting']         =  'pretty_print';
+
+console.log("Compiling js");
+closureCompiler = new ClosureCompiler(flags);
+closureCompiler.run(function(exitCode, stdOut, stdErr){
+  if (stdErr.length) {
+    console.error(stdErr);
+    if (stdErr.indexOf("ERROR") !== -1)
+    {
+      process.exit(1);
+    }
   }
+  let  out     =  path.join('build', 'js', 'app.js');
+  let  output  =  envReplaceTransform(stdOut);
+
+  fs.appendFileSync(out, "(function(window){\n\"use strict\";\n"+output+"}.call(window, window));");
+  afterScriptCaller();
 });
 
-browserify({debug: true})
-  .transform(babelify, {presets: ["es2015"]})
-  .require(path.join(cache_path, 'app.js'), { entry: true })
-  .bundle()
-  .on("error", function (err) { console.log("Error: " + err.message); process.exit(1); })
-  .pipe(envReplaceTransform).pipe(fs.createWriteStream(path.join('build', 'js', 'app.js')))
-  .on("close", function(){
-    afterScriptCaller();
-  });
 
 //Generate sprite styles
-var  sprite_css_path  =  path.join(cache_path, 'styles', 'sprite.css');
+var  sprite_css_path  =  path.join(cache_path, 'src', 'styles', 'sprite.css');
 var  total_css        =  "";
 
 function stylus_callback(err, css) {
@@ -177,7 +193,7 @@ var sprite_src = path.join('src', 'images', 'sprites');
 
 
 function stylus_render() {
-  var  styles   =  walk(path.join(cache_path, 'styles')).filter(function(name) {
+  var  styles   =  walk(path.join(cache_path, 'src', 'styles')).filter(function(name) {
     return name[0] !== '.' && name !== 'base.styl' && name !== 'fonts.styl' && name.endsWith(".styl");
   });
 
@@ -189,10 +205,10 @@ function stylus_render() {
     var s = stylus(styl_content)
               .set('filename', styles[i])
               .include(require('nib').path)
-              .include(path.join(cache_path, 'styles'))
+              .include(path.join(cache_path, 'src', 'styles'))
 
     if (styleIncludes && styleIncludes.length > 0) {
-      s = s.include(path.join(cache_path, styleIncludes));
+      s = s.include(path.join(cache_path, 'src', styleIncludes));
     }
 
     s.render(stylus_callback);
@@ -204,7 +220,7 @@ function writeStyles() {
   console.log("Built Style sheet");
 
   try {
-    var font_dir_path = path.join(cache_path, 'fonts');
+    var font_dir_path = path.join(cache_path, 'src', 'fonts');
     if (fs.statSync(font_dir_path).isDirectory())
     {
       fs.copySync(font_dir_path, path.join('build', 'css', 'fonts'));

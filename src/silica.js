@@ -23,7 +23,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.15.6",
+  version               :  "0.15.7",
 
   // Set the root context
   setContext(contextName)
@@ -586,7 +586,7 @@ window['Silica'] = {
         return raw._rt_ctrl;
       } else if (raw.nodeName === 'BODY') {
         return Silica.context;
-      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && raw.dataset && raw.dataset['controller']) {
+      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && raw.dataset != null && raw.dataset.hasOwnProperty('controller')) {
         constructorName = raw.dataset['controller'];
         if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
         {

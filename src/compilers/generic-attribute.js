@@ -1,4 +1,4 @@
-export default function Href() {
+export default function Generic() {
   var nodes = Silica.query(this, '[data-silica]');
   var node;
   var comps, attribute, valueKey;

@@ -23,7 +23,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.15.7",
+  version               :  "0.15.8",
 
   // Set the root context
   setContext(contextName)
@@ -357,8 +357,23 @@ window['Silica'] = {
       return obj;
     }
 
-    let comps = propString.split('.');
-    while (obj[comps[0]] == null || obj[comps[0]] == undefined)
+    if (obj.__property_map === undefined)
+    {
+      obj.__property_map = {};
+    }
+
+    let /** @type {?Array<string>} */ property_path;
+    if (obj.__property_map.hasOwnProperty(propString))
+    {
+      property_path = obj.__property_map[propString];
+    }
+    else
+    {
+      property_path = propString.split('.');
+      obj.__property_map[propString] = property_path;
+    }
+
+    while (obj[property_path[0]] == null || obj[property_path[0]] == undefined)
     {
       if (obj.$ctrl)
       {
@@ -371,7 +386,6 @@ window['Silica'] = {
     }
 
     let context;
-    let property_path = propString.split('.');
     let path_length = property_path.length;
     let property;
     for (let i = 0; i < path_length; ++i)

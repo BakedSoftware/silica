@@ -690,7 +690,7 @@ function ScrollFinished$$module$build_cache$src$compilers$scroll_finished() {
 }
 module$build_cache$src$compilers$scroll_finished.default = ScrollFinished$$module$build_cache$src$compilers$scroll_finished;
 var module$build_cache$src$compilers$generic_attribute = {};
-function Href$$module$build_cache$src$compilers$generic_attribute() {
+function Generic$$module$build_cache$src$compilers$generic_attribute() {
   for (var $nodes$$ = Silica.query(this, "[data-silica]"), $node$$, $comps_valueKey$$, $attribute$$, $params$$, $paramsKeys$$, $i$$ = $nodes$$.length - 1;0 <= $i$$;--$i$$) {
     $node$$ = $nodes$$[$i$$];
     $comps_valueKey$$ = $node$$.dataset.silica.split("=");
@@ -713,7 +713,7 @@ function Href$$module$build_cache$src$compilers$generic_attribute() {
   }
   Silica._capture_links(this);
 }
-module$build_cache$src$compilers$generic_attribute.default = Href$$module$build_cache$src$compilers$generic_attribute;
+module$build_cache$src$compilers$generic_attribute.default = Generic$$module$build_cache$src$compilers$generic_attribute;
 var module$build_cache$src$compilers$mousedown = {};
 function MouseDown$$module$build_cache$src$compilers$mousedown() {
   for (var $nodes$$ = Silica.query(this, "[data-mousedown]"), $node$$, $i$$ = $nodes$$.length - 1;0 <= $i$$;--$i$$) {
@@ -1038,7 +1038,7 @@ module$build_cache$src$watchers$model.default = Model$$module$build_cache$src$wa
 var module$build_cache$src$watchers$watchers = {}, $jscompDefaultExport$$module$build_cache$src$watchers$watchers = {_If:module$build_cache$src$watchers$if.default, Repeat:module$build_cache$src$watchers$repeat.default, Show:module$build_cache$src$watchers$show.default, Class:module$build_cache$src$watchers$class.default, Model:module$build_cache$src$watchers$model.default, Disabled:module$build_cache$src$compilers$disabled.default, Href:module$build_cache$src$compilers$href.default, Style:module$build_cache$src$compilers$style.default, 
 Src:module$build_cache$src$compilers$src.default, Generic:module$build_cache$src$compilers$generic_attribute.default, Include:module$build_cache$src$compilers$include.default};
 module$build_cache$src$watchers$watchers.default = $jscompDefaultExport$$module$build_cache$src$watchers$watchers;
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.15.7", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.15.8", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1207,15 +1207,18 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   if (!$context$$) {
     return $obj$$;
   }
-  for (var $comps$$ = $context$$.split(".");null == $obj$$[$comps$$[0]] || void 0 == $obj$$[$comps$$[0]];) {
+  void 0 === $obj$$.__property_map && ($obj$$.__property_map = {});
+  var $property_path$$;
+  $obj$$.__property_map.hasOwnProperty($context$$) ? $property_path$$ = $obj$$.__property_map[$context$$] : ($property_path$$ = $context$$.split("."), $obj$$.__property_map[$context$$] = $property_path$$);
+  for (;null == $obj$$[$property_path$$[0]] || void 0 == $obj$$[$property_path$$[0]];) {
     if ($obj$$.$ctrl) {
       $obj$$ = $obj$$.$ctrl;
     } else {
       return null;
     }
   }
-  for (var $comps$$ = $context$$.split("."), $path_length$$ = $comps$$.length, $property$$, $i$$ = 0;$i$$ < $path_length$$;++$i$$) {
-    if ($property$$ = $comps$$[$i$$], $context$$ = $obj$$, $obj$$ = $obj$$[$property$$], "function" === typeof $obj$$ && ($obj$$ = $obj$$.apply($context$$, $params$$)), null === $obj$$ || void 0 === $obj$$) {
+  for (var $path_length$$ = $property_path$$.length, $property$$, $i$$ = 0;$i$$ < $path_length$$;++$i$$) {
+    if ($property$$ = $property_path$$[$i$$], $context$$ = $obj$$, $obj$$ = $obj$$[$property$$], "function" === typeof $obj$$ && ($obj$$ = $obj$$.apply($context$$, $params$$)), null === $obj$$ || void 0 === $obj$$) {
       return null;
     }
   }
@@ -1258,7 +1261,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
 }, interpolate:function $window$Silica$interpolate$($element$$, $context$$, $flush$$) {
   $context$$ = void 0 === $context$$ ? null : $context$$;
   $flush$$ = void 0 === $flush$$ ? !0 : $flush$$;
-  var $parentNode$jscomp$1_text$$, $expr$$, $comps$jscomp$2_filter$$, $evald_fmt_property$$;
+  var $parentNode$jscomp$1_text$$, $expr$$, $comps$jscomp$1_filter$$, $evald_fmt_property$$;
   $element$$ = document.createNodeIterator($element$$, NodeFilter.SHOW_TEXT, function($node$$) {
     if (Silica.interpolationPattern.test($node$$.data)) {
       return NodeFilter.FILTER_ACCEPT;
@@ -1266,7 +1269,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   }, !1);
   for (var $node$jscomp$0$$;$node$jscomp$0$$ = $element$$.nextNode();) {
     for ($parentNode$jscomp$1_text$$ = $node$jscomp$0$$.data;null !== ($expr$$ = $parentNode$jscomp$1_text$$.match(Silica.interpolationPattern));) {
-      $expr$$ = $expr$$[1], $comps$jscomp$2_filter$$ = $expr$$.split("|"), $evald_fmt_property$$ = $comps$jscomp$2_filter$$[0].trim(), 1 === $comps$jscomp$2_filter$$.length ? $evald_fmt_property$$ = "<span data-model='" + $evald_fmt_property$$ + "'>{{val}}</span>" : ($comps$jscomp$2_filter$$ = $comps$jscomp$2_filter$$[1].trim(), $evald_fmt_property$$ = "<span data-model='" + $evald_fmt_property$$ + "' data-filter='" + $comps$jscomp$2_filter$$ + "'>{{val}}</span>"), $evald_fmt_property$$ = $evald_fmt_property$$.replace("{{val}}", 
+      $expr$$ = $expr$$[1], $comps$jscomp$1_filter$$ = $expr$$.split("|"), $evald_fmt_property$$ = $comps$jscomp$1_filter$$[0].trim(), 1 === $comps$jscomp$1_filter$$.length ? $evald_fmt_property$$ = "<span data-model='" + $evald_fmt_property$$ + "'>{{val}}</span>" : ($comps$jscomp$1_filter$$ = $comps$jscomp$1_filter$$[1].trim(), $evald_fmt_property$$ = "<span data-model='" + $evald_fmt_property$$ + "' data-filter='" + $comps$jscomp$1_filter$$ + "'>{{val}}</span>"), $evald_fmt_property$$ = $evald_fmt_property$$.replace("{{val}}", 
       Silica.evaluateExpression($expr$$, $node$jscomp$0$$, $context$$)), $parentNode$jscomp$1_text$$ = $parentNode$jscomp$1_text$$.replace("{{" + $expr$$ + "}}", $evald_fmt_property$$);
     }
     $expr$$ = document.createElement("span");

@@ -151,6 +151,7 @@ var flags = {
 flags['compilation_level']  =  'SIMPLE';
 flags['debug']              =  true;
 flags['formatting']         =  'pretty_print';
+flags['create_source_map']  =  path.join('build', 'js', 'app.js.map');
 
 console.log("Compiling js");
 closureCompiler = new ClosureCompiler(flags);
@@ -165,7 +166,16 @@ closureCompiler.run(function(exitCode, stdOut, stdErr){
   let  out     =  path.join('build', 'js', 'app.js');
   let  output  =  envReplaceTransform(stdOut);
 
-  fs.appendFileSync(out, "(function(window){\n\"use strict\";\n"+output+"}.call(window, window));");
+  fs.appendFileSync(out, "(function(window){\n\"use strict\";\n"+output+"}.call(window, window));\n//# sourceMappingURL=/js/app.js.map");
+  spawnSync('cp', ['-R', cache_path, 'build/js/build_cache'], { stdio: [0, 1, 2], cwd: process.cwd() });
+  //let sourceMapMod = spawnSync('sed', ['-i.bak', 's/build_cache/..\\\/..\\\/build_cache/g', flags['create_source_map']], {
+  //  stdio: [0, 1, 2],
+  //  cwd: process.cwd()
+  //});
+  //if (sourceMapMod.error) {
+  //  console.error("Failed running sed");
+  //  console.error(sourceMapMod.error);
+  //}
   afterScriptCaller();
 });
 

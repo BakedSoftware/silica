@@ -23,7 +23,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.15.8",
+  version               :  "0.15.9",
 
   // Set the root context
   setContext(contextName)
@@ -670,6 +670,7 @@ window['Silica'] = {
         return;
     }
     evt.preventDefault();
+    evt.stopPropagation();
     Silica.goTo(path);
     return false;
   },

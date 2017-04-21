@@ -214,7 +214,8 @@ function stylus_render() {
     styl_content = fs.readFileSync(styles[i], 'utf8');
     var s = stylus(styl_content)
               .set('filename', styles[i])
-              .include(require('nib').path)
+              .set('compress', true)
+              .use(require('nib')())
               .include(path.join(cache_path, 'src', 'styles'))
 
     if (styleIncludes && styleIncludes.length > 0) {

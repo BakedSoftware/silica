@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>FSMExample</title>
+    <link rel="stylesheet" href="css/styles.css" type="text/css" media="all">
+  </head>
+  <body>
+    <div class="FSMExample" data-controller="FSM.AppCntrl">
+      {{name}} - {{version}}
+
+      <nav>
+        <a data-class="mainNavClass" data-click="transitionTo"
+                                     data-parameter="list">Address Book</a>
+      </nav>
+
+      <div data-show="mainContent" data-parameter="base">
+        Welcome to your address book.
+      </div>
+
+      <ul data-repeat="address in addresses" data-show="mainContent"
+                                             data-parameter="list">
+        <li data-click="showDetails(address)">{{address}}</li>
+      </ul>
+
+      <div data-show="mainContent" data-parameter="details">
+        <h3>Address Info:</h3>
+        {{currentAddress}}
+      </div>
+    </div>
+
+    <script src="bower_components/silica/silica.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+  </body>
+</html>

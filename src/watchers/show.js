@@ -7,14 +7,14 @@ export default function Show() {
       elements = [this];
     } else {
       let a = [];
-      for (let i = elements.length - 1; i >= 0; i--)
+      for (i = elements.length - 1; i >= 0; i--)
       {
         a[i] = elements[i];
       }
       elements = a;
     }
   }
-  for(var i = elements.length - 1; i >= 0; i--){
+  for(i = elements.length - 1; i >= 0; i--){
     element = elements[i];
     if (!Silica.isInDOM(element)) {
       continue;

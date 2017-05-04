@@ -17,7 +17,8 @@ var flags = {
   language_in: 'ECMASCRIPT6',
   language_out: 'ECMASCRIPT5',
   compilation_level: 'ADVANCED',
-  externs: 'src/externs.js'
+  externs: 'src/externs.js',
+  generate_exports: "true"
 };
 
 console.log("Compiling production version");

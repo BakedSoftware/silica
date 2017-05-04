@@ -41,7 +41,6 @@ class Base
   }
 
   // A convenience proxy to querySelectorAll with the instance's element as the scope
-  /** @export */
   $(selector)
   {
     return this['el'].querySelectorAll(selector);

@@ -23,7 +23,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.15.9",
+  version               :  "0.16.0",
 
   // Set the root context
   setContext(contextName)
@@ -587,7 +587,7 @@ window['Silica'] = {
     Silica.directives[key] = obj;
   },
   getContext(raw) {
-    var ctrl, k, v, _ref, raw, ctx, model, needsModel;
+    var ctrl, k, v, _ref, ctx, model, needsModel;
     /** @type {string} */
     var constructorName;
     /** @type {function(new:Object, !Element, ?Object=)} */
@@ -690,18 +690,7 @@ window['Silica'] = {
     }
   },
   _show(element, expr, negate) {
-    var ctx, isVisible;
-    isVisible = true;
-    if (expr.indexOf(Silica.contextName) === 0) {
-      isVisible = Silica.getPropByString(Silica.context, expr.substr(Silica.contextName.length + 1));
-    } else {
-      if (element.nodeType !== 8 && (typeof (ctx = element._rt_ctx)) !== "undefined") {
-        isVisible = Silica.getPropByString(ctx, expr);
-      } else {
-        ctx = Silica.getContext(element);
-        isVisible = Silica.getPropByString(ctx, expr);
-      }
-    }
+    let isVisible = Silica.getValue(element, expr, null, [element, element.dataset['parameter']]);
     if (negate) {
       isVisible = !isVisible;
     }
@@ -958,10 +947,10 @@ window['Silica'] = {
       {
         let node = nodes[i];
         if (node._rt_ctrl) {
-          ctrl = node._rt_ctrl;
-          for (k in ctrl.constructor['watchers'])
+          let ctrl = node._rt_ctrl;
+          for (let k in ctrl.constructor['watchers'])
           {
-            list = Silica._watch[k];
+            let list = Silica._watch[k];
             Silica._watch[k] = (list != null ? list.filter(function(obj) {
               return obj[0] !== ctrl;
             }) : []);

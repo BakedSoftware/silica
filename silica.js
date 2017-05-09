@@ -879,7 +879,7 @@ State$$module$build_cache$src$controllers$fsm.prototype.onExit = function $State
 };
 State$$module$build_cache$src$controllers$fsm.prototype.onEnter = State$$module$build_cache$src$controllers$fsm.prototype.onEnter;
 State$$module$build_cache$src$controllers$fsm.prototype.onExit = State$$module$build_cache$src$controllers$fsm.prototype.onExit;
-var count$$module$build_cache$src$controllers$fsm = 0, FSM$$module$build_cache$src$controllers$fsm = function $FSM$$module$build_cache$src$controllers$fsm$($el$$) {
+var FSM$$module$build_cache$src$controllers$fsm = function $FSM$$module$build_cache$src$controllers$fsm$($el$$) {
   module$build_cache$src$controllers$base.default.call(this, $el$$);
   $el$$ = this.constructor.states;
   this._states = {};
@@ -887,7 +887,7 @@ var count$$module$build_cache$src$controllers$fsm = 0, FSM$$module$build_cache$s
     this._states[$stateName$$] = new $el$$[$stateName$$];
   }
   this._currentState = new State$$module$build_cache$src$controllers$fsm;
-  this._states.base && (console.log("Transition to base", count$$module$build_cache$src$controllers$fsm++), this.transition("base"), console.log("Finished Transition to base", count$$module$build_cache$src$controllers$fsm--));
+  this._states.base && this.transition("base");
 };
 $jscomp.inherits(FSM$$module$build_cache$src$controllers$fsm, module$build_cache$src$controllers$base.default);
 FSM$$module$build_cache$src$controllers$fsm.prototype.transition = function $FSM$$module$build_cache$src$controllers$fsm$$transition$($stateName$$) {
@@ -899,7 +899,9 @@ FSM$$module$build_cache$src$controllers$fsm.prototype.transition = function $FSM
     $$jscomp$this$$._currentState.onExit($$jscomp$this$$);
     $$jscomp$this$$._currentState = $target$$;
     $$jscomp$this$$._currentStateName = $stateName$$;
-    $$jscomp$this$$._currentState.onEnter($$jscomp$this$$);
+    Silica.defer(function() {
+      $$jscomp$this$$._currentState.onEnter($$jscomp$this$$);
+    });
   });
 };
 FSM$$module$build_cache$src$controllers$fsm.prototype.handle = function $FSM$$module$build_cache$src$controllers$fsm$$handle$($func$$) {

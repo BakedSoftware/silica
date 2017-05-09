@@ -12,7 +12,7 @@ class State {
 
 State.prototype['onEnter'] = State.prototype.onEnter;
 State.prototype['onExit'] = State.prototype.onExit;
-let count = 0;
+
 // ##Silica.Controllers.FSM
 // This is a Finite state machine based controller
 /** @unrestricted */
@@ -60,11 +60,13 @@ class FSM extends Base
       return;
     }
 
-    Silica.defer( () => {
+    Silica.defer(() => {
       this._currentState['onExit'](this);
       this._currentState = target;
       this._currentStateName = stateName;
-      this._currentState['onEnter'](this);
+      Silica.defer(() => {
+        this._currentState['onEnter'](this);
+      });
     });
   }
 

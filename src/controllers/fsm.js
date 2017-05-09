@@ -12,7 +12,7 @@ class State {
 
 State.prototype['onEnter'] = State.prototype.onEnter;
 State.prototype['onExit'] = State.prototype.onExit;
-
+let count = 0;
 // ##Silica.Controllers.FSM
 // This is a Finite state machine based controller
 /** @unrestricted */
@@ -60,12 +60,25 @@ class FSM extends Base
       return;
     }
 
-    this._currentState['onExit'](this);
-    this._currentState = target;
-    this._currentStateName = stateName;
-    Silica.defer(() => {
+    Silica.defer( () => {
+      this._currentState['onExit'](this);
+      this._currentState = target;
+      this._currentStateName = stateName;
       this._currentState['onEnter'](this);
     });
+  }
+
+  /**
+   * handle will ask the current state to execute a function if it exists
+   * @param {string} functionName - The name of the function to execute
+   */
+  handle(functionName)
+  {
+    let func = this._currentState[functionName]
+    if (func)
+    {
+      func.call(this._currentState, this);
+    }
   }
 
 }

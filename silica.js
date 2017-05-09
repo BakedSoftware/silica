@@ -879,7 +879,7 @@ State$$module$build_cache$src$controllers$fsm.prototype.onExit = function $State
 };
 State$$module$build_cache$src$controllers$fsm.prototype.onEnter = State$$module$build_cache$src$controllers$fsm.prototype.onEnter;
 State$$module$build_cache$src$controllers$fsm.prototype.onExit = State$$module$build_cache$src$controllers$fsm.prototype.onExit;
-var FSM$$module$build_cache$src$controllers$fsm = function $FSM$$module$build_cache$src$controllers$fsm$($el$$) {
+var count$$module$build_cache$src$controllers$fsm = 0, FSM$$module$build_cache$src$controllers$fsm = function $FSM$$module$build_cache$src$controllers$fsm$($el$$) {
   module$build_cache$src$controllers$base.default.call(this, $el$$);
   $el$$ = this.constructor.states;
   this._states = {};
@@ -887,7 +887,7 @@ var FSM$$module$build_cache$src$controllers$fsm = function $FSM$$module$build_ca
     this._states[$stateName$$] = new $el$$[$stateName$$];
   }
   this._currentState = new State$$module$build_cache$src$controllers$fsm;
-  this._states.base && this.transition("base");
+  this._states.base && (console.log("Transition to base", count$$module$build_cache$src$controllers$fsm++), this.transition("base"), console.log("Finished Transition to base", count$$module$build_cache$src$controllers$fsm--));
 };
 $jscomp.inherits(FSM$$module$build_cache$src$controllers$fsm, module$build_cache$src$controllers$base.default);
 FSM$$module$build_cache$src$controllers$fsm.prototype.transition = function $FSM$$module$build_cache$src$controllers$fsm$$transition$($stateName$$) {
@@ -895,9 +895,15 @@ FSM$$module$build_cache$src$controllers$fsm.prototype.transition = function $FSM
   if (!$target$$) {
     throw "Unknown state " + $stateName$$ + " in " + this.constructor.name;
   }
-  $target$$ != this._currentState && (this._currentState.onExit(this), this._currentState = $target$$, this._currentStateName = $stateName$$, Silica.defer(function() {
+  $target$$ != this._currentState && Silica.defer(function() {
+    $$jscomp$this$$._currentState.onExit($$jscomp$this$$);
+    $$jscomp$this$$._currentState = $target$$;
+    $$jscomp$this$$._currentStateName = $stateName$$;
     $$jscomp$this$$._currentState.onEnter($$jscomp$this$$);
-  }));
+  });
+};
+FSM$$module$build_cache$src$controllers$fsm.prototype.handle = function $FSM$$module$build_cache$src$controllers$fsm$$handle$($func$$) {
+  ($func$$ = this._currentState[$func$$]) && $func$$.call(this._currentState, this);
 };
 $jscomp.global.Object.defineProperties(FSM$$module$build_cache$src$controllers$fsm, {states:{configurable:!0, enumerable:!0, get:function() {
   return {base:State$$module$build_cache$src$controllers$fsm};
@@ -1153,8 +1159,8 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   $element$$ == document && ($element$$ = document.body.parentElement);
   Silica.isInFlush = !$skipSchedule$$;
   if (null === $changed$$ && Silica._isReady) {
-    for ($func$jscomp$7_key$$ in Silica._watch) {
-      var $funcs_watchers$$ = Silica._watch[$func$jscomp$7_key$$];
+    for ($func$jscomp$8_key$$ in Silica._watch) {
+      var $funcs_watchers$$ = Silica._watch[$func$jscomp$8_key$$];
       for (var $i$8_i$$ = $funcs_watchers$$.length - 1; 0 <= $i$8_i$$; --$i$8_i$$) {
         $changed$$ = $funcs_watchers$$[$i$8_i$$], $changed$$[1].apply($changed$$[0]);
       }
@@ -1162,14 +1168,14 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   } else {
     for ($k$$ in $changed$$) {
       for ($funcs_watchers$$ = $changed$$[$k$$], !0 === $funcs_watchers$$ && ($funcs_watchers$$ = Silica._watch[$k$$]), $i$8_i$$ = $funcs_watchers$$.length - 1; 0 <= $i$8_i$$; --$i$8_i$$) {
-        var $func$jscomp$7_key$$ = $funcs_watchers$$[$i$8_i$$];
-        $func$jscomp$7_key$$[1].apply($func$jscomp$7_key$$[0]);
+        var $func$jscomp$8_key$$ = $funcs_watchers$$[$i$8_i$$];
+        $func$jscomp$8_key$$[1].apply($func$jscomp$8_key$$[0]);
       }
     }
   }
   $funcs_watchers$$ = Silica.watchers;
   for ($k$$ in $funcs_watchers$$) {
-    $onlySafe$$ && "_" === $k$$[0] || ($func$jscomp$7_key$$ = $funcs_watchers$$[$k$$], $func$jscomp$7_key$$.apply($element$$));
+    $onlySafe$$ && "_" === $k$$[0] || ($func$jscomp$8_key$$ = $funcs_watchers$$[$k$$], $func$jscomp$8_key$$.apply($element$$));
   }
   Silica.isInFlush = $skipSchedule$$;
   !0 !== Silica._scheduledFlush || $skipSchedule$$ || (Silica._scheduledFlush = !1, window.setTimeout(function() {
@@ -1242,10 +1248,12 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     }
   }
   Silica.flush($element$$, !1, $finalChanges_func$$);
-  for ($element$$ = Silica._defers.length - 1; 0 <= $element$$; $element$$--) {
-    Silica._defers[$element$$].call();
-  }
-  Silica._defers = [];
+  var $defers$$ = Silica._defers;
+  0 < $defers$$.length && (Silica._defers = [], Silica.apply(function() {
+    for (var $i$9$$ = $defers$$.length - 1; 0 <= $i$9$$; $i$9$$--) {
+      $defers$$[$i$9$$].call();
+    }
+  }));
   return Silica;
 }, getPropByString:function $window$Silica$getPropByString$($obj$$, $context$$, $params$$) {
   if (!$context$$) {

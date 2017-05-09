@@ -2,19 +2,32 @@ let AppCntrlStates = {
   "base": class extends Silica.Controllers.FSM.State {
     onEnter(ctrl)
     {
-      console.log(ctrl, "Entered base state");
+      ctrl.mainActionResult = "Entered base state";
+    }
+    mainAction(ctrl)
+    {
+      ctrl.mainActionResult = "Base state says hi";
     }
   },
   "list": class extends Silica.Controllers.FSM.State {
     onEnter(ctrl)
     {
-      console.log("Set up list stuff here")
+      ctrl.mainActionResult = "Entered list state";
+    }
+    mainAction(ctrl)
+    {
+      ctrl.addresses.push("New Address #" + ctrl.addresses.length)
+      ctrl.mainActionResult = "Added new address to list";
     }
   },
   "details": class extends Silica.Controllers.FSM.State {
     onEnter(ctrl)
     {
-      console.log("set up map stuff here")
+      ctrl.mainActionResult = "Entered details state";
+    }
+    mainAction(ctrl)
+    {
+      ctrl.mainActionResult = "What should details do?";
     }
   }
 };
@@ -28,6 +41,7 @@ class AppCntrl extends Silica.Controllers.FSM.Controller {
     this.name = "FSMExample";
     this.version = "1.0.0";
     this.addresses = ["102 NE 1st Ave, Delray Beach, FL 33444"];
+    this.mainActionResult = "Main Action Not Run Yet";
   }
 
   /**
@@ -57,6 +71,11 @@ class AppCntrl extends Silica.Controllers.FSM.Controller {
   {
     this.currentAddress = address;
     this.transition("details");
+  }
+
+  mainAction()
+  {
+    this.handle("mainAction");
   }
 }
 

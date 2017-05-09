@@ -339,11 +339,17 @@ window['Silica'] = {
       }
     }
     Silica.flush(element, false, finalChanges);
-    for (let i = Silica._defers.length - 1; i >= 0; i--)
+    let defers = Silica._defers;
+    if (defers.length > 0)
     {
-      Silica._defers[i].call();
+      Silica._defers = []
+      Silica.apply(() => {
+        for (let i = defers.length - 1; i >= 0; i--)
+        {
+          defers[i].call();
+        }
+      });
     }
-    Silica._defers = [];
     return Silica;
   },
 

@@ -545,12 +545,9 @@ function loadPartial$$module$build_cache$src$compilers$include($url$$, $element$
         if (4 == $xhr$$.readyState) {
           var $fragment$$ = document.createElement("div");
           $fragment$$.innerHTML = $xhr$$.responseText;
-          $element$$.appendChild($fragment$$);
-          Silica.compile($element$$);
-          Silica._includeCache[$url$$] = $fragment$$;
-          Silica.apply(function() {
+          $element$$.dataset.sio2IncludedUrl === $url$$ && (clearContent$$module$build_cache$src$compilers$include($element$$), $element$$.appendChild($fragment$$), Silica.compile($element$$), Silica._includeCache[$url$$] = $fragment$$, Silica.apply(function() {
             loadCallback$$module$build_cache$src$compilers$include($element$$);
-          });
+          }));
         }
       };
       $xhr$$.open("GET", $url$$, !0);
@@ -1094,7 +1091,7 @@ module$build_cache$src$watchers$model.default = Model$$module$build_cache$src$wa
 var module$build_cache$src$watchers$watchers = {}, $jscompDefaultExport$$module$build_cache$src$watchers$watchers = {_If:module$build_cache$src$watchers$if.default, Repeat:module$build_cache$src$watchers$repeat.default, Show:module$build_cache$src$watchers$show.default, Class:module$build_cache$src$watchers$class.default, Model:module$build_cache$src$watchers$model.default, Disabled:module$build_cache$src$compilers$disabled.default, Href:module$build_cache$src$compilers$href.default, Style:module$build_cache$src$compilers$style.default, 
 Src:module$build_cache$src$compilers$src.default, Generic:module$build_cache$src$compilers$generic_attribute.default, Include:module$build_cache$src$compilers$include.default};
 module$build_cache$src$watchers$watchers.default = $jscompDefaultExport$$module$build_cache$src$watchers$watchers;
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.16.1", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.16.2", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

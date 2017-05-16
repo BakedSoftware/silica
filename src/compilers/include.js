@@ -41,12 +41,17 @@ function loadPartial(url, element)
     {
       let fragment = document.createElement('div');
       fragment.innerHTML = xhr.responseText;
-      element.appendChild(fragment);
-      Silica.compile(element);
-      Silica._includeCache[url] = fragment;
-      Silica.apply(function(){
-        loadCallback(element);
-      });
+
+      if (element.dataset['sio2IncludedUrl'] === url)
+      {
+        clearContent(element);
+        element.appendChild(fragment);
+        Silica.compile(element);
+        Silica._includeCache[url] = fragment;
+        Silica.apply(function(){
+          loadCallback(element);
+        });
+      }
     }
   };
 

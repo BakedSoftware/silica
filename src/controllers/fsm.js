@@ -34,8 +34,12 @@ class FSM extends Base
      */
     this._currentState = new State();
 
-    if (this._states["base"]) {
-      this.transition("base");
+    if (this["initialState"]) {
+      this._currentStateName = this["initialState"]();
+      this._currentState = this._getStateWithName(this._currentStateName);
+      Silica.defer(() => {
+        this._currentState['onEnter'](this);
+      });
     }
   }
 
@@ -46,14 +50,19 @@ class FSM extends Base
     }
   }
 
-
-  transition(stateName)
-  {
+  _getStateWithName(stateName) {
     let target = this._states[stateName];
     if (!target)
     {
       throw "Unknown state " + stateName +" in " + this.constructor.name;
     }
+    return target;
+  }
+
+
+  transition(stateName)
+  {
+    let target = this._getStateWithName(stateName);
 
     if (target == this._currentState)
     {
@@ -76,10 +85,19 @@ class FSM extends Base
    */
   handle(functionName)
   {
+    if (!this._currentState)
+    {
+      return;
+    }
+
     let func = this._currentState[functionName]
     if (func)
     {
-      func.call(this._currentState, this);
+      if (typeof func === "function")
+      {
+        return func.call(this._currentState, this);
+      }
+      return func;
     }
   }
 

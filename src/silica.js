@@ -23,7 +23,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.16.0",
+  version               :  "0.16.1",
 
   // Set the root context
   setContext(contextName)
@@ -340,7 +340,7 @@ window['Silica'] = {
     }
     Silica.flush(element, false, finalChanges);
     let defers = Silica._defers;
-    if (defers.length > 0)
+    while (defers.length > 0)
     {
       Silica._defers = []
       Silica.apply(() => {
@@ -349,6 +349,7 @@ window['Silica'] = {
           defers[i].call();
         }
       });
+      defers = Silica._defers;
     }
     return Silica;
   },

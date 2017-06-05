@@ -3,6 +3,8 @@ import Controllers from './controllers/controllers';
 import Compilers from './compilers/compilers';
 // Import the watchers
 import Watchers from './watchers/watchers';
+// Import browser hax
+import Hax from './hax/hax';
 
 window['Silica'] = {
   context               :  window,
@@ -23,7 +25,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.16.2",
+  version               :  "0.16.3",
 
   // Set the root context
   setContext(contextName)
@@ -607,8 +609,8 @@ window['Silica'] = {
         return raw._rt_ctrl;
       } else if (raw.nodeName === 'BODY') {
         return Silica.context;
-      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && raw.dataset != null && raw.dataset.hasOwnProperty('controller')) {
-        constructorName = raw.dataset['controller'];
+      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && Hax.hasDatasetProperty(raw.dataset, 'controller')) {
+        constructorName = Hax.getDatasetProperty(raw.dataset, 'controller');
         if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
         {
           needsModel = true;

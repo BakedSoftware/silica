@@ -24,7 +24,7 @@ export default function directives() {
         newChild.dataset[j] = node.dataset[j];
       }
       newChild._rt_ctrl = new obj['controller'](newChild);
-      newChild._rt_ctrl.$ctrl = Silica.getContext(node.parentNode);
+      newChild._rt_ctrl.$ctrl = Silica.getContext(node.parentElement);
       Silica.cacheTemplates(newChild);
       Silica.interpolate(newChild, newChild._rt_ctrl, false)
       node.parentNode.replaceChild(newChild, node);

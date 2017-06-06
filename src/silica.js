@@ -595,6 +595,9 @@ window['Silica'] = {
   addDirective(key, obj) {
     Silica.directives[key] = obj;
   },
+  /**
+   * @param {Element} raw
+   */
   getContext(raw) {
     var ctrl, k, v, _ref, ctx, model, needsModel;
     /** @type {string} */

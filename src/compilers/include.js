@@ -72,7 +72,7 @@ export default function Include() {
     {
       if (node.dataset.hasOwnProperty('sio2IncludedUrl'))
       {
-        delete node.dataset['sio2IncludedUrl'];
+        node.removeAttribute('data-sio2-included-url');
       }
       clearContent(node);
       continue;

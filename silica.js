@@ -958,10 +958,10 @@ var module$build_cache$src$controllers$controllers = {}, Controllers$$module$bui
 module$build_cache$src$controllers$controllers.default = $jscompDefaultExport$$module$build_cache$src$controllers$controllers;
 var module$build_cache$src$hax$safari = {};
 function getDatasetProperty$$module$build_cache$src$hax$safari($dataset$$, $propName$$) {
-  return "undefined" !== typeof Reflect ? Reflect.get($dataset$$, $propName$$) : $dataset$$[$propName$$];
+  return null == $dataset$$ ? null : "undefined" !== typeof Reflect ? Reflect.get($dataset$$, $propName$$) : $dataset$$[$propName$$];
 }
 function hasDatasetProperty$$module$build_cache$src$hax$safari($dataset$$, $propName$$) {
-  return "undefined" !== typeof Reflect ? Reflect.has($dataset$$, $propName$$) : $dataset$$[$propName$$];
+  return null == $dataset$$ ? !1 : "undefined" !== typeof Reflect ? Reflect.has($dataset$$, $propName$$) : $dataset$$[$propName$$];
 }
 var $jscompDefaultExport$$module$build_cache$src$hax$safari = {getDatasetProperty:getDatasetProperty$$module$build_cache$src$hax$safari, hasDatasetProperty:hasDatasetProperty$$module$build_cache$src$hax$safari};
 module$build_cache$src$hax$safari.default = $jscompDefaultExport$$module$build_cache$src$hax$safari;
@@ -1133,7 +1133,7 @@ module$build_cache$src$watchers$model.default = Model$$module$build_cache$src$wa
 var module$build_cache$src$watchers$watchers = {}, $jscompDefaultExport$$module$build_cache$src$watchers$watchers = {_If:module$build_cache$src$watchers$if.default, Repeat:module$build_cache$src$watchers$repeat.default, Show:module$build_cache$src$watchers$show.default, Class:module$build_cache$src$watchers$class.default, Model:module$build_cache$src$watchers$model.default, Disabled:module$build_cache$src$compilers$disabled.default, Href:module$build_cache$src$compilers$href.default, Style:module$build_cache$src$compilers$style.default, 
 Src:module$build_cache$src$compilers$src.default, Generic:module$build_cache$src$compilers$generic_attribute.default, Include:module$build_cache$src$compilers$include.default};
 module$build_cache$src$watchers$watchers.default = $jscompDefaultExport$$module$build_cache$src$watchers$watchers;
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.16.6", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.16.7", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

@@ -2,16 +2,30 @@
  * Gets 'data-*' property.
  * See https://bugs.webkit.org/show_bug.cgi?id=161454
  */
-function getDatasetProperty(dataset, propName) {
-    return dataset == null ? null : typeof Reflect !== 'undefined' ? Reflect.get(dataset, propName) : dataset[propName];
+function getDatasetProperty(element, propName) {
+  if (element.dataset && typeof element.dataset !== 'undefined' && element.dataset[propName])
+  {
+    return element.dataset[propName];
+  }
+  if (typeof Reflect !== 'undefined') {
+    let dataset = Reflect.get(element, 'dataset');
+    if (dataset) {
+      let value = Reflect.get(new Object(dataset), propName);
+      if (value) {
+        return value;
+      }
+    }
+  }
+
+  return element.getAttribute('data-'+propName);
 }
 /**
- * @param {Object} dataset
+ * @param {Element} element
  * @param {string} propName
  * @return {boolean}
  */
-function hasDatasetProperty(dataset, propName) {
-    return dataset == null ? false : typeof Reflect !== 'undefined' ? Reflect.has(dataset, propName) : dataset[propName];
+function hasDatasetProperty(element, propName) {
+  return !!getDatasetProperty(element, propName);
 }
 
 export default {

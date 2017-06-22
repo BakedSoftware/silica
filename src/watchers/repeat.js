@@ -1,4 +1,6 @@
 import ControllerCompiler from '../compilers/controller.js'
+// Import browser hax
+import Hax from '../hax/hax';
 
 export default function Repeat() {
   var changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
@@ -63,7 +65,7 @@ export default function Repeat() {
     }
 
     // Get the template
-    template = Silica._repeat_templates[raw.dataset._rt_repeat_template];
+    template = Silica._repeat_templates[Hax.getDatasetProperty(raw, "_rt_repeat_template")];
     if (newList.constructor == Object) {
       let keys = Object.keys(newList);
       let obj = newList;

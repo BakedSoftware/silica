@@ -149,11 +149,6 @@ $jscomp.polyfill("Reflect.get", function($orig$$) {
     }
   };
 }, "es6", "es5");
-$jscomp.polyfill("Reflect.has", function($orig$$) {
-  return $orig$$ ? $orig$$ : function($target$$, $propertyKey$$) {
-    return $propertyKey$$ in $target$$;
-  };
-}, "es6", "es3");
 $jscomp.owns = function $$jscomp$owns$($obj$$, $prop$$) {
   return Object.prototype.hasOwnProperty.call($obj$$, $prop$$);
 };
@@ -957,11 +952,20 @@ module$build_cache$src$controllers$fsm.default = $jscompDefaultExport$$module$bu
 var module$build_cache$src$controllers$controllers = {}, Controllers$$module$build_cache$src$controllers$controllers = {Base:module$build_cache$src$controllers$base.default, FSM:module$build_cache$src$controllers$fsm.default}, $jscompDefaultExport$$module$build_cache$src$controllers$controllers = Controllers$$module$build_cache$src$controllers$controllers;
 module$build_cache$src$controllers$controllers.default = $jscompDefaultExport$$module$build_cache$src$controllers$controllers;
 var module$build_cache$src$hax$safari = {};
-function getDatasetProperty$$module$build_cache$src$hax$safari($dataset$$, $propName$$) {
-  return null == $dataset$$ ? null : "undefined" !== typeof Reflect ? Reflect.get($dataset$$, $propName$$) : $dataset$$[$propName$$];
+function getDatasetProperty$$module$build_cache$src$hax$safari($element$$, $propName$$) {
+  if ($element$$.dataset && "undefined" !== typeof $element$$.dataset && $element$$.dataset[$propName$$]) {
+    return $element$$.dataset[$propName$$];
+  }
+  if ("undefined" !== typeof Reflect) {
+    var $dataset_value$$ = Reflect.get($element$$, "dataset");
+    if ($dataset_value$$ && ($dataset_value$$ = Reflect.get(Object($dataset_value$$), $propName$$))) {
+      return $dataset_value$$;
+    }
+  }
+  return $element$$.getAttribute("data-" + $propName$$);
 }
-function hasDatasetProperty$$module$build_cache$src$hax$safari($dataset$$, $propName$$) {
-  return null == $dataset$$ ? !1 : "undefined" !== typeof Reflect ? Reflect.has($dataset$$, $propName$$) : $dataset$$[$propName$$];
+function hasDatasetProperty$$module$build_cache$src$hax$safari($element$$, $propName$$) {
+  return !!getDatasetProperty$$module$build_cache$src$hax$safari($element$$, $propName$$);
 }
 var $jscompDefaultExport$$module$build_cache$src$hax$safari = {getDatasetProperty:getDatasetProperty$$module$build_cache$src$hax$safari, hasDatasetProperty:hasDatasetProperty$$module$build_cache$src$hax$safari};
 module$build_cache$src$hax$safari.default = $jscompDefaultExport$$module$build_cache$src$hax$safari;
@@ -1034,7 +1038,7 @@ function Repeat$$module$build_cache$src$watchers$repeat() {
     })), $_ref$$ = $raw$$.childNodes, $changed_context$$ = ($changed_context$$ = $raw$$._rt_repeat_list) && $list$jscomp$4_newList_param$$ ? $changed_context$$ !== $newListHash_obj$jscomp$39_template$$ : !0) {
       if ($raw$$._rt_repeat_list = $list$jscomp$4_newList_param$$ ? $newListHash_obj$jscomp$39_template$$ : null, $list$jscomp$4_newList_param$$) {
         $list$jscomp$4_newList_param$$.constructor === Number && ($list$jscomp$4_newList_param$$ = Array($list$jscomp$4_newList_param$$));
-        $newListHash_obj$jscomp$39_template$$ = Silica._repeat_templates[$raw$$.dataset._rt_repeat_template];
+        $newListHash_obj$jscomp$39_template$$ = Silica._repeat_templates[module$build_cache$src$hax$hax.default.getDatasetProperty($raw$$, "_rt_repeat_template")];
         if ($list$jscomp$4_newList_param$$.constructor == Object) {
           $changed_context$$ = Object.keys($list$jscomp$4_newList_param$$);
           $child_node$$ = $list$jscomp$4_newList_param$$;
@@ -1133,7 +1137,7 @@ module$build_cache$src$watchers$model.default = Model$$module$build_cache$src$wa
 var module$build_cache$src$watchers$watchers = {}, $jscompDefaultExport$$module$build_cache$src$watchers$watchers = {_If:module$build_cache$src$watchers$if.default, Repeat:module$build_cache$src$watchers$repeat.default, Show:module$build_cache$src$watchers$show.default, Class:module$build_cache$src$watchers$class.default, Model:module$build_cache$src$watchers$model.default, Disabled:module$build_cache$src$compilers$disabled.default, Href:module$build_cache$src$compilers$href.default, Style:module$build_cache$src$compilers$style.default, 
 Src:module$build_cache$src$compilers$src.default, Generic:module$build_cache$src$compilers$generic_attribute.default, Include:module$build_cache$src$compilers$include.default};
 module$build_cache$src$watchers$watchers.default = $jscompDefaultExport$$module$build_cache$src$watchers$watchers;
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.16.7", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.16.8", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1177,11 +1181,11 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     $element$$ === Silica._appRoot && (Silica._isReady = !0);
     return $element$$;
   }
-}, cacheTemplates:function $window$Silica$cacheTemplates$($element$jscomp$15_nodes$$) {
-  $element$jscomp$15_nodes$$ = $element$jscomp$15_nodes$$.querySelectorAll("[data-repeat]");
-  for (var $node$$, $hash$$, $context$$, $i$$ = $element$jscomp$15_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $element$jscomp$15_nodes$$[$i$$], $node$$.dataset._rt_repeat_template || ($hash$$ = md5($node$$.innerHTML), 1 === $node$$.children.length ? Silica._repeat_templates[$hash$$] = $node$$.firstElementChild : ($context$$ = document.createElement("div"), $context$$.innerHTML = $node$$.innerHTML, Silica._repeat_templates[$hash$$] = $context$$), $node$$.dataset._rt_repeat_template = $hash$$, $context$$ = {}, $context$$.$ctrl = Silica.getContext($node$$), Silica._repeat_templates[$hash$$] = 
-    Silica.compile(Silica._repeat_templates[$hash$$], !1, $context$$, !0, !1), $node$$.innerHTML = "");
+}, cacheTemplates:function $window$Silica$cacheTemplates$($element$jscomp$17_nodes$$) {
+  $element$jscomp$17_nodes$$ = $element$jscomp$17_nodes$$.querySelectorAll("[data-repeat]");
+  for (var $node$$, $hash$$, $context$$, $i$$ = $element$jscomp$17_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $element$jscomp$17_nodes$$[$i$$], module$build_cache$src$hax$hax.default.hasDatasetProperty($node$$, "_rt_repeat_template") || ($hash$$ = md5($node$$.innerHTML), 1 === $node$$.children.length ? Silica._repeat_templates[$hash$$] = $node$$.removeChild($node$$.firstElementChild) : (console.warn("Repeat has multiple children, wrapping with div", $node$$), $context$$ = document.createElement("div"), $context$$.innerHTML = $node$$.innerHTML, Silica._repeat_templates[$hash$$] = $context$$), 
+    $node$$.dataset._rt_repeat_template = $hash$$, $context$$ = {}, $context$$.$ctrl = Silica.getContext($node$$), Silica._repeat_templates[$hash$$] = Silica.compile(Silica._repeat_templates[$hash$$], !1, $context$$, !0, !1), $node$$.innerHTML = "");
   }
 }, debounce:function $window$Silica$debounce$($func$$, $wait$$, $immediate$$) {
   var $timeout$$;
@@ -1412,8 +1416,8 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     if ("BODY" === $raw$jscomp$5_v$$.nodeName) {
       return Silica.context;
     }
-    if (9 !== $raw$jscomp$5_v$$.nodeType && 3 !== $raw$jscomp$5_v$$.nodeType && 8 !== $raw$jscomp$5_v$$.nodeType && module$build_cache$src$hax$hax.default.hasDatasetProperty($raw$jscomp$5_v$$.dataset, "controller")) {
-      $constructorName$jscomp$1_ctrl$$ = module$build_cache$src$hax$hax.default.getDatasetProperty($raw$jscomp$5_v$$.dataset, "controller");
+    if (9 !== $raw$jscomp$5_v$$.nodeType && 3 !== $raw$jscomp$5_v$$.nodeType && 8 !== $raw$jscomp$5_v$$.nodeType && module$build_cache$src$hax$hax.default.hasDatasetProperty($raw$jscomp$5_v$$, "controller")) {
+      $constructorName$jscomp$1_ctrl$$ = module$build_cache$src$hax$hax.default.getDatasetProperty($raw$jscomp$5_v$$, "controller");
       "undefined" !== typeof($_ref$jscomp$8_constructor$$ = $constructorName$jscomp$1_ctrl$$.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] && ($needsModel_pairIdx$$ = !0, $model$jscomp$4_stored$jscomp$1_watchers$$ = Silica.getValue($raw$jscomp$5_v$$.parentNode, $_ref$jscomp$8_constructor$$[2]));
       $constructorName$jscomp$1_ctrl$$ = $_ref$jscomp$8_constructor$$[1];
       $_ref$jscomp$8_constructor$$ = eval($constructorName$jscomp$1_ctrl$$);
@@ -1458,15 +1462,15 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   if (null == /[a-zA-Z]+\:+/g.exec($path$$) && "#" !== $path$$ && "" !== $path$$) {
     return $evt$$.preventDefault(), $evt$$.stopPropagation(), Silica.goTo($path$$), !1;
   }
-}, _capture_links:function $window$Silica$_capture_links$($element$jscomp$20_nodes$$) {
-  $element$jscomp$20_nodes$$ = Silica.queryOfType($element$jscomp$20_nodes$$, "a", "[href]", "[data-href]");
-  for (var $node$$, $i$$ = $element$jscomp$20_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $element$jscomp$20_nodes$$[$i$$], $node$$.hostname === location.hostname && "_blank" !== $node$$.target && ($node$$.removeEventListener("click", Silica._handle_href, !0), $node$$.addEventListener("click", Silica._handle_href, !0));
+}, _capture_links:function $window$Silica$_capture_links$($element$jscomp$22_nodes$$) {
+  $element$jscomp$22_nodes$$ = Silica.queryOfType($element$jscomp$22_nodes$$, "a", "[href]", "[data-href]");
+  for (var $node$$, $i$$ = $element$jscomp$22_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $element$jscomp$22_nodes$$[$i$$], $node$$.hostname === location.hostname && "_blank" !== $node$$.target && ($node$$.removeEventListener("click", Silica._handle_href, !0), $node$$.addEventListener("click", Silica._handle_href, !0));
   }
-}, _show:function $window$Silica$_show$($element$jscomp$21_isVisible$$, $expr$$, $negate$$) {
-  $element$jscomp$21_isVisible$$ = Silica.getValue($element$jscomp$21_isVisible$$, $expr$$, null, [$element$jscomp$21_isVisible$$, $element$jscomp$21_isVisible$$.dataset.parameter]);
-  $negate$$ && ($element$jscomp$21_isVisible$$ = !$element$jscomp$21_isVisible$$);
-  return $element$jscomp$21_isVisible$$;
+}, _show:function $window$Silica$_show$($element$jscomp$23_isVisible$$, $expr$$, $negate$$) {
+  $element$jscomp$23_isVisible$$ = Silica.getValue($element$jscomp$23_isVisible$$, $expr$$, null, [$element$jscomp$23_isVisible$$, $element$jscomp$23_isVisible$$.dataset.parameter]);
+  $negate$$ && ($element$jscomp$23_isVisible$$ = !$element$jscomp$23_isVisible$$);
+  return $element$jscomp$23_isVisible$$;
 }, _call:function $window$Silica$_call$($element$$, $evnt$$, $act$$) {
   if (Silica.isInDOM($element$$)) {
     $element$$.dataset.nopreventdefault || $evnt$$.preventDefault();

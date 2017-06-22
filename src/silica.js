@@ -25,7 +25,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.16.7",
+  version               :  "0.16.8",
 
   // Set the root context
   setContext(contextName)
@@ -118,12 +118,13 @@ window['Silica'] = {
     for (let i = nodes.length - 1; i >= 0; --i)
     {
       node = nodes[i];
-      if (!node.dataset._rt_repeat_template)
+      if (!Hax.hasDatasetProperty(node, '_rt_repeat_template'))
       {
         hash                              =  md5(node.innerHTML);
         if (node.children.length === 1) {
-          Silica._repeat_templates[hash]   =  node.firstElementChild;
+          Silica._repeat_templates[hash]   =  node.removeChild(node.firstElementChild);
         } else {
+          console.warn("Repeat has multiple children, wrapping with div", node);
           let wrap = document.createElement('div');
           wrap.innerHTML = node.innerHTML;
           Silica._repeat_templates[hash]   =  wrap;
@@ -612,8 +613,8 @@ window['Silica'] = {
         return raw._rt_ctrl;
       } else if (raw.nodeName === 'BODY') {
         return Silica.context;
-      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && Hax.hasDatasetProperty(raw.dataset, 'controller')) {
-        constructorName = Hax.getDatasetProperty(raw.dataset, 'controller');
+      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && Hax.hasDatasetProperty(raw, 'controller')) {
+        constructorName = Hax.getDatasetProperty(raw, 'controller');
         if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
         {
           needsModel = true;

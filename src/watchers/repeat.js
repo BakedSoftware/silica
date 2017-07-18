@@ -1,8 +1,9 @@
-import ControllerCompiler from '../compilers/controller.js'
+goog.module('watchers.repeat');
 // Import browser hax
-import Hax from '../hax/hax';
+const Hax = goog.require('hax');
+const ControllerCompiler = goog.require('compilers.controller');
 
-export default function Repeat() {
+function Repeat() {
   var changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
   var elements = Silica.querySorted(this, '[data-repeat]');
   let raw, cache_display;
@@ -137,3 +138,5 @@ export default function Repeat() {
     }
   }
 }
+
+exports = Repeat;

@@ -1,8 +1,9 @@
-import BaseController from './base'
-import FSM from './fsm'
+goog.module('controllers');
 
-var Controllers = {
-  'Base': BaseController,
+const  Base  =  goog.require('controllers.Base');
+const  FSM   =  goog.require('controllers.FSM');
+
+exports = {
+  'Base': Base,
   'FSM': FSM
 };
-export default Controllers;

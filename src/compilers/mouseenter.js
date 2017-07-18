@@ -1,4 +1,6 @@
-export default function MouseEnter() {
+goog.module('compilers.mouseenter');
+
+function MouseEnter() {
   var nodes = Silica.query(this, "[data-mouseenter]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -10,3 +12,5 @@ export default function MouseEnter() {
     };
   }
 }
+
+exports = MouseEnter;

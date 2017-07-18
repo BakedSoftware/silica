@@ -1,4 +1,6 @@
-export default function Controller(ctx, force = false, storeWatchers = true) {
+goog.module('compilers.controller');
+
+function ControllerCompiler(ctx, force = false, storeWatchers = true) {
   var ctrl, k, v, _ref, model, lastCtrl;
   /** @type (Node|Element) */
   var node;
@@ -87,3 +89,5 @@ export default function Controller(ctx, force = false, storeWatchers = true) {
     }
   }
 }
+
+exports = ControllerCompiler;

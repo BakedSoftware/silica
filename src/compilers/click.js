@@ -1,4 +1,6 @@
-export default function Click() {
+goog.module('compilers.click');
+
+function Click() {
   var nodes = Silica.query(this, "[data-click]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -10,3 +12,5 @@ export default function Click() {
     };
   }
 }
+
+exports = Click;

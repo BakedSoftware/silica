@@ -1,8 +1,6 @@
-import Safari from './safari.js'
+goog.module('hax');
 
-let hax = {
-  getDatasetProperty: Safari.getDatasetProperty,
-  hasDatasetProperty: Safari.hasDatasetProperty
-};
+const Safari = goog.require('hax.safari')
 
-export default hax;
+exports.getDatasetProperty  =  Safari.getDatasetProperty;
+exports.hasDatasetProperty  =  Safari.hasDatasetProperty;

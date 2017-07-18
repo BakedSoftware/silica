@@ -1,4 +1,6 @@
-export default function MouseOver() {
+goog.module('compilers.mouseover');
+
+function MouseOver() {
   var nodes = Silica.query(this, "[data-mouseover]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -10,3 +12,5 @@ export default function MouseOver() {
     };
   }
 }
+
+exports = MouseOver;

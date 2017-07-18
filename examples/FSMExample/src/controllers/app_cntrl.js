@@ -47,6 +47,14 @@ class AppCntrl extends Silica.Controllers.FSM.Controller {
   /**
    * @override
    */
+  initialState()
+  {
+    return "base";
+  }
+
+  /**
+   * @override
+   */
   static get states()
   {
     return AppCntrlStates;

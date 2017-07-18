@@ -1,10 +1,12 @@
-import Controllers from './controllers/controllers';
+goog.module("silica");
+// Import the controllers
+var Controllers = goog.require('controllers');
 // Import the compilers
-import Compilers from './compilers/compilers';
+var Compilers = goog.require('compilers');
 // Import the watchers
-import Watchers from './watchers/watchers';
+var Watchers = goog.require('watchers');
 // Import browser hax
-import Hax from './hax/hax';
+var Hax = goog.require('hax');
 
 window['Silica'] = {
   context               :  window,
@@ -25,7 +27,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.16.8",
+  version               :  "0.17.0",
 
   // Set the root context
   setContext(contextName)
@@ -129,11 +131,11 @@ window['Silica'] = {
           wrap.innerHTML = node.innerHTML;
           Silica._repeat_templates[hash]   =  wrap;
         }
-        node.dataset._rt_repeat_template  =  hash;
-        context                           =  {};
-        context.$ctrl                     =  Silica.getContext(node);
-        Silica._repeat_templates[hash]    =  Silica.compile(Silica._repeat_templates[hash], false, context, true, false);
-        node.innerHTML                    =  "";
+        node.dataset['_rt_repeat_template']  =  hash;
+        context                              =  {};
+        context.$ctrl                        =  Silica.getContext(node);
+        Silica._repeat_templates[hash]       =  Silica.compile(Silica._repeat_templates[hash], false, context, true, false);
+        node.innerHTML                       =  "";
       }
     }
   },

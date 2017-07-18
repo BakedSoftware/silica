@@ -1,3 +1,5 @@
+goog.module('watchers.class');
+
 function updater(element) {
   var hardClass = element.dataset._rt_hard_klass;
   if (hardClass && hardClass.length > 0) {
@@ -32,7 +34,7 @@ function updater(element) {
 }
 
 /** @this Element */
-export default function Class() {
+function Class() {
   var elements = this.querySelectorAll('[data-class]');
   if (this.dataset['class']) {
     updater(this);
@@ -41,3 +43,5 @@ export default function Class() {
     updater(elements[i]);
   }
 }
+
+exports = Class;

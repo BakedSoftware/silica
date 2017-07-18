@@ -1,4 +1,6 @@
-export default function Show(){
+goog.module('compilers.show');
+
+function Show(){
   var nodes = Silica.query(this, "[data-show]");
   var node;
   var isVisible, negate, raw, val;
@@ -40,3 +42,5 @@ export default function Show(){
     }
   }
 }
+
+exports = Show;

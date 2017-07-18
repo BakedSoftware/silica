@@ -1,8 +1,10 @@
+goog.module('compilers.model');
+
 var inputTimeRegexp = /date|time/i;
 var inputTypes = ["text", "file", "number", "email", "password", "tel", "search", "url", "range", "date", "month", "week", "time", "datetime", "datetime-local", "color", "textarea", "select", "select-one"]
 
 /** @this Element */
-export default function Model(context = null) {
+function Model(context = null) {
   var elm, change, ctx, model, val;
   var elements = Silica.query(this, 'input[data-model]', 'select[data-model]', 'textarea[data-model]', 'option[data-model]');
   for (let i = elements.length - 1; i >= 0; i--)
@@ -77,3 +79,5 @@ export default function Model(context = null) {
     elm.addEventListener("blur", function() { if (Silica.__activeElement === this) Silica.__activeElement = null; })
   }
 }
+
+exports = Model;

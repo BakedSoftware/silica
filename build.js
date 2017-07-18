@@ -1,6 +1,7 @@
 const  fs               =  require('fs');
 const  ClosureCompiler  =  require('google-closure-compiler').compiler;
 const  childProcess     =  require('child_process');
+const  spawnSync        =  require('child_process').spawnSync;
 
 childProcess.execSync("rm -rf build_cache");
 childProcess.execSync("rm -rf build");
@@ -28,6 +29,16 @@ closureCompiler.run(function(exitCode, stdOut, stdErr){
     console.error(stdErr);
   }
   fs.appendFileSync("build/silica.min.js", "!function(){\n\"use strict\";\n"+stdOut+"}.call(window);");
+  let compress = spawnSync('gzip', ["-k", "build/silica.min.js"], {
+    stdio: [0, 1, 2],
+    cwd: process.cwd()
+  });
+  if (compress.error) {
+    console.log("An error occurred during compression");
+    console.error(compress.error);
+  } else {
+    console.log("Compression finished");
+  }
 });
 
 // Build debug version
@@ -42,4 +53,15 @@ closureCompiler.run(function(exitCode, stdOut, stdErr){
     console.error(stdErr);
   }
   fs.appendFileSync("build/silica.js", "!function(){\n\"use strict\";\n"+stdOut+"}.call(window);");
+  console.log("Compressing results")
+  let compress = spawnSync('gzip', ["-k", "build/silica.js"], {
+    stdio: [0, 1, 2],
+    cwd: process.cwd()
+  });
+  if (compress.error) {
+    console.log("An error occurred during compression");
+    console.error(compress.error);
+  } else {
+    console.log("Compression finished");
+  }
 });

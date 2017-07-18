@@ -1,4 +1,6 @@
-export default function KeyUp(context = null) {
+goog.module('compilers.keyup');
+
+function KeyUp(context = null) {
   var elements = Silica.query(this, '[data-keyup]');
   for (let i = elements.length - 1; i >= 0; i--)
   {
@@ -7,3 +9,5 @@ export default function KeyUp(context = null) {
     });
   }
 }
+
+exports = KeyUp;

@@ -1,4 +1,6 @@
-export default function TouchEnd() {
+goog.module('compilers.touch.end');
+
+function TouchEnd() {
   var nodes = Silica.query(this, "[data-touchend]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -10,3 +12,5 @@ export default function TouchEnd() {
     };
   }
 }
+
+exports = TouchEnd;

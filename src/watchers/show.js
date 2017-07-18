@@ -1,5 +1,7 @@
+goog.module('watchers.show');
+
 /** @this Element */
-export default function Show() {
+function Show() {
   var element, elements, i, isVisible, k, negate;
   elements = this.querySelectorAll("[data-show]");
   if(this.dataset['show']){
@@ -36,3 +38,5 @@ export default function Show() {
     }
   }
 }
+
+exports = Show;

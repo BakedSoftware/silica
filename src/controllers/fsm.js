@@ -1,5 +1,10 @@
-import Base from './base.js'
+goog.module('controllers.FSM');
 
+const Base  = goog.require('controllers.Base');
+
+/**
+ * @dict
+ */
 class State {
   onEnter(ctrl)
   {
@@ -16,7 +21,7 @@ State.prototype['onExit'] = State.prototype.onExit;
 // ##Silica.Controllers.FSM
 // This is a Finite state machine based controller
 /** @unrestricted */
-class FSM extends Base
+class Controller extends Base
 {
   // The constructor binds the element to the controller and sets its scope
   // When subclassing remember to **call super**
@@ -28,6 +33,8 @@ class FSM extends Base
     for (const stateName in stateDefinitions) {
       this._states[stateName] = new stateDefinitions[stateName];
     }
+    this['handle'] = this.handle;
+    this['transition'] = this.transition;
 
     /**
      * @private {State}
@@ -103,7 +110,7 @@ class FSM extends Base
 
 }
 
-Object.defineProperties(FSM.prototype, {
+Object.defineProperties(Controller.prototype, {
   'currentState': {
     configurable: 0,
     enumerable: 0,
@@ -114,10 +121,5 @@ Object.defineProperties(FSM.prototype, {
   }
 });
 
-let exports = {
- 'Controller'  :  FSM,
- 'State'       :  State
-};
-
-
-export default exports;
+exports['Controller']  =  Controller;
+exports['State']       =  State;

@@ -1,4 +1,6 @@
-export default function MouseLeave() {
+goog.module('compilers.mouseleave');
+
+function MouseLeave() {
   var nodes = Silica.query(this, "[data-mouseleave]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -10,3 +12,5 @@ export default function MouseLeave() {
     };
   }
 }
+
+exports = MouseLeave;

@@ -1,5 +1,7 @@
+goog.module('compilers.class');
+
 /** @this Element */
-export default function Class() {
+function Class() {
   var nodes = Silica.query(this, "[data-class]");
   var node;
   var klass;
@@ -30,3 +32,5 @@ export default function Class() {
     }
   }
 }
+
+exports = Class;

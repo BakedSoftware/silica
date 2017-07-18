@@ -1,3 +1,5 @@
+goog.module('compilers.include');
+
 function loadCallback(element)
 {
   var ctx = Silica.getContext(element);
@@ -59,7 +61,7 @@ function loadPartial(url, element)
   xhr.send(null);
 }
 
-export default function Include() {
+function Include() {
   var nodes = Silica.query(this, '[data-include]');
   var node, url;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -78,3 +80,5 @@ export default function Include() {
     loadPartial(url, node);
   }
 }
+
+exports = Include;

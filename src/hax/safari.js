@@ -1,3 +1,4 @@
+goog.module('hax.safari')
 /**
  * Gets 'data-*' property.
  * See https://bugs.webkit.org/show_bug.cgi?id=161454
@@ -28,7 +29,5 @@ function hasDatasetProperty(element, propName) {
   return !!getDatasetProperty(element, propName);
 }
 
-export default {
-  getDatasetProperty: getDatasetProperty,
-  hasDatasetProperty: hasDatasetProperty
-}
+exports.getDatasetProperty = getDatasetProperty;
+exports.hasDatasetProperty = hasDatasetProperty;

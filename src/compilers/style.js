@@ -1,4 +1,6 @@
-export default function Style() {
+goog.module('compilers.style');
+
+function Style() {
   var nodes = Silica.query(this, '[data-style]');
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -7,3 +9,5 @@ export default function Style() {
     node.setAttribute("style", Silica.getValue(node, node.dataset['style']));
   }
 }
+
+exports = Style;

@@ -300,18 +300,18 @@ $jscomp.polyfill("Map", function($NativeMap$$) {
   };
   $PolyfillMap$$.prototype[Symbol.iterator] = $PolyfillMap$$.prototype.entries;
   var $maybeGetEntry$$ = function $$maybeGetEntry$$$($index$jscomp$46_map$$, $key$$) {
-    var $id$jscomp$4_id$jscomp$inline_24_type$$ = $key$$ && typeof $key$$;
-    "object" == $id$jscomp$4_id$jscomp$inline_24_type$$ || "function" == $id$jscomp$4_id$jscomp$inline_24_type$$ ? $idMap$$.has($key$$) ? $id$jscomp$4_id$jscomp$inline_24_type$$ = $idMap$$.get($key$$) : ($id$jscomp$4_id$jscomp$inline_24_type$$ = "" + ++$mapIndex$$, $idMap$$.set($key$$, $id$jscomp$4_id$jscomp$inline_24_type$$)) : $id$jscomp$4_id$jscomp$inline_24_type$$ = "p_" + $key$$;
-    var $list$$ = $index$jscomp$46_map$$.data_[$id$jscomp$4_id$jscomp$inline_24_type$$];
-    if ($list$$ && $jscomp.owns($index$jscomp$46_map$$.data_, $id$jscomp$4_id$jscomp$inline_24_type$$)) {
+    var $id$jscomp$4_id$jscomp$inline_26_type$$ = $key$$ && typeof $key$$;
+    "object" == $id$jscomp$4_id$jscomp$inline_26_type$$ || "function" == $id$jscomp$4_id$jscomp$inline_26_type$$ ? $idMap$$.has($key$$) ? $id$jscomp$4_id$jscomp$inline_26_type$$ = $idMap$$.get($key$$) : ($id$jscomp$4_id$jscomp$inline_26_type$$ = "" + ++$mapIndex$$, $idMap$$.set($key$$, $id$jscomp$4_id$jscomp$inline_26_type$$)) : $id$jscomp$4_id$jscomp$inline_26_type$$ = "p_" + $key$$;
+    var $list$$ = $index$jscomp$46_map$$.data_[$id$jscomp$4_id$jscomp$inline_26_type$$];
+    if ($list$$ && $jscomp.owns($index$jscomp$46_map$$.data_, $id$jscomp$4_id$jscomp$inline_26_type$$)) {
       for ($index$jscomp$46_map$$ = 0; $index$jscomp$46_map$$ < $list$$.length; $index$jscomp$46_map$$++) {
         var $entry$$ = $list$$[$index$jscomp$46_map$$];
         if ($key$$ !== $key$$ && $entry$$.key !== $entry$$.key || $key$$ === $entry$$.key) {
-          return {id:$id$jscomp$4_id$jscomp$inline_24_type$$, list:$list$$, index:$index$jscomp$46_map$$, entry:$entry$$};
+          return {id:$id$jscomp$4_id$jscomp$inline_26_type$$, list:$list$$, index:$index$jscomp$46_map$$, entry:$entry$$};
         }
       }
     }
-    return {id:$id$jscomp$4_id$jscomp$inline_24_type$$, list:$list$$, index:-1, entry:void 0};
+    return {id:$id$jscomp$4_id$jscomp$inline_26_type$$, list:$list$$, index:-1, entry:void 0};
   }, $makeIterator$$ = function $$makeIterator$$$($map$$, $func$$) {
     var $entry$$ = $map$$.head_;
     return $jscomp.iteratorPrototype(function() {
@@ -675,11 +675,28 @@ function module$exports$compilers$model($context_elm$$) {
   }
 }
 ;function module$exports$compilers$src() {
-  for (var $nodes$$ = Silica.queryOfType(this, "img", "[data-src]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $nodes$$[$i$$], $node$$.src = Silica.getValue($node$$, $node$$.dataset.src) || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+  for (var $nodes$$ = Silica.queryOfType(this, "img", "[data-src]"), $node$$, $JSCompiler_object_inline_w_22$$ = window.innerWidth, $JSCompiler_object_inline_h_23$$ = window.innerHeight, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $nodes$$[$i$$];
+    var $rect$$ = $node$$.getBoundingClientRect();
+    0 < $rect$$.width && 0 < $rect$$.height && $rect$$.top <= $JSCompiler_object_inline_h_23$$ && $rect$$.left < $JSCompiler_object_inline_w_22$$ && ($node$$.src = Silica.getValue($node$$, $node$$.dataset.src) || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
   }
 }
-;function module$exports$compilers$scroll() {
+function module$contents$compilers$src_debounce($func$$, $wait$$, $immediate$$) {
+  var $timeout$$;
+  return function() {
+    var $context$$ = this, $args$$ = arguments, $callNow$$ = $immediate$$ && !$timeout$$;
+    clearTimeout($timeout$$);
+    $timeout$$ = setTimeout(function() {
+      $timeout$$ = null;
+      $immediate$$ || $func$$.apply($context$$, $args$$);
+    }, $wait$$);
+    $callNow$$ && $func$$.apply($context$$, $args$$);
+  };
+}
+window.addEventListener("scroll", module$contents$compilers$src_debounce(function DataSrcCheck() {
+  module$exports$compilers$src.call(document.body);
+}, 16, !1));
+function module$exports$compilers$scroll() {
   for (var $nodes$$ = Silica.query(this, "[data-scroll]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onscroll = function $$node$$$onscroll$($evt$$) {
       Silica._call(this, $evt$$, "scroll");
@@ -781,18 +798,18 @@ function module$exports$compilers$model($context_elm$$) {
     };
   }
 }
-;function module$exports$compilers$keydown($context$jscomp$1_elements$$) {
-  $context$jscomp$1_elements$$ = Silica.query(this, "[data-keydown]");
-  for (var $i$$ = $context$jscomp$1_elements$$.length - 1; 0 <= $i$$; $i$$--) {
-    $context$jscomp$1_elements$$[$i$$].addEventListener("keydown", function($evt$$) {
+;function module$exports$compilers$keydown($context$jscomp$2_elements$$) {
+  $context$jscomp$2_elements$$ = Silica.query(this, "[data-keydown]");
+  for (var $i$$ = $context$jscomp$2_elements$$.length - 1; 0 <= $i$$; $i$$--) {
+    $context$jscomp$2_elements$$[$i$$].addEventListener("keydown", function($evt$$) {
       Silica._call(this, $evt$$, "keydown");
     });
   }
 }
-;function module$exports$compilers$keyup($context$jscomp$2_elements$$) {
-  $context$jscomp$2_elements$$ = Silica.query(this, "[data-keyup]");
-  for (var $i$$ = $context$jscomp$2_elements$$.length - 1; 0 <= $i$$; $i$$--) {
-    $context$jscomp$2_elements$$[$i$$].addEventListener("keyup", function($evt$$) {
+;function module$exports$compilers$keyup($context$jscomp$3_elements$$) {
+  $context$jscomp$3_elements$$ = Silica.query(this, "[data-keyup]");
+  for (var $i$$ = $context$jscomp$3_elements$$.length - 1; 0 <= $i$$; $i$$--) {
+    $context$jscomp$3_elements$$[$i$$].addEventListener("keyup", function($evt$$) {
       Silica._call(this, $evt$$, "keyup");
     });
   }
@@ -1059,7 +1076,7 @@ function module$exports$watchers$model() {
 }
 ;var module$exports$watchers = {_If:module$exports$watchers$if, Repeat:module$exports$watchers$repeat, Show:module$exports$watchers$show, Class:module$exports$watchers$class, Model:module$exports$watchers$model, Disabled:module$exports$compilers$disabled, Href:module$exports$compilers$href, Style:module$exports$compilers$style, Src:module$exports$compilers$src, Generic:module$exports$compilers$generic, Include:module$exports$compilers$include};
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.17.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.18.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1137,8 +1154,8 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   $element$$ == document && ($element$$ = document.body.parentElement);
   Silica.isInFlush = !$skipSchedule$$;
   if (null === $changed$$ && Silica._isReady) {
-    for ($func$jscomp$8_key$$ in Silica._watch) {
-      var $funcs_watchers$$ = Silica._watch[$func$jscomp$8_key$$];
+    for ($func$jscomp$9_key$$ in Silica._watch) {
+      var $funcs_watchers$$ = Silica._watch[$func$jscomp$9_key$$];
       for (var $i$8_i$$ = $funcs_watchers$$.length - 1; 0 <= $i$8_i$$; --$i$8_i$$) {
         $changed$$ = $funcs_watchers$$[$i$8_i$$], $changed$$[1].apply($changed$$[0]);
       }
@@ -1146,14 +1163,14 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   } else {
     for ($k$$ in $changed$$) {
       for ($funcs_watchers$$ = $changed$$[$k$$], !0 === $funcs_watchers$$ && ($funcs_watchers$$ = Silica._watch[$k$$]), $i$8_i$$ = $funcs_watchers$$.length - 1; 0 <= $i$8_i$$; --$i$8_i$$) {
-        var $func$jscomp$8_key$$ = $funcs_watchers$$[$i$8_i$$];
-        $func$jscomp$8_key$$[1].apply($func$jscomp$8_key$$[0]);
+        var $func$jscomp$9_key$$ = $funcs_watchers$$[$i$8_i$$];
+        $func$jscomp$9_key$$[1].apply($func$jscomp$9_key$$[0]);
       }
     }
   }
   $funcs_watchers$$ = Silica.watchers;
   for ($k$$ in $funcs_watchers$$) {
-    $onlySafe$$ && "_" === $k$$[0] || ($func$jscomp$8_key$$ = $funcs_watchers$$[$k$$], $func$jscomp$8_key$$.apply($element$$));
+    $onlySafe$$ && "_" === $k$$[0] || ($func$jscomp$9_key$$ = $funcs_watchers$$[$k$$], $func$jscomp$9_key$$.apply($element$$));
   }
   Silica.isInFlush = $skipSchedule$$;
   !0 !== Silica._scheduledFlush || $skipSchedule$$ || (Silica._scheduledFlush = !1, window.setTimeout(function() {
@@ -1203,20 +1220,20 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
           var $_ref2$$ = $old_values$$[$k$$];
           var $_k$$ = 0;
           for ($_len2$$ = $_ref2$$.length; $_k$$ < $_len2$$; $_k$$++) {
-            var $args$jscomp$1_changed$$ = $_ref2$$[$_k$$];
-            $args$jscomp$1_changed$$[0] === $finalChanges_func$$[0] && ($oldVal$$ = $args$jscomp$1_changed$$[1]);
+            var $args$jscomp$2_changed$$ = $_ref2$$[$_k$$];
+            $args$jscomp$2_changed$$[0] === $finalChanges_func$$[0] && ($oldVal$$ = $args$jscomp$2_changed$$[1]);
           }
-          $args$jscomp$1_changed$$ = $val$$ !== $oldVal$$;
-          Array.isArray($val$$) && Array.isArray($oldVal$$) && (($args$jscomp$1_changed$$ = $oldVal$$ && $val$$ ? $oldVal$$.length !== $val$$.length : !0) || ($args$jscomp$1_changed$$ = $oldVal$$.some(function($e$$, $idx$$) {
+          $args$jscomp$2_changed$$ = $val$$ !== $oldVal$$;
+          Array.isArray($val$$) && Array.isArray($oldVal$$) && (($args$jscomp$2_changed$$ = $oldVal$$ && $val$$ ? $oldVal$$.length !== $val$$.length : !0) || ($args$jscomp$2_changed$$ = $oldVal$$.some(function($e$$, $idx$$) {
             return $val$$[$idx$$] !== $e$$;
           })));
-          $args$jscomp$1_changed$$ && $association_changes$$[$k$$].push($finalChanges_func$$);
+          $args$jscomp$2_changed$$ && $association_changes$$[$k$$].push($finalChanges_func$$);
         }
       }
     } else {
-      $val$$ = Silica.getPropByString(window, $k$$), $oldVal$$ = $old_values$$[$k$$], $args$jscomp$1_changed$$ = $val$$ !== $oldVal$$, Array.isArray($val$$) && Array.isArray($oldVal$$) && (($args$jscomp$1_changed$$ = $oldVal$$ && $val$$ ? $oldVal$$.length !== $val$$.length : !0) || ($args$jscomp$1_changed$$ = $oldVal$$.some(function($e$$, $idx$$) {
+      $val$$ = Silica.getPropByString(window, $k$$), $oldVal$$ = $old_values$$[$k$$], $args$jscomp$2_changed$$ = $val$$ !== $oldVal$$, Array.isArray($val$$) && Array.isArray($oldVal$$) && (($args$jscomp$2_changed$$ = $oldVal$$ && $val$$ ? $oldVal$$.length !== $val$$.length : !0) || ($args$jscomp$2_changed$$ = $oldVal$$.some(function($e$$, $idx$$) {
         return $val$$[$idx$$] !== $e$$;
-      }))), $association_changes$$[$k$$] = $args$jscomp$1_changed$$;
+      }))), $association_changes$$[$k$$] = $args$jscomp$2_changed$$;
     }
   }
   $finalChanges_func$$ = {};

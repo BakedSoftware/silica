@@ -34,4 +34,8 @@ window.addEventListener("scroll", debounce(function DataSrcCheck() {
   Src.call(document.body);
 }, 16, false));
 
+window.addEventListener("resize", debounce(function DataSrcCheck() {
+  Src.call(document.body);
+}, 16, false));
+
 exports = Src;

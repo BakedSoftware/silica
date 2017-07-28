@@ -56,6 +56,7 @@
               constructor(el) {
                 super(el)
                 this.name = null;
+                this.characters = [];
                 this.embeddedPage = "./include.html",
                 this.fonts = [{key: "Arial", name:"Super A"}, {key:"Courier",
                   name:"Old Typey"}, {key:"Operator Mono", name:"Best"}];
@@ -148,9 +149,14 @@
             }
           };
           Ex.AppCntrl.watchers = {
-            "name": function() {
-              if (this.name) {
-                this.email = `${this.name.replace(/\s/g, "_")}@gmail.com`;
+            "characters.length": function(current, previous) {
+              console.log("Characters changed from", previous, "to", current);
+            },
+            "name": function(current, previous) {
+              this.characters.push(current);
+              console.log("Name changed from:", previous, "to", current);
+              if (current) {
+                this.email = `${current.replace(/\s/g, "_")}@gmail.com`;
               } else {
                 this.email = "";
               }

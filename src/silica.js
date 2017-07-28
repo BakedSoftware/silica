@@ -27,7 +27,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.18.1",
+  version               :  "0.19.0",
 
   // Set the root context
   setContext(contextName)
@@ -184,7 +184,7 @@ window['Silica'] = {
         funcs = Silica._watch[key];
         for (let i = funcs.length - 1; i >= 0; --i) {
           func = funcs[i];
-          func[1].apply(func[0]);
+          func[1].apply(func[0], [func[2], func[3]]);
         }
       }
     } else {
@@ -194,13 +194,13 @@ window['Silica'] = {
         if (funcs !== true) {
           for (var i = funcs.length - 1; i >= 0; --i) {
             func = funcs[i];
-            func[1].apply(func[0]);
+            func[1].apply(func[0], [func[2], func[3]]);
           }
         } else {
           funcs = Silica._watch[k];
           for (var i = funcs.length - 1; i >= 0; --i) {
             func = funcs[i];
-            func[1].apply(func[0]);
+            func[1].apply(func[0], [func[2], func[3]]);
           }
         }
       }
@@ -227,45 +227,6 @@ window['Silica'] = {
     if (Silica.isInApply) {
       return func.call();
     }
-    old_values = {};
-    var association;
-    for (let property in Silica._watch)
-    {
-      funcs = Silica._watch[property];
-      old_values[property] = [];
-      //Check if we are looking at an object property (starts with a lowercase)
-      //or global property (starts with an uppercase).
-      //Lowercase has charCode 97-122 inclusive
-      if (property.charCodeAt(0) >= 97)
-      {
-        // association is an array of length 2 where first element is the object
-        // and the second is the function on the object to execute when value
-        // changes
-        for (let i = funcs.length - 1, association = funcs[i]; i >= 0; association = funcs[--i])
-        {
-          //Get the current value
-          val = Silica.getPropByString(association[0], property);
-          //Shallow copy the value if it is an array
-          if (Array.isArray(val))
-          {
-            val = val.slice();
-          }
-          //Store the value as an array of [object, value] where value is the
-          //value of watched property of object
-          old_values[property].push([association[0], val]);
-        }
-      }
-      else
-      {
-        val = Silica.getPropByString(window, property);
-        if (Array.isArray(val))
-        {
-          val = val.slice();
-        }
-        old_values[property] = val;
-      }
-    }
-
     // Mark we are about to execute the function
     // If the function to execute triggers another apply, the flag is checked
     // and the additional applies can be executed with out the need to diff the
@@ -278,37 +239,28 @@ window['Silica'] = {
     }
     catch (err)
     {
-      console.error(err);
-    }
-    finally {
       // Clear mark
       Silica.isInApply = false;
+      console.error(err);
+      return Silica
     }
 
     // Compute the differences
-    // TODO: Store the new values as the old values for the next round
     changes = {};
-    _ref1 = Silica._watch;
-    for (k in _ref1) {
-      funcs = _ref1[k];
+    for (let k in Silica._watch) {
+      let watchers = Silica._watch[k];
+      changes[k] = [];
       // Check if we are looking at Global or object property key
       if (k.charCodeAt(0) >= 97) {
-        changes[k] = [];
-        for (_j = 0, _len1 = funcs.length; _j < _len1; _j++) {
-          func = funcs[_j];
+        for (_j = 0, _len1 = watchers.length; _j < _len1; _j++) {
+          let watcher = watchers[_j];
           if (k.match(/\.\*$/)) {
-            changes[k].push(func);
+            changes[k].push(watcher);
           } else {
-            val = Silica.getPropByString(func[0], k);
-            _ref2 = old_values[k];
-            for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-              args = _ref2[_k];
-              if (args[0] === func[0]) {
-                oldVal = args[1];
-              }
-            }
-            changed = val !== oldVal;
-            if (Array.isArray(val) && Array.isArray(oldVal)) {
+            watcher[3] = oldVal = watcher[2];
+            watcher[2] = val = Silica.getPropByString(watcher[0], k);
+            changed = oldVal !== val;
+            if (!changed && Array.isArray(val) && Array.isArray(oldVal)) {
               changed = oldVal && val ? oldVal.length !== val.length : true;
               if (!changed) {
                 changed = oldVal.some(function(e, idx) {
@@ -317,15 +269,16 @@ window['Silica'] = {
               }
             }
             if (changed) {
-              changes[k].push(func);
+              changes[k].push(watcher);
             }
           }
         }
       } else {
-        val = Silica.getPropByString(window, k);
-        oldVal = old_values[k];
+        let watcher = watchers[0];
+        watcher[3] = oldVal = watcher[2];
+        watcher[2] = val = Silica.getPropByString(window, k);
         changed = val !== oldVal;
-        if (Array.isArray(val) && Array.isArray(oldVal)) {
+        if (!changed && Array.isArray(val) && Array.isArray(oldVal)) {
           changed = oldVal && val ? oldVal.length !== val.length : true;
           if (!changed) {
             changed = oldVal.some(function(e, idx) {
@@ -333,28 +286,38 @@ window['Silica'] = {
             });
           }
         }
-        changes[k] = changed;
+        if (changed) {
+          changes[k].push(watcher);
+          for (_j = 1, _len = watchers.length; _j < _len; _j++)
+          {
+            let additional = watchers[_j];
+            additional[2] = watcher[2];
+            additional[3] = watcher[3];
+            changes[k].push(additional);
+          }
+        }
       }
     }
     finalChanges = {};
     for (k in changes) {
       v = changes[k];
-      if ((Array.isArray(v) && v.length) || v === true) {
+      if (Array.isArray(v) && v.length) {
         finalChanges[k] = v;
       }
     }
     Silica.flush(element, false, finalChanges);
+    Silica.isInApply = false;
     let defers = Silica._defers;
-    while (defers.length > 0)
+    Silica._defers = []
+
+    if (defers.length)
     {
-      Silica._defers = []
       Silica.apply(() => {
         for (let i = defers.length - 1; i >= 0; i--)
         {
           defers[i].call();
         }
       });
-      defers = Silica._defers;
     }
     return Silica;
   },
@@ -664,7 +627,7 @@ window['Silica'] = {
             if (!Silica._watch[k]) {
               Silica._watch[k] = [];
             }
-            Silica._watch[k].push([ctrl, v]);
+            Silica._watch[k].push([ctrl, v, null]);
           }
           if (typeof ctrl['onLoad'] === "function") {
             ctrl['onLoad']();

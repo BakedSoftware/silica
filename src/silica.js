@@ -27,7 +27,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.19.0",
+  version               :  "0.19.1",
 
   // Set the root context
   setContext(contextName)
@@ -417,7 +417,7 @@ window['Silica'] = {
     }
     else
     {
-      if (!obj.hasOwnProperty(paths[0]) && obj.$ctrl)
+      if (!obj.hasOwnProperty(paths[0]) && typeof(obj[paths[0]]) !== "function" && obj.$ctrl)
       {
         ctx = obj.$ctrl;
       } else {

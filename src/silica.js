@@ -27,7 +27,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.19.1",
+  version               :  "0.20.0",
 
   // Set the root context
   setContext(contextName)
@@ -79,7 +79,7 @@ window['Silica'] = {
     }
     if (element == document)
     {
-      element = document.body.parentElement;
+      element = document.firstElementChild;
       context = context || {};
     }
     else
@@ -164,7 +164,7 @@ window['Silica'] = {
     Silica._defers.push(func);
   },
 
-  flush(element = document.body.parentElement, onlySafe = false, changed = null, skipSchedule = false)
+  flush(element = document.firstElementChild, onlySafe = false, changed = null, skipSchedule = false)
   {
     if (Silica.isInFlush && !skipSchedule) {
       if (Silica._scheduledFlush) {
@@ -174,7 +174,7 @@ window['Silica'] = {
       }
     }
     if (element == document) {
-      element = document.body.parentElement;
+      element = document.firstElementChild;
     }
     Silica.isInFlush = !skipSchedule;
     if (changed === null && Silica._isReady) {
@@ -393,7 +393,7 @@ window['Silica'] = {
 
   isInDOM(element) {
     while (element.parentElement != null && !element._deleted) {
-      if (element.parentElement == document.body) {
+      if (element.parentElement == document.firstElementChild) {
         return true;
       } else {
         element = element.parentElement;
@@ -457,9 +457,17 @@ window['Silica'] = {
       filter = expr[1].trim();
       expr = expr[0].trim();
     }
-    if (!ctx.$ctrl)
+    if (!ctx.$ctrl && elm !== document.firstElementChild && ctx !== Silica.context)
     {
-      ctx.$ctrl = Silica.getContext(elm);
+      let parentCtx = Silica.getContext(elm);
+      if (parentCtx == ctx)
+      {
+        ctx.$ctrl = Silica.context;
+      }
+      else
+      {
+        ctx.$ctrl = parentCtx;
+      }
     }
 
     //Expr refers to a global property so it must be in window context
@@ -576,8 +584,6 @@ window['Silica'] = {
         return raw._rt_ctx;
       } else if (raw._rt_ctrl) {
         return raw._rt_ctrl;
-      } else if (raw.nodeName === 'BODY') {
-        return Silica.context;
       } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && Hax.hasDatasetProperty(raw, 'controller')) {
         constructorName = Hax.getDatasetProperty(raw, 'controller');
         if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')

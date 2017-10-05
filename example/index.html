@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html data-controller="Ex.AppCntrl">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>Silica Example</title>
   </head>
   <body>
-    <div data-controller="Ex.AppCntrl" data-style="appStyle">
+    <div data-style="appStyle">
       <h1>{{greeting}}</h1>
       <input type="text" data-model="name" placeholder="Enter Your Name" />
 
@@ -47,7 +47,7 @@
       <h3>Embedded Page: {{embeddedPage}}</h3>
       <div data-include="embeddedPage"></div>
     </div>
-      <script src="silica.min.js" type="text/javascript" charset="utf-8"></script>
+      <script src="silica.js" type="text/javascript" charset="utf-8"></script>
       <script type="text/javascript" charset="utf-8">
         (function(){
           'use strict';

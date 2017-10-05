@@ -35,18 +35,15 @@ const structure = [
 
 const indexTemplate = `
 <!DOCTYPE html>
-<html>
+<html data-controller="${projectAbbreviation}.AppCntrl">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>${projectName}</title>
     <link rel="stylesheet" href="css/styles.css" type="text/css" media="all">
   </head>
-  <body>
-    <div class="${projectName}" data-controller="${projectAbbreviation}.AppCntrl">
-      {{name}} - {{version}}
-    </div>
-    <script src="bower_components/jquery/dist/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  <body class="${projectName}">
+    {{name}} - {{version}}
     <script src="bower_components/silica/silica.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/app.js" type="text/javascript" charset="utf-8"></script>
   </body>

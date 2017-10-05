@@ -238,7 +238,11 @@ function stylus_render() {
 }
 
 function writeStyles() {
-  fs.writeFileSync(path.join('build', 'css', 'styles.css'), csso.minify(total_css).css);
+  let has_var = total_css.indexOf("$")
+  if (has_var != 0) {
+    console.warn("There may be a fault in the css near: ", total_css.substr(has_var, 10));
+  }
+  fs.writeFileSync(path.join('build', 'css', 'styles.css'), csso.minify(total_css, {debug: true}).css);
   console.log("Built Style sheet");
 
   try {

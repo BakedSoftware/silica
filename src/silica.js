@@ -1,4 +1,6 @@
 goog.module("silica");
+// Import the PubSub Module
+var PubSub = goog.require('silica.pubsub');
 // Import the controllers
 var Controllers = goog.require('controllers');
 // Import the compilers
@@ -27,7 +29,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.20.0",
+  version               :  "0.21.0",
 
   // Set the root context
   setContext(contextName)
@@ -985,3 +987,6 @@ window['Silica']['setContext']         =  Silica.setContext;
 window['Silica']['setPropByString']    =  Silica.setPropByString;
 window['Silica']['setRouter']          =  Silica.setRouter;
 window['Silica']['usePushState']       =  Silica.usePushState;
+window['Silica']['pub']                =  PubSub.Pub;
+window['Silica']['sub']                =  PubSub.Sub;
+window['Silica']['unsub']              =  PubSub.Unsub;

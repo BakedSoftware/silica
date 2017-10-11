@@ -21,6 +21,7 @@
     "node-sprite-generator": "^0.10.2",
     "node-sprite-generator-jimp": "0.0.1",
     "node-static": "^0.7.7",
+    "silica": "^0.22.0",
     "stylus": "^0.54.0",
     "watch": "^1.0.2"
   },

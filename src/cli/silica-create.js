@@ -110,6 +110,6 @@ var yarn = spawnSync('yarn',
                     cwd: projectName
                   });
 
-var yarn_install = spawnSync('yarn',
-                              ['install', 'jquery', 'silica'],
+var yarn_add = spawnSync('yarn',
+                              ['add', 'jquery', 'silica'],
                               { 'cwd': projectName });

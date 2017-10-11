@@ -253,7 +253,7 @@ function writeStyles() {
     }
   } catch(err){}
 
-  fs.copySync(path.join('bower_components'), path.join('build', 'bower_components'));
+  fs.copySync(path.join('node_modules'), path.join('build', 'node_modules'));
   afterScriptCaller();
 }
 

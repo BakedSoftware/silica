@@ -44,7 +44,7 @@ const indexTemplate = `
   </head>
   <body class="${projectName}">
     {{name}} - {{version}}
-    <script src="bower_components/silica/silica.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="node_modules/silica/silica.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/app.js" type="text/javascript" charset="utf-8"></script>
   </body>
 </html>

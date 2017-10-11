@@ -99,28 +99,18 @@ fs.writeFileSync(path.join(projectName, 'src', 'controllers', 'app_cntrl.js'), a
 fs.writeFileSync(path.join(projectName, 'src', 'app.js'), appTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'styles', 'app.styl'), styleTemplate);
 
-// Setup bower
+// Setup yarn
 
-console.log("Set up bower (Choose any values)");
+console.log("Set up yarn (Choose any values)");
 
-var bower = spawnSync('bower',
+var yarn = spawnSync('yarn',
                   ['init'],
                   {
                     stdio: [0, 1, 2],
                     cwd: projectName
                   });
 
-var bower_install = spawnSync('bower',
-                              ['install', 'jquery', 'silica'],
+var yarn_install = spawnSync('yarn',
+                              ['install', 'silica'],
                               { 'cwd': projectName });
 
-// Setup npm
-var npm_init = spawnSync('npm',
-                         ['init'],
-                         {
-                           stdio: [0, 1, 2],
-                           cwd: projectName
-                         });
-spawnSync('npm',
-          ['install', '--save', 'babel-preset-es2015'],
-          { 'cwd': projectName});

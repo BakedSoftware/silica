@@ -1,4 +1,6 @@
-export default function KeyDown(context = null) {
+goog.module('compilers.keydown');
+
+function KeyDown(context = null) {
   var elements = Silica.query(this, '[data-keydown]');
   for (let i = elements.length - 1; i >= 0; i--)
   {
@@ -7,3 +9,5 @@ export default function KeyDown(context = null) {
     });
   }
 }
+
+exports = KeyDown;

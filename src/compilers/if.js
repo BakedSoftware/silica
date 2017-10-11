@@ -1,5 +1,7 @@
+goog.module('compilers.if');
+
 /** @this Element */
-export default function _if() {
+function _if() {
   var nodes = Silica.queryWithComments(this, '[data-if]');
   var isVisible, negate, raw, val, node, comment;
   var temp = document.createElement("div");
@@ -80,3 +82,5 @@ export default function _if() {
     }
   }
 }
+
+exports = _if;

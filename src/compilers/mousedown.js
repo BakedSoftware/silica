@@ -1,4 +1,6 @@
-export default function MouseDown() {
+goog.module('compilers.mousedown');
+
+function MouseDown() {
   var nodes = Silica.query(this, "[data-mousedown]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -10,3 +12,5 @@ export default function MouseDown() {
     };
   }
 }
+
+exports = MouseDown;

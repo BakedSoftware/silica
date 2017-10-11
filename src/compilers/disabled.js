@@ -1,4 +1,6 @@
-export default function Disabled() {
+goog.module('compilers.disabled');
+
+function Disabled() {
   var nodes = Silica.query(this, '[data-disabled]');
   var node;
   var property;
@@ -22,3 +24,5 @@ export default function Disabled() {
     }
   }
 }
+
+exports = Disabled;

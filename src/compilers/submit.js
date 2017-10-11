@@ -1,4 +1,6 @@
-export default function Submit() {
+goog.module('compilers.submit');
+
+function Submit() {
   var nodes = Silica.query(this, '[data-submit]');
   var node;
   var handler = function(evt)
@@ -13,3 +15,5 @@ export default function Submit() {
     node._rt_live = true;
   }
 }
+
+exports = Submit;

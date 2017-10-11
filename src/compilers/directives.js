@@ -1,4 +1,6 @@
-export default function directives() {
+goog.module('compilers.directives');
+
+function directives() {
   for (let k in Silica.directives)
   {
     let obj = Silica.directives[k];
@@ -45,3 +47,5 @@ export default function directives() {
     }
   }
 }
+
+exports = directives;

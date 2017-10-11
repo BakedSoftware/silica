@@ -1,4 +1,6 @@
-export default function MouseOut() {
+goog.module('compilers.mouseout');
+
+function MouseOut() {
   var nodes = Silica.query(this, "[data-mouseout]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -10,3 +12,5 @@ export default function MouseOut() {
     };
   }
 }
+
+exports = MouseOut;

@@ -1,6 +1,9 @@
-import ControllerCompiler from '../compilers/controller.js'
+goog.module('watchers.repeat');
+// Import browser hax
+const Hax = goog.require('hax');
+const ControllerCompiler = goog.require('compilers.controller');
 
-export default function Repeat() {
+function Repeat() {
   var changed, child, container, context, ctx, expr, html, list, model, newList, newListHash, obj, oldList, repeat, rt_model, template, _i, _len, _ref;
   var elements = Silica.querySorted(this, '[data-repeat]');
   let raw, cache_display;
@@ -63,7 +66,7 @@ export default function Repeat() {
     }
 
     // Get the template
-    template = Silica._repeat_templates[raw.dataset._rt_repeat_template];
+    template = Silica._repeat_templates[Hax.getDatasetProperty(raw, "_rt_repeat_template")];
     if (newList.constructor == Object) {
       let keys = Object.keys(newList);
       let obj = newList;
@@ -135,3 +138,5 @@ export default function Repeat() {
     }
   }
 }
+
+exports = Repeat;

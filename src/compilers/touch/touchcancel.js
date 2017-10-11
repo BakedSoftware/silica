@@ -1,4 +1,6 @@
-export default function TouchCancel() {
+goog.module('compilers.touch.cancel');
+
+function TouchCancel() {
   var nodes = Silica.query(this, "[data-touchcancel]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -10,3 +12,5 @@ export default function TouchCancel() {
     };
   }
 }
+
+exports = TouchCancel;

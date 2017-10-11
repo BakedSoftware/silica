@@ -1,4 +1,6 @@
-export default function Generic() {
+goog.module('compilers.generic');
+
+function Generic() {
   var nodes = Silica.query(this, '[data-silica]');
   var node;
   var comps, attribute, valueKey;
@@ -36,3 +38,5 @@ export default function Generic() {
   }
   Silica._capture_links(this);
 }
+
+exports = Generic;

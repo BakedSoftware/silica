@@ -1,4 +1,6 @@
-export default function MouseWheel() {
+goog.module('compilers.mousewheel');
+
+function MouseWheel() {
   var nodes = Silica.query(this, "[data-mousewheel]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -10,3 +12,5 @@ export default function MouseWheel() {
     };
   }
 }
+
+exports = MouseWheel;

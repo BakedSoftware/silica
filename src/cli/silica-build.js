@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
+const  ClosureCompiler  =  require('google-closure-compiler').compiler;
 const  babelify         =  require("babelify");
 const  babelify_preset  =  require('babel-preset-es2015');
 const  browserify       =  require('browserify');
+const  csso             =  require('csso');
 const  fs               =  require('fs-extra');
 const  nsg              =  require('node-sprite-generator');
 const  path             =  require('path');
 const  program          =  require('commander');
 const  spawnSync        =  require('child_process').spawnSync;
 const  stylus           =  require('stylus');
-const  ClosureCompiler  =  require('google-closure-compiler').compiler;
 
 program
   .option('-d --done [script]', "The path to a script to run after build")
@@ -23,8 +24,8 @@ var  env_regex      =  /\$\{(\w+)(?:\:=(.+?))?\}/;
 
 console.log("Starting Build")
 
-fs.removeSync(cache_path, true);
-fs.removeSync('build', true);
+fs.removeSync(cache_path);
+fs.removeSync('build');
 
 fs.mkdirSync('build');
 fs.mkdirSync(path.join('build', 'js'));
@@ -103,11 +104,22 @@ console.log("Preprocess Finished");
 var asyncLock = 0;
 
 function afterScriptCaller() {
-  if (!afterScript) {
-    return
-  }
   asyncLock++;
   if (asyncLock == 2) {
+    console.log("Compressing results")
+    let compress = spawnSync('gzip', ["-k", "-r", "build"], {
+      stdio: [0, 1, 2],
+      cwd: process.cwd()
+    });
+    if (compress.error) {
+      console.log("An error occurred during compression");
+      console.error(compress.error);
+    } else {
+      console.log("Compression finished");
+    }
+    if (!afterScript) {
+      return
+    }
     console.log("Running after build script")
     afterScriptResult = spawnSync(afterScript, [], {
       stdio: [0, 1, 2],
@@ -214,7 +226,6 @@ function stylus_render() {
     styl_content = fs.readFileSync(styles[i], 'utf8');
     var s = stylus(styl_content)
               .set('filename', styles[i])
-              .set('compress', true)
               .use(require('nib')())
               .include(path.join(cache_path, 'src', 'styles'))
 
@@ -227,7 +238,11 @@ function stylus_render() {
 }
 
 function writeStyles() {
-  fs.writeFileSync(path.join('build', 'css', 'styles.css'), total_css);
+  let has_var = total_css.indexOf("$")
+  if (has_var != 0) {
+    console.warn("There may be a fault in the css near: ", total_css.substr(has_var, 10));
+  }
+  fs.writeFileSync(path.join('build', 'css', 'styles.css'), csso.minify(total_css, {debug: true}).css);
   console.log("Built Style sheet");
 
   try {

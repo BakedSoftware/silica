@@ -1,4 +1,6 @@
-export default function Blur() {
+goog.module('compilers.blur');
+
+function Blur() {
   var nodes = Silica.query(this, "[data-blur]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -10,3 +12,5 @@ export default function Blur() {
     };
   }
 }
+
+exports = Blur;

@@ -1,3 +1,4 @@
+goog.module('controllers.Base');
 /*
 
 Controller
@@ -64,4 +65,4 @@ Base['watchers'] = {};
 
 Base.prototype['$'] = Base.prototype.$;
 
-export default Base;
+exports = Base;

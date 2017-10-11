@@ -12,7 +12,10 @@
 "use strict";
 var $jscomp = $jscomp || {};
 $jscomp.scope = {};
-$jscomp.defineProperty = "function" == typeof Object.defineProperties ? Object.defineProperty : function($target$$, $property$$, $descriptor$$) {
+$jscomp.ASSUME_ES5 = !1;
+$jscomp.ASSUME_NO_NATIVE_MAP = !1;
+$jscomp.ASSUME_NO_NATIVE_SET = !1;
+$jscomp.defineProperty = $jscomp.ASSUME_ES5 || "function" == typeof Object.defineProperties ? Object.defineProperty : function($target$$, $property$$, $descriptor$$) {
   $target$$ != Array.prototype && $target$$ != Object.prototype && ($target$$[$property$$] = $descriptor$$.value);
 };
 $jscomp.getGlobal = function $$jscomp$getGlobal$($maybeGlobal$$) {
@@ -55,6 +58,8 @@ $jscomp.iteratorPrototype = function $$jscomp$iteratorPrototype$($iterator$$) {
 };
 $jscomp.makeIterator = function $$jscomp$makeIterator$($iterable$$) {
   $jscomp.initSymbolIterator();
+  $jscomp.initSymbol();
+  $jscomp.initSymbolIterator();
   var $iteratorFunction$$ = $iterable$$[Symbol.iterator];
   return $iteratorFunction$$ ? $iteratorFunction$$.call($iterable$$) : $jscomp.arrayIterator($iterable$$);
 };
@@ -66,11 +71,13 @@ $jscomp.inherits = function $$jscomp$inherits$($childCtor$$, $parentCtor$$) {
   $childCtor$$.prototype = new $tempCtor$$;
   $childCtor$$.prototype.constructor = $childCtor$$;
   for (var $p$$ in $parentCtor$$) {
-    if (Object.defineProperties) {
-      var $descriptor$$ = Object.getOwnPropertyDescriptor($parentCtor$$, $p$$);
-      $descriptor$$ && Object.defineProperty($childCtor$$, $p$$, $descriptor$$);
-    } else {
-      $childCtor$$[$p$$] = $parentCtor$$[$p$$];
+    if ("prototype" != $p$$) {
+      if (Object.defineProperties) {
+        var $descriptor$$ = Object.getOwnPropertyDescriptor($parentCtor$$, $p$$);
+        $descriptor$$ && Object.defineProperty($childCtor$$, $p$$, $descriptor$$);
+      } else {
+        $childCtor$$[$p$$] = $parentCtor$$[$p$$];
+      }
     }
   }
 };
@@ -122,7 +129,7 @@ $jscomp.polyfill("Array.prototype.keys", function($orig$$) {
       return $i$$;
     });
   };
-}, "es6-impl", "es3");
+}, "es6", "es3");
 $jscomp.polyfill("Reflect.getOwnPropertyDescriptor", function($orig$$) {
   return $orig$$ || Object.getOwnPropertyDescriptor;
 }, "es6", "es5");
@@ -149,11 +156,6 @@ $jscomp.polyfill("Reflect.get", function($orig$$) {
     }
   };
 }, "es6", "es5");
-$jscomp.polyfill("Reflect.has", function($orig$$) {
-  return $orig$$ ? $orig$$ : function($target$$, $propertyKey$$) {
-    return $propertyKey$$ in $target$$;
-  };
-}, "es6", "es3");
 $jscomp.owns = function $$jscomp$owns$($obj$$, $prop$$) {
   return Object.prototype.hasOwnProperty.call($obj$$, $prop$$);
 };
@@ -219,10 +221,9 @@ $jscomp.polyfill("WeakMap", function($NativeWeakMap$$) {
     return $jscomp.owns($key$$, $prop$$) && $jscomp.owns($key$$[$prop$$], this.id_) ? delete $key$$[$prop$$][this.id_] : !1;
   };
   return $PolyfillWeakMap$$;
-}, "es6-impl", "es3");
+}, "es6", "es3");
 $jscomp.MapEntry = function $$jscomp$MapEntry$() {
 };
-$jscomp.ASSUME_NO_NATIVE_MAP = !1;
 $jscomp.polyfill("Map", function($NativeMap$$) {
   if (!$jscomp.ASSUME_NO_NATIVE_MAP && function() {
     if (!$NativeMap$$ || !$NativeMap$$.prototype.entries || "function" != typeof Object.seal) {
@@ -264,9 +265,9 @@ $jscomp.polyfill("Map", function($NativeMap$$) {
     $r$$.entry ? $r$$.entry.value = $value$$ : ($r$$.entry = {next:this.head_, previous:this.head_.previous, head:this.head_, key:$key$$, value:$value$$}, $r$$.list.push($r$$.entry), this.head_.previous.next = $r$$.entry, this.head_.previous = $r$$.entry, this.size++);
     return this;
   };
-  $PolyfillMap$$.prototype.delete = function $$PolyfillMap$$$$delete$($key$jscomp$32_r$$) {
-    $key$jscomp$32_r$$ = $maybeGetEntry$$(this, $key$jscomp$32_r$$);
-    return $key$jscomp$32_r$$.entry && $key$jscomp$32_r$$.list ? ($key$jscomp$32_r$$.list.splice($key$jscomp$32_r$$.index, 1), $key$jscomp$32_r$$.list.length || delete this.data_[$key$jscomp$32_r$$.id], $key$jscomp$32_r$$.entry.previous.next = $key$jscomp$32_r$$.entry.next, $key$jscomp$32_r$$.entry.next.previous = $key$jscomp$32_r$$.entry.previous, $key$jscomp$32_r$$.entry.head = null, this.size--, !0) : !1;
+  $PolyfillMap$$.prototype.delete = function $$PolyfillMap$$$$delete$($key$jscomp$34_r$$) {
+    $key$jscomp$34_r$$ = $maybeGetEntry$$(this, $key$jscomp$34_r$$);
+    return $key$jscomp$34_r$$.entry && $key$jscomp$34_r$$.list ? ($key$jscomp$34_r$$.list.splice($key$jscomp$34_r$$.index, 1), $key$jscomp$34_r$$.list.length || delete this.data_[$key$jscomp$34_r$$.id], $key$jscomp$34_r$$.entry.previous.next = $key$jscomp$34_r$$.entry.next, $key$jscomp$34_r$$.entry.next.previous = $key$jscomp$34_r$$.entry.previous, $key$jscomp$34_r$$.entry.head = null, this.size--, !0) : !1;
   };
   $PolyfillMap$$.prototype.clear = function $$PolyfillMap$$$$clear$() {
     this.data_ = {};
@@ -301,18 +302,18 @@ $jscomp.polyfill("Map", function($NativeMap$$) {
   };
   $PolyfillMap$$.prototype[Symbol.iterator] = $PolyfillMap$$.prototype.entries;
   var $maybeGetEntry$$ = function $$maybeGetEntry$$$($index$jscomp$46_map$$, $key$$) {
-    var $id$jscomp$4_id$jscomp$inline_24_type$$ = $key$$ && typeof $key$$;
-    "object" == $id$jscomp$4_id$jscomp$inline_24_type$$ || "function" == $id$jscomp$4_id$jscomp$inline_24_type$$ ? $idMap$$.has($key$$) ? $id$jscomp$4_id$jscomp$inline_24_type$$ = $idMap$$.get($key$$) : ($id$jscomp$4_id$jscomp$inline_24_type$$ = "" + ++$mapIndex$$, $idMap$$.set($key$$, $id$jscomp$4_id$jscomp$inline_24_type$$)) : $id$jscomp$4_id$jscomp$inline_24_type$$ = "p_" + $key$$;
-    var $list$$ = $index$jscomp$46_map$$.data_[$id$jscomp$4_id$jscomp$inline_24_type$$];
-    if ($list$$ && $jscomp.owns($index$jscomp$46_map$$.data_, $id$jscomp$4_id$jscomp$inline_24_type$$)) {
+    var $id$jscomp$4_id$jscomp$inline_29_type$$ = $key$$ && typeof $key$$;
+    "object" == $id$jscomp$4_id$jscomp$inline_29_type$$ || "function" == $id$jscomp$4_id$jscomp$inline_29_type$$ ? $idMap$$.has($key$$) ? $id$jscomp$4_id$jscomp$inline_29_type$$ = $idMap$$.get($key$$) : ($id$jscomp$4_id$jscomp$inline_29_type$$ = "" + ++$mapIndex$$, $idMap$$.set($key$$, $id$jscomp$4_id$jscomp$inline_29_type$$)) : $id$jscomp$4_id$jscomp$inline_29_type$$ = "p_" + $key$$;
+    var $list$$ = $index$jscomp$46_map$$.data_[$id$jscomp$4_id$jscomp$inline_29_type$$];
+    if ($list$$ && $jscomp.owns($index$jscomp$46_map$$.data_, $id$jscomp$4_id$jscomp$inline_29_type$$)) {
       for ($index$jscomp$46_map$$ = 0; $index$jscomp$46_map$$ < $list$$.length; $index$jscomp$46_map$$++) {
         var $entry$$ = $list$$[$index$jscomp$46_map$$];
         if ($key$$ !== $key$$ && $entry$$.key !== $entry$$.key || $key$$ === $entry$$.key) {
-          return {id:$id$jscomp$4_id$jscomp$inline_24_type$$, list:$list$$, index:$index$jscomp$46_map$$, entry:$entry$$};
+          return {id:$id$jscomp$4_id$jscomp$inline_29_type$$, list:$list$$, index:$index$jscomp$46_map$$, entry:$entry$$};
         }
       }
     }
-    return {id:$id$jscomp$4_id$jscomp$inline_24_type$$, list:$list$$, index:-1, entry:void 0};
+    return {id:$id$jscomp$4_id$jscomp$inline_29_type$$, list:$list$$, index:-1, entry:void 0};
   }, $makeIterator$$ = function $$makeIterator$$$($map$$, $func$$) {
     var $entry$$ = $map$$.head_;
     return $jscomp.iteratorPrototype(function() {
@@ -332,8 +333,7 @@ $jscomp.polyfill("Map", function($NativeMap$$) {
     return $head$$.previous = $head$$.next = $head$$.head = $head$$;
   }, $mapIndex$$ = 0;
   return $PolyfillMap$$;
-}, "es6-impl", "es3");
-$jscomp.ASSUME_NO_NATIVE_SET = !1;
+}, "es6", "es3");
 $jscomp.polyfill("Set", function($NativeSet$$) {
   if (!$jscomp.ASSUME_NO_NATIVE_SET && function() {
     if (!$NativeSet$$ || !$NativeSet$$.prototype.entries || "function" != typeof Object.seal) {
@@ -400,18 +400,15 @@ $jscomp.polyfill("Set", function($NativeSet$$) {
     });
   };
   return $PolyfillSet$$;
-}, "es6-impl", "es3");
-var module$build_cache$src$compilers$blur = {};
-function Blur$$module$build_cache$src$compilers$blur() {
+}, "es6", "es3");
+function module$exports$compilers$blur() {
   for (var $nodes$$ = Silica.query(this, "[data-blur]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onblur = function $$node$$$onblur$($evt$$) {
       Silica._call(this, $evt$$, "blur");
     };
   }
 }
-module$build_cache$src$compilers$blur.default = Blur$$module$build_cache$src$compilers$blur;
-var module$build_cache$src$compilers$class = {};
-function Class$$module$build_cache$src$compilers$class() {
+;function module$exports$compilers$class() {
   var $nodes$$ = Silica.query(this, "[data-class]"), $klass$$;
   9 != this.nodeType && this.dataset["class"] && (null == this.dataset._rt_hard_klass && (this.dataset._rt_hard_klass = this.className), ($klass$$ = Silica.getValue(this, this.dataset["class"], null, null)) && this.classList.add($klass$$));
   for (var $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
@@ -420,33 +417,27 @@ function Class$$module$build_cache$src$compilers$class() {
     ($klass$$ = Silica.getValue($node$$, $node$$.dataset["class"], null, [$node$$, $node$$.dataset.parameter])) && $node$$.classList.add($klass$$);
   }
 }
-module$build_cache$src$compilers$class.default = Class$$module$build_cache$src$compilers$class;
-var module$build_cache$src$compilers$click = {};
-function Click$$module$build_cache$src$compilers$click() {
+;function module$exports$compilers$click() {
   for (var $nodes$$ = Silica.query(this, "[data-click]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onclick = function $$node$$$onclick$($evt$$) {
       Silica._call(this, $evt$$, "click");
     };
   }
 }
-module$build_cache$src$compilers$click.default = Click$$module$build_cache$src$compilers$click;
-var module$build_cache$src$compilers$clickoutside = {};
-function handleClick$$module$build_cache$src$compilers$clickoutside($evt$$) {
+;function module$contents$compilers$clickoutside_handleClick($evt$$) {
   for (var $$jscomp$iter$0$$ = $jscomp.makeIterator(Silica._clickOutElements), $$jscomp$key$node_node$$ = $$jscomp$iter$0$$.next(); !$$jscomp$key$node_node$$.done; $$jscomp$key$node_node$$ = $$jscomp$iter$0$$.next()) {
     if ($$jscomp$key$node_node$$ = $$jscomp$key$node_node$$.value, 0 < $$jscomp$key$node_node$$.offsetWidth || 0 < $$jscomp$key$node_node$$.offsetHeight) {
       $evt$$.target == $$jscomp$key$node_node$$ || Silica.isDescendent($$jscomp$key$node_node$$, $evt$$.target) || Silica._call($$jscomp$key$node_node$$, $evt$$, "clickOutside");
     }
   }
 }
-function ClickOutside$$module$build_cache$src$compilers$clickoutside() {
+function module$exports$compilers$clickoutside() {
   for (var $nodes$$ = Silica.query(this, "[data-click-outside]"), $i$$ = $nodes$$.length - 1; 0 <= $i$$; $i$$--) {
     Silica._clickOutElements.add($nodes$$[$i$$]);
   }
-  0 < Silica._clickOutElements.size ? window.addEventListener("click", handleClick$$module$build_cache$src$compilers$clickoutside) : window.removeEventListener("click", handleClick$$module$build_cache$src$compilers$clickoutside);
+  0 < Silica._clickOutElements.size ? window.addEventListener("click", module$contents$compilers$clickoutside_handleClick) : window.removeEventListener("click", module$contents$compilers$clickoutside_handleClick);
 }
-module$build_cache$src$compilers$clickoutside.default = ClickOutside$$module$build_cache$src$compilers$clickoutside;
-var module$build_cache$src$compilers$directives = {};
-function directives$$module$build_cache$src$compilers$directives() {
+;function module$exports$compilers$directives() {
   for (var $k$$ in Silica.directives) {
     for (var $obj$$ = Silica.directives[$k$$], $nodes$$ = Silica.queryOfType(this, $k$$), $wrapper$$ = document.createElement("div"), $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
       $wrapper$$.innerHTML = $obj$$.template;
@@ -456,16 +447,16 @@ function directives$$module$build_cache$src$compilers$directives() {
           $newChild$$.setAttribute($attrs_v$$[$j$$].name, $attrs_v$$[$j$$].value);
         }
       }
-      for (var $j$1$$ in $node$$.dataset) {
-        $newChild$$.dataset[$j$1$$] = $node$$.dataset[$j$1$$];
+      for (var $j$2$$ in $node$$.dataset) {
+        $newChild$$.dataset[$j$2$$] = $node$$.dataset[$j$2$$];
       }
       $newChild$$._rt_ctrl = new $obj$$.controller($newChild$$);
       $newChild$$._rt_ctrl.$ctrl = Silica.getContext($node$$.parentElement);
       Silica.cacheTemplates($newChild$$);
       Silica.interpolate($newChild$$, $newChild$$._rt_ctrl, !1);
       $node$$.parentNode.replaceChild($newChild$$, $node$$);
-      var $node$$ = $obj$$.controller.watchers, $w$$;
-      for ($w$$ in $node$$) {
+      $node$$ = $obj$$.controller.watchers;
+      for (var $w$$ in $node$$) {
         $attrs_v$$ = $node$$[$w$$], Silica._watch[$w$$] || (Silica._watch[$w$$] = []), Silica._watch[$w$$].push([$newChild$$._rt_ctrl, $attrs_v$$]);
       }
       if ("function" === typeof $newChild$$._rt_ctrl.onLoad) {
@@ -474,10 +465,8 @@ function directives$$module$build_cache$src$compilers$directives() {
     }
   }
 }
-module$build_cache$src$compilers$directives.default = directives$$module$build_cache$src$compilers$directives;
-var module$build_cache$src$compilers$if = {};
-function _if$$module$build_cache$src$compilers$if() {
-  for (var $_ref$$, $comment_isVisible_list$$, $nodes$$ = Silica.queryWithComments(this, "[data-if]"), $raw$$, $subNodes_val$$, $node$$, $temp$$ = document.createElement("div"), $$jscomp$loop$17$$ = {}, $i$$ = $nodes$$.length - 1; 0 <= $i$$; $$jscomp$loop$17$$ = {subNode:$$jscomp$loop$17$$.subNode}, --$i$$) {
+;function module$exports$compilers$if() {
+  for (var $_ref$$, $comment_isVisible_list$$, $nodes$$ = Silica.queryWithComments(this, "[data-if]"), $raw$$, $subNodes_val$$, $node$$, $temp$$ = document.createElement("div"), $$jscomp$loop$20$$ = {}, $i$$ = $nodes$$.length - 1; 0 <= $i$$; $$jscomp$loop$20$$ = {subNode:$$jscomp$loop$20$$.subNode}, --$i$$) {
     if ($node$$ = $nodes$$[$i$$], 8 === $node$$.nodeType ? ($temp$$.innerHTML = $node$$.nodeValue, $raw$$ = $subNodes_val$$ = $temp$$.firstElementChild.dataset["if"]) : $raw$$ = $subNodes_val$$ = $node$$.dataset["if"], ($comment_isVisible_list$$ = "!" === $subNodes_val$$[0]) && ($subNodes_val$$ = $subNodes_val$$.substr(1)), Silica._ifs[$raw$$] || (Silica._ifs[$raw$$] = []), $comment_isVisible_list$$ = Silica._show($node$$, $subNodes_val$$, $comment_isVisible_list$$)) {
       if (8 !== $node$$.nodeType ? Silica._ifs[$raw$$].push($node$$) : ($comment_isVisible_list$$ = $temp$$.firstElementChild, Silica._ifs[$raw$$].push($comment_isVisible_list$$), $node$$.parentElement.insertBefore($comment_isVisible_list$$, $node$$), $node$$.remove(), $node$$ = $comment_isVisible_list$$), null != ($_ref$$ = Silica.getContext($node$$)) && "function" === typeof $_ref$$.onLoad && $_ref$$.el === $node$$) {
         $_ref$$.onLoad();
@@ -485,26 +474,26 @@ function _if$$module$build_cache$src$compilers$if() {
     } else {
       if (8 !== $node$$.nodeType) {
         $subNodes_val$$ = Silica.queryWithComments($node$$, "[data-if]");
-        $$jscomp$loop$17$$.subNode = void 0;
-        for (var $$jscomp$loop$18_prop$$, $j$2_j$$ = $subNodes_val$$.length - 1; 0 <= $j$2_j$$; --$j$2_j$$) {
-          $$jscomp$loop$17$$.subNode = $subNodes_val$$[$j$2_j$$], $$jscomp$loop$18_prop$$ = $$jscomp$loop$17$$.subNode.dataset["if"], $comment_isVisible_list$$ = Silica._shws[$$jscomp$loop$18_prop$$], Silica._shws[$$jscomp$loop$18_prop$$] = null != $comment_isVisible_list$$ ? $comment_isVisible_list$$.filter(function($$jscomp$loop$17$$) {
+        $$jscomp$loop$20$$.subNode = void 0;
+        for (var $$jscomp$loop$21_prop$$, $j$3_j$$ = $subNodes_val$$.length - 1; 0 <= $j$3_j$$; --$j$3_j$$) {
+          $$jscomp$loop$20$$.subNode = $subNodes_val$$[$j$3_j$$], $$jscomp$loop$21_prop$$ = $$jscomp$loop$20$$.subNode.dataset["if"], $comment_isVisible_list$$ = Silica._shws[$$jscomp$loop$21_prop$$], Silica._shws[$$jscomp$loop$21_prop$$] = null != $comment_isVisible_list$$ ? $comment_isVisible_list$$.filter(function($$jscomp$loop$20$$) {
             return function($obj$$) {
-              return $obj$$ != $$jscomp$loop$17$$.subNode;
+              return $obj$$ != $$jscomp$loop$20$$.subNode;
             };
-          }($$jscomp$loop$17$$)) : [];
+          }($$jscomp$loop$20$$)) : [];
         }
         $subNodes_val$$ = Silica.query(this, "[data-controller]");
-        $$jscomp$loop$18_prop$$ = {};
-        for ($j$2_j$$ = $subNodes_val$$.length - 1; 0 <= $j$2_j$$; $$jscomp$loop$18_prop$$ = {ctrl:$$jscomp$loop$18_prop$$.ctrl}, --$j$2_j$$) {
-          $$jscomp$loop$17$$.subNode = $subNodes_val$$[$j$2_j$$];
-          $$jscomp$loop$18_prop$$.ctrl = this._rt_ctrl;
+        $$jscomp$loop$21_prop$$ = {};
+        for ($j$3_j$$ = $subNodes_val$$.length - 1; 0 <= $j$3_j$$; $$jscomp$loop$21_prop$$ = {ctrl:$$jscomp$loop$21_prop$$.ctrl}, --$j$3_j$$) {
+          $$jscomp$loop$20$$.subNode = $subNodes_val$$[$j$3_j$$];
+          $$jscomp$loop$21_prop$$.ctrl = this._rt_ctrl;
           var $k$$ = void 0;
-          for ($k$$ in null != $$jscomp$loop$18_prop$$.ctrl ? $$jscomp$loop$18_prop$$.ctrl.watchers : void 0) {
-            $comment_isVisible_list$$ = Silica._watch[$k$$], Silica._watch[$k$$] = null != $comment_isVisible_list$$ ? $comment_isVisible_list$$.filter(function($$jscomp$loop$18$$) {
+          for ($k$$ in null != $$jscomp$loop$21_prop$$.ctrl ? $$jscomp$loop$21_prop$$.ctrl.watchers : void 0) {
+            $comment_isVisible_list$$ = Silica._watch[$k$$], Silica._watch[$k$$] = null != $comment_isVisible_list$$ ? $comment_isVisible_list$$.filter(function($$jscomp$loop$21$$) {
               return function($obj$$) {
-                return $obj$$[0] !== $$jscomp$loop$18$$.ctrl;
+                return $obj$$[0] !== $$jscomp$loop$21$$.ctrl;
               };
-            }($$jscomp$loop$18_prop$$)) : [];
+            }($$jscomp$loop$21_prop$$)) : [];
           }
         }
         $comment_isVisible_list$$ = document.createComment($node$$.outerHTML);
@@ -514,9 +503,7 @@ function _if$$module$build_cache$src$compilers$if() {
     }
   }
 }
-module$build_cache$src$compilers$if.default = _if$$module$build_cache$src$compilers$if;
-var module$build_cache$src$compilers$show = {};
-function Show$$module$build_cache$src$compilers$show() {
+;function module$exports$compilers$show() {
   for (var $nodes$$ = Silica.query(this, "[data-show]"), $node$$, $isVisible$jscomp$1_negate$$, $raw$$, $val$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $raw$$ = $val$$ = $node$$.dataset.show, ($isVisible$jscomp$1_negate$$ = "!" === $val$$[0]) && ($val$$ = $val$$.substr(1)), Silica._shws[$raw$$] || (Silica._shws[$raw$$] = []), Silica._shws[$raw$$].some(function($obj$$) {
       return $obj$$ == $node$$;
@@ -528,56 +515,48 @@ function Show$$module$build_cache$src$compilers$show() {
     }, $isVisible$jscomp$1_negate$$ = Silica._show($node$$, $val$$, $isVisible$jscomp$1_negate$$), Silica._shws[$raw$$].push($node$$), $isVisible$jscomp$1_negate$$ ? $node$$.classList.remove("hidden") : $node$$.classList.add("hidden"));
   }
 }
-module$build_cache$src$compilers$show.default = Show$$module$build_cache$src$compilers$show;
-var module$build_cache$src$compilers$disabled = {};
-function Disabled$$module$build_cache$src$compilers$disabled() {
+;function module$exports$compilers$disabled() {
   for (var $nodes$$ = Silica.query(this, "[data-disabled]"), $node$$, $property$$, $negate$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $property$$ = $node$$.dataset.disabled, ($negate$$ = "!" === $property$$[0]) && ($property$$ = $property$$.substr(1)), Silica._show($node$$, $property$$, $negate$$) ? $node$$.setAttribute("disabled", !0) : $node$$.removeAttribute("disabled");
   }
 }
-module$build_cache$src$compilers$disabled.default = Disabled$$module$build_cache$src$compilers$disabled;
-var module$build_cache$src$compilers$href = {};
-function Href$$module$build_cache$src$compilers$href() {
+;function module$exports$compilers$href() {
   for (var $nodes$$ = Silica.query(this, "[data-href]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$.setAttribute("href", Silica.getValue($node$$, $node$$.dataset.href));
   }
   Silica._capture_links(this);
 }
-module$build_cache$src$compilers$href.default = Href$$module$build_cache$src$compilers$href;
-var module$build_cache$src$compilers$style = {};
-function Style$$module$build_cache$src$compilers$style() {
+;function module$exports$compilers$style() {
   for (var $nodes$$ = Silica.query(this, "[data-style]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$.setAttribute("style", Silica.getValue($node$$, $node$$.dataset.style));
   }
 }
-module$build_cache$src$compilers$style.default = Style$$module$build_cache$src$compilers$style;
-var module$build_cache$src$compilers$include = {};
-function loadCallback$$module$build_cache$src$compilers$include($element$$) {
+;function module$contents$compilers$include_loadCallback($element$$) {
   var $ctx$$ = Silica.getContext($element$$);
   if ($ctx$$.onLoad && "function" === typeof $ctx$$.onLoad) {
     $ctx$$.onLoad($element$$);
   }
 }
-function clearContent$$module$build_cache$src$compilers$include($element$$) {
+function module$contents$compilers$include_clearContent($element$$) {
   for (; $element$$.hasChildNodes();) {
     $element$$.removeChild($element$$.lastChild);
   }
 }
-function loadPartial$$module$build_cache$src$compilers$include($url$$, $element$$) {
+function module$contents$compilers$include_loadPartial($url$$, $element$$) {
   if ($element$$.dataset.sio2IncludedUrl != $url$$) {
     $element$$.dataset.sio2IncludedUrl = $url$$;
-    clearContent$$module$build_cache$src$compilers$include($element$$);
+    module$contents$compilers$include_clearContent($element$$);
     var $cached$$ = Silica._includeCache[$url$$];
     if ($cached$$) {
-      $element$$.appendChild($cached$$), Silica.flush($element$$), loadCallback$$module$build_cache$src$compilers$include($element$$);
+      $element$$.appendChild($cached$$), Silica.flush($element$$), module$contents$compilers$include_loadCallback($element$$);
     } else {
       var $xhr$$ = new XMLHttpRequest;
       $xhr$$.onreadystatechange = function $$xhr$$$onreadystatechange$() {
         if (4 == $xhr$$.readyState) {
           var $fragment$$ = document.createElement("div");
           $fragment$$.innerHTML = $xhr$$.responseText;
-          $element$$.dataset.sio2IncludedUrl === $url$$ && (clearContent$$module$build_cache$src$compilers$include($element$$), $element$$.appendChild($fragment$$), Silica.compile($element$$), Silica._includeCache[$url$$] = $fragment$$, Silica.apply(function() {
-            loadCallback$$module$build_cache$src$compilers$include($element$$);
+          $element$$.dataset.sio2IncludedUrl === $url$$ && (module$contents$compilers$include_clearContent($element$$), $element$$.appendChild($fragment$$), Silica.compile($element$$), Silica._includeCache[$url$$] = $fragment$$, Silica.apply(function() {
+            module$contents$compilers$include_loadCallback($element$$);
           }));
         }
       };
@@ -586,14 +565,12 @@ function loadPartial$$module$build_cache$src$compilers$include($url$$, $element$
     }
   }
 }
-function Include$$module$build_cache$src$compilers$include() {
+function module$exports$compilers$include() {
   for (var $nodes$$ = Silica.query(this, "[data-include]"), $node$$, $url$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $nodes$$[$i$$], ($url$$ = Silica.getValue($node$$, $node$$.dataset.include)) && "" !== $url$$ ? loadPartial$$module$build_cache$src$compilers$include($url$$, $node$$) : ($node$$.dataset.hasOwnProperty("sio2IncludedUrl") && delete $node$$.dataset.sio2IncludedUrl, clearContent$$module$build_cache$src$compilers$include($node$$));
+    $node$$ = $nodes$$[$i$$], ($url$$ = Silica.getValue($node$$, $node$$.dataset.include)) && "" !== $url$$ ? module$contents$compilers$include_loadPartial($url$$, $node$$) : ($node$$.removeAttribute("data-sio2-included-url"), module$contents$compilers$include_clearContent($node$$));
   }
 }
-module$build_cache$src$compilers$include.default = Include$$module$build_cache$src$compilers$include;
-var module$build_cache$src$compilers$controller = {};
-function Controller$$module$build_cache$src$compilers$controller($ctx$jscomp$1_nodes$$, $force$$, $storeWatchers$$) {
+;function module$exports$compilers$controller($ctx$jscomp$1_nodes$$, $force$$, $storeWatchers$$) {
   $force$$ = void 0 === $force$$ ? !1 : $force$$;
   $storeWatchers$$ = void 0 === $storeWatchers$$ ? !0 : $storeWatchers$$;
   var $k$$;
@@ -638,30 +615,25 @@ function Controller$$module$build_cache$src$compilers$controller($ctx$jscomp$1_n
     }
   }
 }
-module$build_cache$src$compilers$controller.default = Controller$$module$build_cache$src$compilers$controller;
-var module$build_cache$src$compilers$double_click = {};
-function DoubleClick$$module$build_cache$src$compilers$double_click() {
+;function module$exports$compilers$double_click() {
   for (var $nodes$$ = Silica.query(this, "[data-dblclick]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.ondblclick = function $$node$$$ondblclick$($evt$$) {
       Silica._call(this, $evt$$, "dblclick");
     };
   }
 }
-module$build_cache$src$compilers$double_click.default = DoubleClick$$module$build_cache$src$compilers$double_click;
-var module$build_cache$src$compilers$focus = {};
-function Focus$$module$build_cache$src$compilers$focus() {
+;function module$exports$compilers$focus() {
   for (var $nodes$$ = Silica.query(this, "[data-focus]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onfocus = function $$node$$$onfocus$($evt$$) {
       Silica._call(this, $evt$$, "focus");
     };
   }
 }
-module$build_cache$src$compilers$focus.default = Focus$$module$build_cache$src$compilers$focus;
-var module$build_cache$src$compilers$model = {}, inputTimeRegexp$$module$build_cache$src$compilers$model = /date|time/i, inputTypes$$module$build_cache$src$compilers$model = "text file number email password tel search url range date month week time datetime datetime-local color textarea select select-one".split(" ");
-function Model$$module$build_cache$src$compilers$model($context_elm$$) {
-  for (var $change_ctx$$, $model$jscomp$0$$, $type$jscomp$97_val$$, $elements$$ = Silica.query(this, "input[data-model]", "select[data-model]", "textarea[data-model]", "option[data-model]"), $i$$ = $elements$$.length - 1; 0 <= $i$$; $i$$--) {
-    $context_elm$$ = $elements$$[$i$$], $change_ctx$$ = Silica.getContext($context_elm$$), $model$jscomp$0$$ = $context_elm$$.dataset.model, $type$jscomp$97_val$$ = $context_elm$$.type, -1 !== inputTypes$$module$build_cache$src$compilers$model.indexOf($type$jscomp$97_val$$) ? $context_elm$$.value = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) : "radio" === $type$jscomp$97_val$$ ? ($type$jscomp$97_val$$ = $context_elm$$.value, $type$jscomp$97_val$$.match(/[0-9]/) && ($type$jscomp$97_val$$ = 
-    parseInt($type$jscomp$97_val$$, 10)), $context_elm$$.checked = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) === $type$jscomp$97_val$$) : "checkbox" === $type$jscomp$97_val$$ ? $context_elm$$.checked = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) : "OPTION" === $context_elm$$.nodeName && ($context_elm$$.value = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$)), $change_ctx$$ = function $$change_ctx$$$() {
+;var module$contents$compilers$model_inputTimeRegexp = /date|time/i, module$contents$compilers$model_inputTypes = "text file number email password tel search url range date month week time datetime datetime-local color textarea select select-one".split(" ");
+function module$exports$compilers$model($context_elm$$) {
+  for (var $change_ctx$$, $model$jscomp$0$$, $type$jscomp$104_val$$, $elements$$ = Silica.query(this, "input[data-model]", "select[data-model]", "textarea[data-model]", "option[data-model]"), $i$$ = $elements$$.length - 1; 0 <= $i$$; $i$$--) {
+    $context_elm$$ = $elements$$[$i$$], $change_ctx$$ = Silica.getContext($context_elm$$), $model$jscomp$0$$ = $context_elm$$.dataset.model, $type$jscomp$104_val$$ = $context_elm$$.type, -1 !== module$contents$compilers$model_inputTypes.indexOf($type$jscomp$104_val$$) ? $context_elm$$.value = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) : "radio" === $type$jscomp$104_val$$ ? ($type$jscomp$104_val$$ = $context_elm$$.value, $type$jscomp$104_val$$.match(/[0-9]/) && ($type$jscomp$104_val$$ = 
+    parseInt($type$jscomp$104_val$$, 10)), $context_elm$$.checked = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) === $type$jscomp$104_val$$) : "checkbox" === $type$jscomp$104_val$$ ? $context_elm$$.checked = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) : "OPTION" === $context_elm$$.nodeName && ($context_elm$$.value = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$)), $change_ctx$$ = function $$change_ctx$$$() {
       var $_ref$$, $_ref1$$, $val$$ = this.value, $ctx$$ = Silica.getContext(this), $model$$ = this.dataset.model;
       "radio" === this.type ? $val$$.match(/[0-9]/) && ($val$$ = parseInt($val$$, 10)) : "checkbox" === this.type && ($val$$ = this.checked);
       if (Silica.isInApply) {
@@ -696,9 +668,7 @@ function Model$$module$build_cache$src$compilers$model($context_elm$$) {
     });
   }
 }
-module$build_cache$src$compilers$model.default = Model$$module$build_cache$src$compilers$model;
-var module$build_cache$src$compilers$submit = {};
-function Submit$$module$build_cache$src$compilers$submit() {
+;function module$exports$compilers$submit() {
   for (var $nodes$$ = Silica.query(this, "[data-submit]"), $node$$, $handler$$ = function $$handler$$$($evt$$) {
     Silica._call(this, $evt$$, "submit");
     return !1;
@@ -706,43 +676,55 @@ function Submit$$module$build_cache$src$compilers$submit() {
     $node$$ = $nodes$$[$i$$], $node$$.onsubmit = $handler$$, $node$$._rt_live = !0;
   }
 }
-module$build_cache$src$compilers$submit.default = Submit$$module$build_cache$src$compilers$submit;
-var module$build_cache$src$compilers$src = {};
-function Src$$module$build_cache$src$compilers$src() {
-  for (var $nodes$$ = Silica.queryOfType(this, "img", "[data-src]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $nodes$$[$i$$], $node$$.src = Silica.getValue($node$$, $node$$.dataset.src) || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+;function module$exports$compilers$src() {
+  for (var $nodes$$ = Silica.queryOfType(this, "img", "[data-src]"), $node$$, $JSCompiler_object_inline_w_25$$ = window.innerWidth, $JSCompiler_object_inline_h_26$$ = window.innerHeight, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $nodes$$[$i$$];
+    var $rect$$ = $node$$.getBoundingClientRect();
+    0 < $rect$$.width && 0 < $rect$$.height && $rect$$.top <= $JSCompiler_object_inline_h_26$$ && $rect$$.left < $JSCompiler_object_inline_w_25$$ && ($node$$.src = Silica.getValue($node$$, $node$$.dataset.src) || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
   }
 }
-module$build_cache$src$compilers$src.default = Src$$module$build_cache$src$compilers$src;
-var module$build_cache$src$compilers$scroll = {};
-function Scroll$$module$build_cache$src$compilers$scroll() {
+function module$contents$compilers$src_debounce($func$$, $wait$$, $immediate$$) {
+  var $timeout$$;
+  return function() {
+    var $context$$ = this, $args$$ = arguments, $callNow$$ = $immediate$$ && !$timeout$$;
+    clearTimeout($timeout$$);
+    $timeout$$ = setTimeout(function() {
+      $timeout$$ = null;
+      $immediate$$ || $func$$.apply($context$$, $args$$);
+    }, $wait$$);
+    $callNow$$ && $func$$.apply($context$$, $args$$);
+  };
+}
+window.addEventListener("scroll", module$contents$compilers$src_debounce(function DataSrcCheck() {
+  module$exports$compilers$src.call(document.body);
+}, 16, !1));
+window.addEventListener("resize", module$contents$compilers$src_debounce(function DataSrcCheck() {
+  module$exports$compilers$src.call(document.body);
+}, 16, !1));
+function module$exports$compilers$scroll() {
   for (var $nodes$$ = Silica.query(this, "[data-scroll]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onscroll = function $$node$$$onscroll$($evt$$) {
       Silica._call(this, $evt$$, "scroll");
     };
   }
 }
-module$build_cache$src$compilers$scroll.default = Scroll$$module$build_cache$src$compilers$scroll;
-var module$build_cache$src$compilers$scroll_finished = {};
-function ScrollFinished$$module$build_cache$src$compilers$scroll_finished() {
-  for (var $nodes$$ = Silica.query(this, "[data-scroll-finished]"), $node$$, $$jscomp$loop$19$$ = {}, $i$$ = $nodes$$.length - 1; 0 <= $i$$; $$jscomp$loop$19$$ = {element:$$jscomp$loop$19$$.element}, --$i$$) {
+;function module$exports$compilers$scroll_finished() {
+  for (var $nodes$$ = Silica.query(this, "[data-scroll-finished]"), $node$$, $$jscomp$loop$22$$ = {}, $i$$ = $nodes$$.length - 1; 0 <= $i$$; $$jscomp$loop$22$$ = {element:$$jscomp$loop$22$$.element}, --$i$$) {
     $node$$ = $nodes$$[$i$$];
     $node$$._rt_live = !0;
-    $$jscomp$loop$19$$.element = this;
+    $$jscomp$loop$22$$.element = this;
     var $onscrollfinished$$ = Silica.debounce(function($element$$, $evt$$) {
       Silica._call($element$$, $evt$$, "scroll-finished");
     }, 50);
-    $node$$.onscroll = function($$jscomp$loop$19$$) {
+    $node$$.onscroll = function($$jscomp$loop$22$$) {
       return function($evt$$) {
         this.dataset.scroll && Silica._call(this, $evt$$, "scroll");
-        $onscrollfinished$$($$jscomp$loop$19$$.element, $evt$$);
+        $onscrollfinished$$($$jscomp$loop$22$$.element, $evt$$);
       };
-    }($$jscomp$loop$19$$);
+    }($$jscomp$loop$22$$);
   }
 }
-module$build_cache$src$compilers$scroll_finished.default = ScrollFinished$$module$build_cache$src$compilers$scroll_finished;
-var module$build_cache$src$compilers$generic_attribute = {};
-function Generic$$module$build_cache$src$compilers$generic_attribute() {
+;function module$exports$compilers$generic() {
   for (var $nodes$$ = Silica.query(this, "[data-silica]"), $node$$, $comps_valueKey$$, $attribute$$, $params$$, $paramsKeys$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$];
     $comps_valueKey$$ = $node$$.dataset.silica.split("=");
@@ -765,172 +747,143 @@ function Generic$$module$build_cache$src$compilers$generic_attribute() {
   }
   Silica._capture_links(this);
 }
-module$build_cache$src$compilers$generic_attribute.default = Generic$$module$build_cache$src$compilers$generic_attribute;
-var module$build_cache$src$compilers$mousedown = {};
-function MouseDown$$module$build_cache$src$compilers$mousedown() {
+;function module$exports$compilers$mousedown() {
   for (var $nodes$$ = Silica.query(this, "[data-mousedown]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onmousedown = function $$node$$$onmousedown$($evt$$) {
       Silica._call(this, $evt$$, "mousedown");
     };
   }
 }
-module$build_cache$src$compilers$mousedown.default = MouseDown$$module$build_cache$src$compilers$mousedown;
-var module$build_cache$src$compilers$mouseenter = {};
-function MouseEnter$$module$build_cache$src$compilers$mouseenter() {
+;function module$exports$compilers$mouseenter() {
   for (var $nodes$$ = Silica.query(this, "[data-mouseenter]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onmouseenter = function $$node$$$onmouseenter$($evt$$) {
       Silica._call(this, $evt$$, "mouseenter");
     };
   }
 }
-module$build_cache$src$compilers$mouseenter.default = MouseEnter$$module$build_cache$src$compilers$mouseenter;
-var module$build_cache$src$compilers$mouseleave = {};
-function MouseLeave$$module$build_cache$src$compilers$mouseleave() {
+;function module$exports$compilers$mouseleave() {
   for (var $nodes$$ = Silica.query(this, "[data-mouseleave]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onmouseleave = function $$node$$$onmouseleave$($evt$$) {
       Silica._call(this, $evt$$, "mouseleave");
     };
   }
 }
-module$build_cache$src$compilers$mouseleave.default = MouseLeave$$module$build_cache$src$compilers$mouseleave;
-var module$build_cache$src$compilers$mousemove = {};
-function MouseMove$$module$build_cache$src$compilers$mousemove() {
+;function module$exports$compilers$mousemove() {
   for (var $nodes$$ = Silica.query(this, "[data-mousemove]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onmousemove = function $$node$$$onmousemove$($evt$$) {
       Silica._call(this, $evt$$, "mousemove");
     };
   }
 }
-module$build_cache$src$compilers$mousemove.default = MouseMove$$module$build_cache$src$compilers$mousemove;
-var module$build_cache$src$compilers$mouseout = {};
-function MouseOut$$module$build_cache$src$compilers$mouseout() {
+;function module$exports$compilers$mouseout() {
   for (var $nodes$$ = Silica.query(this, "[data-mouseout]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onmouseout = function $$node$$$onmouseout$($evt$$) {
       Silica._call(this, $evt$$, "mouseout");
     };
   }
 }
-module$build_cache$src$compilers$mouseout.default = MouseOut$$module$build_cache$src$compilers$mouseout;
-var module$build_cache$src$compilers$mouseover = {};
-function MouseOver$$module$build_cache$src$compilers$mouseover() {
+;function module$exports$compilers$mouseover() {
   for (var $nodes$$ = Silica.query(this, "[data-mouseover]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onmouseover = function $$node$$$onmouseover$($evt$$) {
       Silica._call(this, $evt$$, "mouseover");
     };
   }
 }
-module$build_cache$src$compilers$mouseover.default = MouseOver$$module$build_cache$src$compilers$mouseover;
-var module$build_cache$src$compilers$mouseup = {};
-function MouseUp$$module$build_cache$src$compilers$mouseup() {
+;function module$exports$compilers$mouseup() {
   for (var $nodes$$ = Silica.query(this, "[data-mouseup]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onmouseup = function $$node$$$onmouseup$($evt$$) {
       Silica._call(this, $evt$$, "mouseup");
     };
   }
 }
-module$build_cache$src$compilers$mouseup.default = MouseUp$$module$build_cache$src$compilers$mouseup;
-var module$build_cache$src$compilers$mousewheel = {};
-function MouseWheel$$module$build_cache$src$compilers$mousewheel() {
+;function module$exports$compilers$mousewheel() {
   for (var $nodes$$ = Silica.query(this, "[data-mousewheel]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onmousewheel = function $$node$$$onmousewheel$($evt$$) {
       Silica._call(this, $evt$$, "mousewheel");
     };
   }
 }
-module$build_cache$src$compilers$mousewheel.default = MouseWheel$$module$build_cache$src$compilers$mousewheel;
-var module$build_cache$src$compilers$keydown = {};
-function KeyDown$$module$build_cache$src$compilers$keydown($context$jscomp$1_elements$$) {
-  $context$jscomp$1_elements$$ = Silica.query(this, "[data-keydown]");
-  for (var $i$$ = $context$jscomp$1_elements$$.length - 1; 0 <= $i$$; $i$$--) {
-    $context$jscomp$1_elements$$[$i$$].addEventListener("keydown", function($evt$$) {
+;function module$exports$compilers$keydown($context$jscomp$2_elements$$) {
+  $context$jscomp$2_elements$$ = Silica.query(this, "[data-keydown]");
+  for (var $i$$ = $context$jscomp$2_elements$$.length - 1; 0 <= $i$$; $i$$--) {
+    $context$jscomp$2_elements$$[$i$$].addEventListener("keydown", function($evt$$) {
       Silica._call(this, $evt$$, "keydown");
     });
   }
 }
-module$build_cache$src$compilers$keydown.default = KeyDown$$module$build_cache$src$compilers$keydown;
-var module$build_cache$src$compilers$keyup = {};
-function KeyUp$$module$build_cache$src$compilers$keyup($context$jscomp$2_elements$$) {
-  $context$jscomp$2_elements$$ = Silica.query(this, "[data-keyup]");
-  for (var $i$$ = $context$jscomp$2_elements$$.length - 1; 0 <= $i$$; $i$$--) {
-    $context$jscomp$2_elements$$[$i$$].addEventListener("keyup", function($evt$$) {
+;function module$exports$compilers$keyup($context$jscomp$3_elements$$) {
+  $context$jscomp$3_elements$$ = Silica.query(this, "[data-keyup]");
+  for (var $i$$ = $context$jscomp$3_elements$$.length - 1; 0 <= $i$$; $i$$--) {
+    $context$jscomp$3_elements$$[$i$$].addEventListener("keyup", function($evt$$) {
       Silica._call(this, $evt$$, "keyup");
     });
   }
 }
-module$build_cache$src$compilers$keyup.default = KeyUp$$module$build_cache$src$compilers$keyup;
-var module$build_cache$src$compilers$touch$touchstart = {};
-function TouchStart$$module$build_cache$src$compilers$touch$touchstart() {
+;function module$exports$compilers$touch$start() {
   for (var $nodes$$ = Silica.query(this, "[data-touchstart]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.ontouchstart = function $$node$$$ontouchstart$($evt$$) {
       Silica._call(this, $evt$$, "touchstart");
     };
   }
 }
-module$build_cache$src$compilers$touch$touchstart.default = TouchStart$$module$build_cache$src$compilers$touch$touchstart;
-var module$build_cache$src$compilers$touch$touchcancel = {};
-function TouchCancel$$module$build_cache$src$compilers$touch$touchcancel() {
+;function module$exports$compilers$touch$cancel() {
   for (var $nodes$$ = Silica.query(this, "[data-touchcancel]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.ontouchcancel = function $$node$$$ontouchcancel$($evt$$) {
       Silica._call(this, $evt$$, "touchcancel");
     };
   }
 }
-module$build_cache$src$compilers$touch$touchcancel.default = TouchCancel$$module$build_cache$src$compilers$touch$touchcancel;
-var module$build_cache$src$compilers$touch$touchend = {};
-function TouchEnd$$module$build_cache$src$compilers$touch$touchend() {
+;function module$exports$compilers$touch$end() {
   for (var $nodes$$ = Silica.query(this, "[data-touchend]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.ontouchend = function $$node$$$ontouchend$($evt$$) {
       Silica._call(this, $evt$$, "touchend");
     };
   }
 }
-module$build_cache$src$compilers$touch$touchend.default = TouchEnd$$module$build_cache$src$compilers$touch$touchend;
-var module$build_cache$src$compilers$compilers = {}, $jscompDefaultExport$$module$build_cache$src$compilers$compilers = {Directive:module$build_cache$src$compilers$directives.default, _if:module$build_cache$src$compilers$if.default, Show:module$build_cache$src$compilers$show.default, Class:module$build_cache$src$compilers$class.default, Disabled:module$build_cache$src$compilers$disabled.default, Href:module$build_cache$src$compilers$href.default, Style:module$build_cache$src$compilers$style.default, 
-Include:module$build_cache$src$compilers$include.default, Controller:module$build_cache$src$compilers$controller.default, Click:module$build_cache$src$compilers$click.default, ClickOutside:module$build_cache$src$compilers$clickoutside.default, DoubleClick:module$build_cache$src$compilers$double_click.default, Blur:module$build_cache$src$compilers$blur.default, Focus:module$build_cache$src$compilers$focus.default, Model:module$build_cache$src$compilers$model.default, Submit:module$build_cache$src$compilers$submit.default, 
-Src:module$build_cache$src$compilers$src.default, Scroll:module$build_cache$src$compilers$scroll.default, ScrollFinished:module$build_cache$src$compilers$scroll_finished.default, Generic:module$build_cache$src$compilers$generic_attribute.default, MouseDown:module$build_cache$src$compilers$mousedown.default, MouseUp:module$build_cache$src$compilers$mouseup.default, MouseOut:module$build_cache$src$compilers$mouseout.default, MouseMove:module$build_cache$src$compilers$mousemove.default, MouseWheel:module$build_cache$src$compilers$mousewheel.default, 
-MouseLeave:module$build_cache$src$compilers$mouseleave.default, MouseEnter:module$build_cache$src$compilers$mouseenter.default, MouseOver:module$build_cache$src$compilers$mouseover.default, KeyDown:module$build_cache$src$compilers$keydown.default, KeyUp:module$build_cache$src$compilers$keyup.default, TouchStart:module$build_cache$src$compilers$touch$touchstart.default, TouchCancel:module$build_cache$src$compilers$touch$touchcancel.default, TouchEnd:module$build_cache$src$compilers$touch$touchend.default};
-module$build_cache$src$compilers$compilers.default = $jscompDefaultExport$$module$build_cache$src$compilers$compilers;
-var module$build_cache$src$controllers$base = {}, Base$$module$build_cache$src$controllers$base = function $Base$$module$build_cache$src$controllers$base$($el$$) {
+;var module$exports$compilers = {Directive:module$exports$compilers$directives, _if:module$exports$compilers$if, Show:module$exports$compilers$show, Class:module$exports$compilers$class, Disabled:module$exports$compilers$disabled, Href:module$exports$compilers$href, Style:module$exports$compilers$style, Include:module$exports$compilers$include, Controller:module$exports$compilers$controller, Click:module$exports$compilers$click, ClickOutside:module$exports$compilers$clickoutside, DoubleClick:module$exports$compilers$double_click, 
+Blur:module$exports$compilers$blur, Focus:module$exports$compilers$focus, Model:module$exports$compilers$model, Submit:module$exports$compilers$submit, Src:module$exports$compilers$src, Scroll:module$exports$compilers$scroll, ScrollFinished:module$exports$compilers$scroll_finished, Generic:module$exports$compilers$generic, MouseDown:module$exports$compilers$mousedown, MouseUp:module$exports$compilers$mouseup, MouseOut:module$exports$compilers$mouseout, MouseMove:module$exports$compilers$mousemove, 
+MouseWheel:module$exports$compilers$mousewheel, MouseLeave:module$exports$compilers$mouseleave, MouseEnter:module$exports$compilers$mouseenter, MouseOver:module$exports$compilers$mouseover, KeyDown:module$exports$compilers$keydown, KeyUp:module$exports$compilers$keyup, TouchStart:module$exports$compilers$touch$start, TouchCancel:module$exports$compilers$touch$cancel, TouchEnd:module$exports$compilers$touch$end};
+var module$exports$controllers$Base = function $module$exports$controllers$Base$($el$$) {
   this.el = $el$$;
   $el$$.parentElement && (this.$ctrl = Silica.getContext($el$$.parentElement));
 };
-Base$$module$build_cache$src$controllers$base.prototype.$ = function $Base$$module$build_cache$src$controllers$base$$$$($selector$$) {
+module$exports$controllers$Base.prototype.$ = function $module$exports$controllers$Base$$$$($selector$$) {
   return this.el.querySelectorAll($selector$$);
 };
-Base$$module$build_cache$src$controllers$base.watchers = {};
-Base$$module$build_cache$src$controllers$base.prototype.$ = Base$$module$build_cache$src$controllers$base.prototype.$;
-var $jscompDefaultExport$$module$build_cache$src$controllers$base = Base$$module$build_cache$src$controllers$base;
-module$build_cache$src$controllers$base.default = $jscompDefaultExport$$module$build_cache$src$controllers$base;
-var module$build_cache$src$controllers$fsm = {}, State$$module$build_cache$src$controllers$fsm = function $State$$module$build_cache$src$controllers$fsm$() {
+module$exports$controllers$Base.watchers = {};
+module$exports$controllers$Base.prototype.$ = module$exports$controllers$Base.prototype.$;
+var module$exports$controllers$FSM = {}, module$contents$controllers$FSM_State = function $module$contents$controllers$FSM_State$() {
 };
-State$$module$build_cache$src$controllers$fsm.prototype.onEnter = function $State$$module$build_cache$src$controllers$fsm$$onEnter$($ctrl$$) {
+module$contents$controllers$FSM_State.prototype.onEnter = function $module$contents$controllers$FSM_State$$onEnter$($ctrl$$) {
 };
-State$$module$build_cache$src$controllers$fsm.prototype.onExit = function $State$$module$build_cache$src$controllers$fsm$$onExit$($ctrl$$) {
+module$contents$controllers$FSM_State.prototype.onExit = function $module$contents$controllers$FSM_State$$onExit$($ctrl$$) {
 };
-State$$module$build_cache$src$controllers$fsm.prototype.onEnter = State$$module$build_cache$src$controllers$fsm.prototype.onEnter;
-State$$module$build_cache$src$controllers$fsm.prototype.onExit = State$$module$build_cache$src$controllers$fsm.prototype.onExit;
-var FSM$$module$build_cache$src$controllers$fsm = function $FSM$$module$build_cache$src$controllers$fsm$($el$$) {
-  module$build_cache$src$controllers$base.default.call(this, $el$$);
+module$contents$controllers$FSM_State.prototype.onEnter = module$contents$controllers$FSM_State.prototype.onEnter;
+module$contents$controllers$FSM_State.prototype.onExit = module$contents$controllers$FSM_State.prototype.onExit;
+var module$contents$controllers$FSM_Controller = function $module$contents$controllers$FSM_Controller$($el$$) {
+  module$exports$controllers$Base.call(this, $el$$);
   var $$jscomp$this$$ = this;
   $el$$ = this.constructor.states;
   this._states = {};
   for (var $stateName$$ in $el$$) {
     this._states[$stateName$$] = new $el$$[$stateName$$];
   }
-  this._currentState = new State$$module$build_cache$src$controllers$fsm;
+  this.handle = this.handle;
+  this.transition = this.transition;
+  this._currentState = new module$contents$controllers$FSM_State;
   this.initialState && (this._currentStateName = this.initialState(), this._currentState = this._getStateWithName(this._currentStateName), Silica.defer(function() {
     $$jscomp$this$$._currentState.onEnter($$jscomp$this$$);
   }));
 };
-$jscomp.inherits(FSM$$module$build_cache$src$controllers$fsm, module$build_cache$src$controllers$base.default);
-FSM$$module$build_cache$src$controllers$fsm.prototype._getStateWithName = function $FSM$$module$build_cache$src$controllers$fsm$$_getStateWithName$($stateName$$) {
+$jscomp.inherits(module$contents$controllers$FSM_Controller, module$exports$controllers$Base);
+module$contents$controllers$FSM_Controller.prototype._getStateWithName = function $module$contents$controllers$FSM_Controller$$_getStateWithName$($stateName$$) {
   var $target$$ = this._states[$stateName$$];
   if (!$target$$) {
     throw "Unknown state " + $stateName$$ + " in " + this.constructor.name;
   }
   return $target$$;
 };
-FSM$$module$build_cache$src$controllers$fsm.prototype.transition = function $FSM$$module$build_cache$src$controllers$fsm$$transition$($stateName$$) {
+module$contents$controllers$FSM_Controller.prototype.transition = function $module$contents$controllers$FSM_Controller$$transition$($stateName$$) {
   var $$jscomp$this$$ = this, $target$$ = this._getStateWithName($stateName$$);
   $target$$ != this._currentState && Silica.defer(function() {
     $$jscomp$this$$._currentState.onExit($$jscomp$this$$);
@@ -941,80 +894,115 @@ FSM$$module$build_cache$src$controllers$fsm.prototype.transition = function $FSM
     });
   });
 };
-FSM$$module$build_cache$src$controllers$fsm.prototype.handle = function $FSM$$module$build_cache$src$controllers$fsm$$handle$($func$$) {
+module$contents$controllers$FSM_Controller.prototype.handle = function $module$contents$controllers$FSM_Controller$$handle$($func$$) {
   if (this._currentState && ($func$$ = this._currentState[$func$$])) {
     return "function" === typeof $func$$ ? $func$$.call(this._currentState, this) : $func$$;
   }
 };
-$jscomp.global.Object.defineProperties(FSM$$module$build_cache$src$controllers$fsm, {states:{configurable:!0, enumerable:!0, get:function() {
-  return {base:State$$module$build_cache$src$controllers$fsm};
+$jscomp.global.Object.defineProperties(module$contents$controllers$FSM_Controller, {states:{configurable:!0, enumerable:!0, get:function() {
+  return {base:module$contents$controllers$FSM_State};
 }}});
-Object.defineProperties(FSM$$module$build_cache$src$controllers$fsm.prototype, {currentState:{configurable:0, enumerable:0, get:function() {
+Object.defineProperties(module$contents$controllers$FSM_Controller.prototype, {currentState:{configurable:0, enumerable:0, get:function() {
   return this._currentStateName;
 }}});
-var exports$$module$build_cache$src$controllers$fsm = {Controller:FSM$$module$build_cache$src$controllers$fsm, State:State$$module$build_cache$src$controllers$fsm}, $jscompDefaultExport$$module$build_cache$src$controllers$fsm = exports$$module$build_cache$src$controllers$fsm;
-module$build_cache$src$controllers$fsm.default = $jscompDefaultExport$$module$build_cache$src$controllers$fsm;
-var module$build_cache$src$controllers$controllers = {}, Controllers$$module$build_cache$src$controllers$controllers = {Base:module$build_cache$src$controllers$base.default, FSM:module$build_cache$src$controllers$fsm.default}, $jscompDefaultExport$$module$build_cache$src$controllers$controllers = Controllers$$module$build_cache$src$controllers$controllers;
-module$build_cache$src$controllers$controllers.default = $jscompDefaultExport$$module$build_cache$src$controllers$controllers;
-var module$build_cache$src$hax$safari = {};
-function getDatasetProperty$$module$build_cache$src$hax$safari($dataset$$, $propName$$) {
-  return "undefined" !== typeof Reflect ? Reflect.get($dataset$$, $propName$$) : $dataset$$[$propName$$];
+module$exports$controllers$FSM.Controller = module$contents$controllers$FSM_Controller;
+module$exports$controllers$FSM.State = module$contents$controllers$FSM_State;
+var module$exports$controllers = {Base:module$exports$controllers$Base, FSM:module$exports$controllers$FSM};
+var module$exports$hax$safari = {getDatasetProperty:function($element$$, $propName$$) {
+  if ($element$$.dataset && "undefined" !== typeof $element$$.dataset && $element$$.dataset[$propName$$]) {
+    return $element$$.dataset[$propName$$];
+  }
+  if ("undefined" !== typeof Reflect) {
+    var $dataset_value$$ = Reflect.get($element$$, "dataset");
+    if ($dataset_value$$ && ($dataset_value$$ = Reflect.get(Object($dataset_value$$), $propName$$))) {
+      return $dataset_value$$;
+    }
+  }
+  return $element$$.getAttribute("data-" + $propName$$);
+}, hasDatasetProperty:function($element$$, $propName$$) {
+  return !!(0,module$exports$hax$safari.getDatasetProperty)($element$$, $propName$$);
+}};
+var module$exports$hax = {};
+module$exports$hax.getDatasetProperty = module$exports$hax$safari.getDatasetProperty;
+module$exports$hax.hasDatasetProperty = module$exports$hax$safari.hasDatasetProperty;
+var module$exports$silica$pubsub = {}, module$contents$silica$pubsub_subscriptions = new Map, module$contents$silica$pubsub_subscription_id = 1, module$contents$silica$pubsub_subscription_separator = "[--+--]";
+function module$contents$silica$pubsub_next_subscription_id() {
+  return module$contents$silica$pubsub_subscription_id++;
 }
-function hasDatasetProperty$$module$build_cache$src$hax$safari($dataset$$, $propName$$) {
-  return "undefined" !== typeof Reflect ? Reflect.has($dataset$$, $propName$$) : $dataset$$[$propName$$];
-}
-var $jscompDefaultExport$$module$build_cache$src$hax$safari = {getDatasetProperty:getDatasetProperty$$module$build_cache$src$hax$safari, hasDatasetProperty:hasDatasetProperty$$module$build_cache$src$hax$safari};
-module$build_cache$src$hax$safari.default = $jscompDefaultExport$$module$build_cache$src$hax$safari;
-var module$build_cache$src$hax$hax = {}, hax$$module$build_cache$src$hax$hax = {getDatasetProperty:module$build_cache$src$hax$safari.default.getDatasetProperty, hasDatasetProperty:module$build_cache$src$hax$safari.default.hasDatasetProperty}, $jscompDefaultExport$$module$build_cache$src$hax$hax = hax$$module$build_cache$src$hax$hax;
-module$build_cache$src$hax$hax.default = $jscompDefaultExport$$module$build_cache$src$hax$hax;
-var module$build_cache$src$watchers$if = {};
-function _If$$module$build_cache$src$watchers$if() {
+module$exports$silica$pubsub.Sub = function $module$exports$silica$pubsub$Sub$($channel$$, $handler$$) {
+  var $subs$$ = module$contents$silica$pubsub_subscriptions.get($channel$$);
+  $subs$$ || ($subs$$ = new Map, module$contents$silica$pubsub_subscriptions.set($channel$$, $subs$$));
+  var $id$$ = module$contents$silica$pubsub_next_subscription_id();
+  $subs$$.set($id$$, $handler$$);
+  return "" + $channel$$ + module$contents$silica$pubsub_subscription_separator + $id$$;
+};
+module$exports$silica$pubsub.Pub = function $module$exports$silica$pubsub$Pub$($channel$$, $args$$) {
+  for (var $$jscomp$restParams$$ = [], $$jscomp$restIndex$$ = 1; $$jscomp$restIndex$$ < arguments.length; ++$$jscomp$restIndex$$) {
+    $$jscomp$restParams$$[$$jscomp$restIndex$$ - 1] = arguments[$$jscomp$restIndex$$];
+  }
+  var $subs$$ = module$contents$silica$pubsub_subscriptions.get($channel$$);
+  $subs$$ && setTimeout(function() {
+    Silica.apply(function() {
+      for (var $$jscomp$iter$1$$ = $jscomp.makeIterator($subs$$), $$jscomp$destructuring$var1_$jscomp$key$$$ = $$jscomp$iter$1$$.next(); !$$jscomp$destructuring$var1_$jscomp$key$$$.done; $$jscomp$destructuring$var1_$jscomp$key$$$ = $$jscomp$iter$1$$.next()) {
+        $$jscomp$destructuring$var1_$jscomp$key$$$ = $jscomp.makeIterator($$jscomp$destructuring$var1_$jscomp$key$$$.value), $$jscomp$destructuring$var1_$jscomp$key$$$.next(), $$jscomp$destructuring$var1_$jscomp$key$$$.next().value.apply(null, [].concat($jscomp.arrayFromIterable($$jscomp$restParams$$)));
+      }
+    });
+  }, 0);
+};
+module$exports$silica$pubsub.Unsub = function $module$exports$silica$pubsub$Unsub$($channel$$) {
+  var $$jscomp$destructuring$var2_id$$ = $jscomp.makeIterator($channel$$.split(module$contents$silica$pubsub_subscription_separator));
+  $channel$$ = $$jscomp$destructuring$var2_id$$.next().value;
+  $$jscomp$destructuring$var2_id$$ = $$jscomp$destructuring$var2_id$$.next().value;
+  var $subs$$ = module$contents$silica$pubsub_subscriptions.get($channel$$);
+  $subs$$ && ($subs$$.delete(parseInt($$jscomp$destructuring$var2_id$$)), 0 === $subs$$.size && module$contents$silica$pubsub_subscriptions.delete($channel$$));
+};
+function module$exports$watchers$if() {
   var $_ref1$$, $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$, $k$$, $negate$$, $_len$$, $wrapper$$ = document.createElement("div");
   var $_ref$$ = Silica._ifs;
   for ($k$$ in $_ref$$) {
     var $elements$$ = $_ref$$[$k$$];
     var $raw$$ = $k$$;
     ($negate$$ = "!" === $k$$[0]) && ($k$$ = $k$$.substr(1));
-    var $$jscomp$loop$20$$ = {};
+    var $$jscomp$loop$23$$ = {};
     var $i$$ = 0;
-    for ($_len$$ = $elements$$.length; $i$$ < $_len$$; $$jscomp$loop$20$$ = {subNode:$$jscomp$loop$20$$.subNode}, ++$i$$) {
-      var $_ref$3_element$$ = $elements$$[$i$$];
-      if ($_ref$3_element$$ == this || Silica.isDescendent(this, $_ref$3_element$$)) {
-        if ($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ = Silica._show($_ref$3_element$$, $k$$, $negate$$)) {
-          if (8 === $_ref$3_element$$.nodeType && ($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ = document.createElement("div"), $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$.innerHTML = $_ref$3_element$$.nodeValue, $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ = Silica.compile($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$.firstElementChild, !1, Silica.getContext($_ref$3_element$$.parentElement)), $_ref$3_element$$.parentNode.replaceChild($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$, 
-          $_ref$3_element$$), Silica._ifs[$raw$$][$i$$] = $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$, $_ref$3_element$$ = void 0, null != ($_ref$3_element$$ = Silica.getContext($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$)) && "function" === typeof $_ref$3_element$$.onLoad && $_ref$3_element$$.el == $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$)) {
-            $_ref$3_element$$.onLoad();
+    for ($_len$$ = $elements$$.length; $i$$ < $_len$$; $$jscomp$loop$23$$ = {subNode:$$jscomp$loop$23$$.subNode}, ++$i$$) {
+      var $_ref$5_element$$ = $elements$$[$i$$];
+      if ($_ref$5_element$$ == this || Silica.isDescendent(this, $_ref$5_element$$)) {
+        if ($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ = Silica._show($_ref$5_element$$, $k$$, $negate$$)) {
+          if (8 === $_ref$5_element$$.nodeType && ($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ = document.createElement("div"), $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$.innerHTML = $_ref$5_element$$.nodeValue, $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ = Silica.compile($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$.firstElementChild, !1, Silica.getContext($_ref$5_element$$.parentElement)), $_ref$5_element$$.parentNode.replaceChild($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$, 
+          $_ref$5_element$$), Silica._ifs[$raw$$][$i$$] = $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$, $_ref$5_element$$ = void 0, null != ($_ref$5_element$$ = Silica.getContext($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$)) && "function" === typeof $_ref$5_element$$.onLoad && $_ref$5_element$$.el == $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$)) {
+            $_ref$5_element$$.onLoad();
           }
         } else {
-          if (8 !== $_ref$3_element$$.nodeType) {
-            var $subNodes$$ = Silica.queryWithComments($_ref$3_element$$, "[data-if]");
-            $$jscomp$loop$20$$.subNode = void 0;
-            for (var $j$4_j$$ = $subNodes$$.length - 1; 0 <= $j$4_j$$; --$j$4_j$$) {
-              $$jscomp$loop$20$$.subNode = $subNodes$$[$j$4_j$$];
-              if (8 !== $$jscomp$loop$20$$.subNode.nodeType || $$jscomp$loop$20$$.subNode.dataset) {
-                var $prop$$ = $$jscomp$loop$20$$.subNode.dataset["if"];
+          if (8 !== $_ref$5_element$$.nodeType) {
+            var $subNodes$$ = Silica.queryWithComments($_ref$5_element$$, "[data-if]");
+            $$jscomp$loop$23$$.subNode = void 0;
+            for (var $j$6_j$$ = $subNodes$$.length - 1; 0 <= $j$6_j$$; --$j$6_j$$) {
+              $$jscomp$loop$23$$.subNode = $subNodes$$[$j$6_j$$];
+              if (8 !== $$jscomp$loop$23$$.subNode.nodeType || $$jscomp$loop$23$$.subNode.dataset) {
+                var $prop$$ = $$jscomp$loop$23$$.subNode.dataset["if"];
               } else {
-                $wrapper$$.innerHTML = $$jscomp$loop$20$$.subNode.data, $prop$$ = $wrapper$$.firstChild.dataset["if"];
+                $wrapper$$.innerHTML = $$jscomp$loop$23$$.subNode.data, $prop$$ = $wrapper$$.firstChild.dataset["if"];
               }
               $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ = Silica._shws[$prop$$];
-              Silica._shws[$prop$$] = null != ($_ref1$$ = null != $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ ? $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$.filter(function($$jscomp$loop$20$$) {
+              Silica._shws[$prop$$] = null != ($_ref1$$ = null != $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ ? $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$.filter(function($$jscomp$loop$23$$) {
                 return function($obj$$) {
-                  return !$obj$$ == $$jscomp$loop$20$$.subNode;
+                  return !$obj$$ == $$jscomp$loop$23$$.subNode;
                 };
-              }($$jscomp$loop$20$$)) : void 0) ? $_ref1$$ : [];
+              }($$jscomp$loop$23$$)) : void 0) ? $_ref1$$ : [];
             }
-            $subNodes$$ = Silica.query($_ref$3_element$$, "[data-controller]");
-            for ($j$4_j$$ = $subNodes$$.length - 1; 0 <= $j$4_j$$; --$j$4_j$$) {
-              $$jscomp$loop$20$$.subNode = $subNodes$$[$j$4_j$$];
-              var $ctrl$$ = $$jscomp$loop$20$$.subNode._rt_ctrl;
+            $subNodes$$ = Silica.query($_ref$5_element$$, "[data-controller]");
+            for ($j$6_j$$ = $subNodes$$.length - 1; 0 <= $j$6_j$$; --$j$6_j$$) {
+              $$jscomp$loop$23$$.subNode = $subNodes$$[$j$6_j$$];
+              var $ctrl$$ = $$jscomp$loop$23$$.subNode._rt_ctrl;
               for ($k$$ in null != $ctrl$$ ? $ctrl$$.constructor.watchers : void 0) {
                 $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ = Silica._watch[$k$$], Silica._watch[$k$$] = null != $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ ? $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$.filter(function($obj$$) {
                   return $obj$$[0] !== $ctrl$$;
                 }) : [];
               }
             }
-            $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ = document.createComment($_ref$3_element$$.outerHTML);
-            $_ref$3_element$$.parentNode.replaceChild($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$, $_ref$3_element$$);
+            $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$ = document.createComment($_ref$5_element$$.outerHTML);
+            $_ref$5_element$$.parentNode.replaceChild($comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$, $_ref$5_element$$);
             Silica._ifs[$raw$$][$i$$] = $comment$jscomp$1_compiled_isVisible$jscomp$2_list$jscomp$3_temp$$;
           }
         }
@@ -1022,9 +1010,7 @@ function _If$$module$build_cache$src$watchers$if() {
     }
   }
 }
-module$build_cache$src$watchers$if.default = _If$$module$build_cache$src$watchers$if;
-var module$build_cache$src$watchers$repeat = {};
-function Repeat$$module$build_cache$src$watchers$repeat() {
+;function module$exports$watchers$repeat() {
   for (var $changed_context$$, $child_node$$, $ctx$$, $list$jscomp$4_newList_param$$, $model$$, $newListHash_obj$jscomp$39_template$$, $_i_count_diff_key$$, $_len$jscomp$1_fragment$jscomp$1_j$$, $_ref$$, $elements$$ = Silica.querySorted(this, "[data-repeat]"), $raw$$, $i$$ = 0, $length$$ = $elements$$.length; $i$$ < $length$$; ++$i$$) {
     if ($raw$$ = $elements$$[$i$$], $ctx$$ = $raw$$.dataset.repeat.split(/\s+in\s+/), $list$jscomp$4_newList_param$$ = $ctx$$[1], $model$$ = $ctx$$[0], $ctx$$ = Silica.getContext($raw$$), "undefined" !== typeof($_ref$$ = $list$jscomp$4_newList_param$$.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] ? ($list$jscomp$4_newList_param$$ = $_ref$$[2], $list$jscomp$4_newList_param$$ = Silica.getValue($raw$$.parentNode, $list$jscomp$4_newList_param$$), $list$jscomp$4_newList_param$$ = Silica.getValue($raw$$, $_ref$$[1], 
     null, $list$jscomp$4_newList_param$$)) : $list$jscomp$4_newList_param$$ = Silica.getValue($raw$$, $list$jscomp$4_newList_param$$), $newListHash_obj$jscomp$39_template$$ = md5(JSON.stringify($list$jscomp$4_newList_param$$, function($key$$, $value$$) {
@@ -1034,7 +1020,7 @@ function Repeat$$module$build_cache$src$watchers$repeat() {
     })), $_ref$$ = $raw$$.childNodes, $changed_context$$ = ($changed_context$$ = $raw$$._rt_repeat_list) && $list$jscomp$4_newList_param$$ ? $changed_context$$ !== $newListHash_obj$jscomp$39_template$$ : !0) {
       if ($raw$$._rt_repeat_list = $list$jscomp$4_newList_param$$ ? $newListHash_obj$jscomp$39_template$$ : null, $list$jscomp$4_newList_param$$) {
         $list$jscomp$4_newList_param$$.constructor === Number && ($list$jscomp$4_newList_param$$ = Array($list$jscomp$4_newList_param$$));
-        $newListHash_obj$jscomp$39_template$$ = Silica._repeat_templates[$raw$$.dataset._rt_repeat_template];
+        $newListHash_obj$jscomp$39_template$$ = Silica._repeat_templates[module$exports$hax$safari.getDatasetProperty($raw$$, "_rt_repeat_template")];
         if ($list$jscomp$4_newList_param$$.constructor == Object) {
           $changed_context$$ = Object.keys($list$jscomp$4_newList_param$$);
           $child_node$$ = $list$jscomp$4_newList_param$$;
@@ -1056,8 +1042,8 @@ function Repeat$$module$build_cache$src$watchers$repeat() {
           $changed_context$$.$ctrl = $ctx$$;
           $child_node$$ = $newListHash_obj$jscomp$39_template$$.cloneNode(!0);
           $child_node$$._rt_ctx = $changed_context$$;
-          for (var $key$6$$ in Silica.compilers) {
-            Silica.compilers[$key$6$$].call($child_node$$);
+          for (var $key$8$$ in Silica.compilers) {
+            Silica.compilers[$key$8$$].call($child_node$$);
           }
           $_len$jscomp$1_fragment$jscomp$1_j$$.appendChild($child_node$$);
           ++$_i_count_diff_key$$;
@@ -1066,7 +1052,7 @@ function Repeat$$module$build_cache$src$watchers$repeat() {
         $_i_count_diff_key$$ = 0;
         for ($_len$jscomp$1_fragment$jscomp$1_j$$ = $list$jscomp$4_newList_param$$.length; $_i_count_diff_key$$ < $_len$jscomp$1_fragment$jscomp$1_j$$; $_i_count_diff_key$$++) {
           $newListHash_obj$jscomp$39_template$$ = $list$jscomp$4_newList_param$$[$_i_count_diff_key$$], $child_node$$ = $_ref$$[$_i_count_diff_key$$], $len_modelChanged$$ = $model$$ != $newListHash_obj$jscomp$39_template$$, $child_node$$._rt_ctx ? $child_node$$._rt_ctx[$model$$] = $newListHash_obj$jscomp$39_template$$ : ($changed_context$$ = {}, $changed_context$$[$model$$] = $newListHash_obj$jscomp$39_template$$, $changed_context$$.$ctrl = $ctx$$, $child_node$$._rt_ctx = $changed_context$$), $len_modelChanged$$ && 
-          module$build_cache$src$compilers$controller.default.call($child_node$$, $child_node$$._rt_ctx, !0), $child_node$$._rt_ctx.index = $_i_count_diff_key$$, Silica.flush($child_node$$, !1, {}, !0);
+          module$exports$compilers$controller.call($child_node$$, $child_node$$._rt_ctx, !0), $child_node$$._rt_ctx.index = $_i_count_diff_key$$, Silica.flush($child_node$$, !1, {}, !0);
         }
         $ctx$$.renderedRepeat ? $ctx$$.renderedRepeat($raw$$) : $ctx$$.$ctrl && $ctx$$.$ctrl.renderedRepeat && $ctx$$.$ctrl.renderedRepeat($raw$$);
       } else {
@@ -1077,9 +1063,7 @@ function Repeat$$module$build_cache$src$watchers$repeat() {
     }
   }
 }
-module$build_cache$src$watchers$repeat.default = Repeat$$module$build_cache$src$watchers$repeat;
-var module$build_cache$src$watchers$show = {};
-function Show$$module$build_cache$src$watchers$show() {
+;function module$exports$watchers$show() {
   var $i$$, $negate$$;
   var $elements$$ = this.querySelectorAll("[data-show]");
   if (this.dataset.show) {
@@ -1101,39 +1085,34 @@ function Show$$module$build_cache$src$watchers$show() {
     }
   }
 }
-module$build_cache$src$watchers$show.default = Show$$module$build_cache$src$watchers$show;
-var module$build_cache$src$watchers$class = {};
-function updater$$module$build_cache$src$watchers$class($element$$) {
-  var $hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$ = $element$$.dataset._rt_hard_klass;
-  $hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$ && 0 < $hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$.length ? $element$$.className = $hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$ : "" == $hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$ ? $element$$.className = "" : $element$$.dataset._rt_hard_klass = $element$$.className;
-  ($hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$ = Silica.getValue($element$$, $element$$.dataset["class"], null, [$element$$, $element$$.dataset.parameter])) && ($hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$ instanceof Array ? $element$$.classList.add.apply($element$$.classList, $hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$) : $element$$.classList.add($hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$));
-  null != $element$$.dataset.show && ($hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$ = $element$$.dataset.show, ($hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$ = Silica._show($element$$, $hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$, "!" == $hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$[0])) && $element$$.classList.contains("hidden") ? $element$$.classList.remove("hidden") : $hardClass_isVisible$jscomp$4_key$jscomp$38_klass$$ || $element$$.classList.contains("hidden") || $element$$.classList.add("hidden"));
+;function module$contents$watchers$class_updater($element$$) {
+  var $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ = $element$$.dataset._rt_hard_klass;
+  $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ && 0 < $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$.length ? $element$$.className = $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ : "" == $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ ? $element$$.className = "" : $element$$.dataset._rt_hard_klass = $element$$.className;
+  ($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ = Silica.getValue($element$$, $element$$.dataset["class"], null, [$element$$, $element$$.dataset.parameter])) && ($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ instanceof Array ? $element$$.classList.add.apply($element$$.classList, $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$) : $element$$.classList.add($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$));
+  null != $element$$.dataset.show && ($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ = $element$$.dataset.show, ($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ = Silica._show($element$$, $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$, "!" == $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$[0])) && $element$$.classList.contains("hidden") ? $element$$.classList.remove("hidden") : $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ || $element$$.classList.contains("hidden") || $element$$.classList.add("hidden"));
 }
-function Class$$module$build_cache$src$watchers$class() {
+function module$exports$watchers$class() {
   var $elements$$ = this.querySelectorAll("[data-class]");
-  this.dataset["class"] && updater$$module$build_cache$src$watchers$class(this);
+  this.dataset["class"] && module$contents$watchers$class_updater(this);
   for (var $i$$ = $elements$$.length - 1; 0 <= $i$$; --$i$$) {
-    updater$$module$build_cache$src$watchers$class($elements$$[$i$$]);
+    module$contents$watchers$class_updater($elements$$[$i$$]);
   }
 }
-module$build_cache$src$watchers$class.default = Class$$module$build_cache$src$watchers$class;
-var module$build_cache$src$watchers$model = {}, inputTimeRegexp$$module$build_cache$src$watchers$model = /date|time/i, inputTypes$$module$build_cache$src$watchers$model = "text file number email password tel search url range date month week time datetime datetime-local color textarea select select-one".split(" ");
-function Model$$module$build_cache$src$watchers$model() {
+;var module$contents$watchers$model_inputTimeRegexp = /date|time/i, module$contents$watchers$model_inputTypes = "text file number email password tel search url range date month week time datetime datetime-local color textarea select select-one".split(" ");
+function module$exports$watchers$model() {
   var $elements$$ = this.querySelectorAll("[data-model]"), $i$$, $activeElement$$ = document.activeElement || Silica.__activeElement;
   for ($i$$ = $elements$$.length - 1; 0 <= $i$$; --$i$$) {
     var $element$$ = $elements$$[$i$$];
     if ($element$$ !== $activeElement$$) {
-      var $type$jscomp$98_val$$ = $element$$.type;
-      -1 !== inputTypes$$module$build_cache$src$watchers$model.indexOf($type$jscomp$98_val$$) ? $element$$.value = Silica._model_get_val($element$$) : "radio" === $type$jscomp$98_val$$ ? ($type$jscomp$98_val$$ = $element$$.value, -1 != $type$jscomp$98_val$$.search(/[0-9]/) && ($type$jscomp$98_val$$ = parseInt($type$jscomp$98_val$$, 10)), $element$$.checked = Silica.getValue($element$$, $element$$.dataset.model) === $type$jscomp$98_val$$) : "checkbox" === $type$jscomp$98_val$$ ? $element$$.checked = 
-      Silica.getValue($element$$, $element$$.dataset.model) : "SPAN" === $element$$.nodeName || "PRE" === $element$$.nodeName || "DIV" === $element$$.nodeName || "P" === $element$$.nodeName ? ($type$jscomp$98_val$$ = Silica._model_get_val($element$$)) && $type$jscomp$98_val$$.nodeName ? ($element$$.innerHTML = "", $element$$.appendChild($type$jscomp$98_val$$)) : $element$$.innerHTML = $type$jscomp$98_val$$ : "OPTION" === $element$$.nodeName && ($element$$.value = Silica._model_get_val($element$$));
+      var $type$jscomp$105_val$$ = $element$$.type;
+      -1 !== module$contents$watchers$model_inputTypes.indexOf($type$jscomp$105_val$$) ? $element$$.value = Silica._model_get_val($element$$) : "radio" === $type$jscomp$105_val$$ ? ($type$jscomp$105_val$$ = $element$$.value, -1 != $type$jscomp$105_val$$.search(/[0-9]/) && ($type$jscomp$105_val$$ = parseInt($type$jscomp$105_val$$, 10)), $element$$.checked = Silica.getValue($element$$, $element$$.dataset.model) === $type$jscomp$105_val$$) : "checkbox" === $type$jscomp$105_val$$ ? $element$$.checked = 
+      Silica.getValue($element$$, $element$$.dataset.model) : "SPAN" === $element$$.nodeName || "PRE" === $element$$.nodeName || "DIV" === $element$$.nodeName || "P" === $element$$.nodeName ? ($type$jscomp$105_val$$ = Silica._model_get_val($element$$)) && $type$jscomp$105_val$$.nodeName ? ($element$$.innerHTML = "", $element$$.appendChild($type$jscomp$105_val$$)) : $element$$.innerHTML = $type$jscomp$105_val$$ : "OPTION" === $element$$.nodeName && ($element$$.value = Silica._model_get_val($element$$));
     }
   }
 }
-module$build_cache$src$watchers$model.default = Model$$module$build_cache$src$watchers$model;
-var module$build_cache$src$watchers$watchers = {}, $jscompDefaultExport$$module$build_cache$src$watchers$watchers = {_If:module$build_cache$src$watchers$if.default, Repeat:module$build_cache$src$watchers$repeat.default, Show:module$build_cache$src$watchers$show.default, Class:module$build_cache$src$watchers$class.default, Model:module$build_cache$src$watchers$model.default, Disabled:module$build_cache$src$compilers$disabled.default, Href:module$build_cache$src$compilers$href.default, Style:module$build_cache$src$compilers$style.default, 
-Src:module$build_cache$src$compilers$src.default, Generic:module$build_cache$src$compilers$generic_attribute.default, Include:module$build_cache$src$compilers$include.default};
-module$build_cache$src$watchers$watchers.default = $jscompDefaultExport$$module$build_cache$src$watchers$watchers;
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.16.4", setContext:function $window$Silica$setContext$($contextName$$) {
+;var module$exports$watchers = {_If:module$exports$watchers$if, Repeat:module$exports$watchers$repeat, Show:module$exports$watchers$show, Class:module$exports$watchers$class, Model:module$exports$watchers$model, Disabled:module$exports$compilers$disabled, Href:module$exports$compilers$href, Style:module$exports$compilers$style, Src:module$exports$compilers$src, Generic:module$exports$compilers$generic, Include:module$exports$compilers$include};
+var module$exports$silica = {};
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.21.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1166,7 +1145,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   $storeWatchers$$ = void 0 === $storeWatchers$$ ? !0 : $storeWatchers$$;
   null === Silica._appRoot && (Silica._appRoot = $element$$);
   if (8 != $element$$.nodeType) {
-    $element$$ == document ? ($element$$ = document.body.parentElement, $context$$ = $context$$ || {}) : $context$$ = $context$$ || Silica.getContext($element$$);
+    $element$$ == document ? ($element$$ = document.firstElementChild, $context$$ = $context$$ || {}) : $context$$ = $context$$ || Silica.getContext($element$$);
     Silica.cacheTemplates($element$$);
     Silica.interpolate($element$$, $context$$, $flush$$);
     for (var $key$$ in Silica.compilers) {
@@ -1177,11 +1156,11 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     $element$$ === Silica._appRoot && (Silica._isReady = !0);
     return $element$$;
   }
-}, cacheTemplates:function $window$Silica$cacheTemplates$($element$jscomp$15_nodes$$) {
-  $element$jscomp$15_nodes$$ = $element$jscomp$15_nodes$$.querySelectorAll("[data-repeat]");
-  for (var $node$$, $hash$$, $context$$, $i$$ = $element$jscomp$15_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $element$jscomp$15_nodes$$[$i$$], $node$$.dataset._rt_repeat_template || ($hash$$ = md5($node$$.innerHTML), 1 === $node$$.children.length ? Silica._repeat_templates[$hash$$] = $node$$.firstElementChild : ($context$$ = document.createElement("div"), $context$$.innerHTML = $node$$.innerHTML, Silica._repeat_templates[$hash$$] = $context$$), $node$$.dataset._rt_repeat_template = $hash$$, $context$$ = {}, $context$$.$ctrl = Silica.getContext($node$$), Silica._repeat_templates[$hash$$] = 
-    Silica.compile(Silica._repeat_templates[$hash$$], !1, $context$$, !0, !1), $node$$.innerHTML = "");
+}, cacheTemplates:function $window$Silica$cacheTemplates$($element$jscomp$18_nodes$$) {
+  $element$jscomp$18_nodes$$ = $element$jscomp$18_nodes$$.querySelectorAll("[data-repeat]");
+  for (var $node$$, $hash$$, $context$$, $i$$ = $element$jscomp$18_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $element$jscomp$18_nodes$$[$i$$], module$exports$hax$safari.hasDatasetProperty($node$$, "_rt_repeat_template") || ($hash$$ = md5($node$$.innerHTML), 1 === $node$$.children.length ? Silica._repeat_templates[$hash$$] = $node$$.removeChild($node$$.firstElementChild) : (console.warn("Repeat has multiple children, wrapping with div", $node$$), $context$$ = document.createElement("div"), $context$$.innerHTML = $node$$.innerHTML, Silica._repeat_templates[$hash$$] = $context$$), $node$$.dataset._rt_repeat_template = 
+    $hash$$, $context$$ = {}, $context$$.$ctrl = Silica.getContext($node$$), Silica._repeat_templates[$hash$$] = Silica.compile(Silica._repeat_templates[$hash$$], !1, $context$$, !0, !1), $node$$.innerHTML = "");
   }
 }, debounce:function $window$Silica$debounce$($func$$, $wait$$, $immediate$$) {
   var $timeout$$;
@@ -1198,7 +1177,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   Silica._defers.push($func$$);
 }, flush:function $window$Silica$flush$($element$$, $onlySafe$$, $changed$$, $skipSchedule$$) {
   var $k$$;
-  $element$$ = void 0 === $element$$ ? document.body.parentElement : $element$$;
+  $element$$ = void 0 === $element$$ ? document.firstElementChild : $element$$;
   $onlySafe$$ = void 0 === $onlySafe$$ ? !1 : $onlySafe$$;
   $changed$$ = void 0 === $changed$$ ? null : $changed$$;
   $skipSchedule$$ = void 0 === $skipSchedule$$ ? !1 : $skipSchedule$$;
@@ -1208,105 +1187,88 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     }
     Silica._scheduledFlush = !0;
   }
-  $element$$ == document && ($element$$ = document.body.parentElement);
+  $element$$ == document && ($element$$ = document.firstElementChild);
   Silica.isInFlush = !$skipSchedule$$;
   if (null === $changed$$ && Silica._isReady) {
-    for ($func$jscomp$8_key$$ in Silica._watch) {
-      var $funcs_watchers$$ = Silica._watch[$func$jscomp$8_key$$];
-      for (var $i$8_i$$ = $funcs_watchers$$.length - 1; 0 <= $i$8_i$$; --$i$8_i$$) {
-        $changed$$ = $funcs_watchers$$[$i$8_i$$], $changed$$[1].apply($changed$$[0]);
+    for ($func$jscomp$9_key$$ in Silica._watch) {
+      var $funcs_watchers$$ = Silica._watch[$func$jscomp$9_key$$];
+      for (var $i$10_i$$ = $funcs_watchers$$.length - 1; 0 <= $i$10_i$$; --$i$10_i$$) {
+        $changed$$ = $funcs_watchers$$[$i$10_i$$], $changed$$[1].apply($changed$$[0], [$changed$$[2], $changed$$[3]]);
       }
     }
   } else {
     for ($k$$ in $changed$$) {
-      for ($funcs_watchers$$ = $changed$$[$k$$], !0 === $funcs_watchers$$ && ($funcs_watchers$$ = Silica._watch[$k$$]), $i$8_i$$ = $funcs_watchers$$.length - 1; 0 <= $i$8_i$$; --$i$8_i$$) {
-        var $func$jscomp$8_key$$ = $funcs_watchers$$[$i$8_i$$];
-        $func$jscomp$8_key$$[1].apply($func$jscomp$8_key$$[0]);
+      for ($funcs_watchers$$ = $changed$$[$k$$], !0 === $funcs_watchers$$ && ($funcs_watchers$$ = Silica._watch[$k$$]), $i$10_i$$ = $funcs_watchers$$.length - 1; 0 <= $i$10_i$$; --$i$10_i$$) {
+        var $func$jscomp$9_key$$ = $funcs_watchers$$[$i$10_i$$];
+        $func$jscomp$9_key$$[1].apply($func$jscomp$9_key$$[0], [$func$jscomp$9_key$$[2], $func$jscomp$9_key$$[3]]);
       }
     }
   }
   $funcs_watchers$$ = Silica.watchers;
   for ($k$$ in $funcs_watchers$$) {
-    $onlySafe$$ && "_" === $k$$[0] || ($func$jscomp$8_key$$ = $funcs_watchers$$[$k$$], $func$jscomp$8_key$$.apply($element$$));
+    $onlySafe$$ && "_" === $k$$[0] || ($func$jscomp$9_key$$ = $funcs_watchers$$[$k$$], $func$jscomp$9_key$$.apply($element$$));
   }
   Silica.isInFlush = $skipSchedule$$;
   !0 !== Silica._scheduledFlush || $skipSchedule$$ || (Silica._scheduledFlush = !1, window.setTimeout(function() {
     Silica.flush(document, !1, {});
   }, 20));
   return Silica;
-}, apply:function $window$Silica$apply$($finalChanges_func$$, $element$$) {
+}, apply:function $window$Silica$apply$($changes_func$$, $element$$) {
   $element$$ = void 0 === $element$$ ? document : $element$$;
-  var $association_changes$$, $k$$, $oldVal$$, $_len2$$;
+  var $k$$, $additional_oldVal$$, $val$$, $_len1_watcher$12$$;
   if (Silica.isInApply) {
-    return $finalChanges_func$$.call();
-  }
-  var $old_values$$ = {};
-  for ($_j_property$$ in Silica._watch) {
-    var $funcs$jscomp$1_v$$ = Silica._watch[$_j_property$$];
-    $old_values$$[$_j_property$$] = [];
-    if (97 <= $_j_property$$.charCodeAt(0)) {
-      var $_len1_i$$ = $funcs$jscomp$1_v$$.length - 1;
-      for ($association_changes$$ = $funcs$jscomp$1_v$$[$_len1_i$$]; 0 <= $_len1_i$$; $association_changes$$ = $funcs$jscomp$1_v$$[--$_len1_i$$]) {
-        var $val$$ = Silica.getPropByString($association_changes$$[0], $_j_property$$);
-        Array.isArray($val$$) && ($val$$ = $val$$.slice());
-        $old_values$$[$_j_property$$].push([$association_changes$$[0], $val$$]);
-      }
-    } else {
-      $val$$ = Silica.getPropByString(window, $_j_property$$), Array.isArray($val$$) && ($val$$ = $val$$.slice()), $old_values$$[$_j_property$$] = $val$$;
-    }
+    return $changes_func$$.call();
   }
   Silica.isInApply = !0;
   try {
-    $finalChanges_func$$.call();
+    $changes_func$$.call();
   } catch ($err$$) {
-    console.error($err$$);
-  } finally {
-    Silica.isInApply = !1;
+    return Silica.isInApply = !1, console.error($err$$), Silica;
   }
-  $association_changes$$ = {};
-  var $_ref1$$ = Silica._watch;
-  for ($k$$ in $_ref1$$) {
-    if ($funcs$jscomp$1_v$$ = $_ref1$$[$k$$], 97 <= $k$$.charCodeAt(0)) {
-      $association_changes$$[$k$$] = [];
-      var $_j_property$$ = 0;
-      for ($_len1_i$$ = $funcs$jscomp$1_v$$.length; $_j_property$$ < $_len1_i$$; $_j_property$$++) {
-        if ($finalChanges_func$$ = $funcs$jscomp$1_v$$[$_j_property$$], $k$$.match(/\.\*$/)) {
-          $association_changes$$[$k$$].push($finalChanges_func$$);
+  $changes_func$$ = {};
+  for ($finalChanges_k$11$$ in Silica._watch) {
+    var $watchers$$ = Silica._watch[$finalChanges_k$11$$];
+    $changes_func$$[$finalChanges_k$11$$] = [];
+    if (97 <= $finalChanges_k$11$$.charCodeAt(0)) {
+      var $_j_v$$ = 0;
+      for ($_len1_watcher$12$$ = $watchers$$.length; $_j_v$$ < $_len1_watcher$12$$; $_j_v$$++) {
+        var $watcher$$ = $watchers$$[$_j_v$$];
+        if ($finalChanges_k$11$$.match(/\.\*$/)) {
+          $changes_func$$[$finalChanges_k$11$$].push($watcher$$);
         } else {
-          $val$$ = Silica.getPropByString($finalChanges_func$$[0], $k$$);
-          var $_ref2$$ = $old_values$$[$k$$];
-          var $_k$$ = 0;
-          for ($_len2$$ = $_ref2$$.length; $_k$$ < $_len2$$; $_k$$++) {
-            var $args$jscomp$1_changed$$ = $_ref2$$[$_k$$];
-            $args$jscomp$1_changed$$[0] === $finalChanges_func$$[0] && ($oldVal$$ = $args$jscomp$1_changed$$[1]);
-          }
-          $args$jscomp$1_changed$$ = $val$$ !== $oldVal$$;
-          Array.isArray($val$$) && Array.isArray($oldVal$$) && (($args$jscomp$1_changed$$ = $oldVal$$ && $val$$ ? $oldVal$$.length !== $val$$.length : !0) || ($args$jscomp$1_changed$$ = $oldVal$$.some(function($e$$, $idx$$) {
+          $watcher$$[3] = $additional_oldVal$$ = $watcher$$[2];
+          $watcher$$[2] = $val$$ = Silica.getPropByString($watcher$$[0], $finalChanges_k$11$$);
+          var $_len$jscomp$2_changed$$ = $additional_oldVal$$ !== $val$$;
+          !$_len$jscomp$2_changed$$ && Array.isArray($val$$) && Array.isArray($additional_oldVal$$) && (($_len$jscomp$2_changed$$ = $additional_oldVal$$ && $val$$ ? $additional_oldVal$$.length !== $val$$.length : !0) || ($_len$jscomp$2_changed$$ = $additional_oldVal$$.some(function($e$$, $idx$$) {
             return $val$$[$idx$$] !== $e$$;
           })));
-          $args$jscomp$1_changed$$ && $association_changes$$[$k$$].push($finalChanges_func$$);
+          $_len$jscomp$2_changed$$ && $changes_func$$[$finalChanges_k$11$$].push($watcher$$);
         }
       }
     } else {
-      $val$$ = Silica.getPropByString(window, $k$$), $oldVal$$ = $old_values$$[$k$$], $args$jscomp$1_changed$$ = $val$$ !== $oldVal$$, Array.isArray($val$$) && Array.isArray($oldVal$$) && (($args$jscomp$1_changed$$ = $oldVal$$ && $val$$ ? $oldVal$$.length !== $val$$.length : !0) || ($args$jscomp$1_changed$$ = $oldVal$$.some(function($e$$, $idx$$) {
+      if ($_len1_watcher$12$$ = $watchers$$[0], $_len1_watcher$12$$[3] = $additional_oldVal$$ = $_len1_watcher$12$$[2], $_len1_watcher$12$$[2] = $val$$ = Silica.getPropByString(window, $finalChanges_k$11$$), $_len$jscomp$2_changed$$ = $val$$ !== $additional_oldVal$$, !$_len$jscomp$2_changed$$ && Array.isArray($val$$) && Array.isArray($additional_oldVal$$) && (($_len$jscomp$2_changed$$ = $additional_oldVal$$ && $val$$ ? $additional_oldVal$$.length !== $val$$.length : !0) || ($_len$jscomp$2_changed$$ = 
+      $additional_oldVal$$.some(function($e$$, $idx$$) {
         return $val$$[$idx$$] !== $e$$;
-      }))), $association_changes$$[$k$$] = $args$jscomp$1_changed$$;
-    }
-  }
-  $finalChanges_func$$ = {};
-  for ($k$$ in $association_changes$$) {
-    if ($funcs$jscomp$1_v$$ = $association_changes$$[$k$$], Array.isArray($funcs$jscomp$1_v$$) && $funcs$jscomp$1_v$$.length || !0 === $funcs$jscomp$1_v$$) {
-      $finalChanges_func$$[$k$$] = $funcs$jscomp$1_v$$;
-    }
-  }
-  Silica.flush($element$$, !1, $finalChanges_func$$);
-  for (var $defers$$ = Silica._defers; 0 < $defers$$.length;) {
-    Silica._defers = [], Silica.apply(function() {
-      for (var $i$9$$ = $defers$$.length - 1; 0 <= $i$9$$; $i$9$$--) {
-        $defers$$[$i$9$$].call();
+      }))), $_len$jscomp$2_changed$$) {
+        for ($changes_func$$[$finalChanges_k$11$$].push($_len1_watcher$12$$), $_j_v$$ = 1, $_len$jscomp$2_changed$$ = $watchers$$.length; $_j_v$$ < $_len$jscomp$2_changed$$; $_j_v$$++) {
+          $additional_oldVal$$ = $watchers$$[$_j_v$$], $additional_oldVal$$[2] = $_len1_watcher$12$$[2], $additional_oldVal$$[3] = $_len1_watcher$12$$[3], $changes_func$$[$finalChanges_k$11$$].push($additional_oldVal$$);
+        }
       }
-    }), $defers$$ = Silica._defers;
+    }
   }
+  var $finalChanges_k$11$$ = {};
+  for ($k$$ in $changes_func$$) {
+    $_j_v$$ = $changes_func$$[$k$$], Array.isArray($_j_v$$) && $_j_v$$.length && ($finalChanges_k$11$$[$k$$] = $_j_v$$);
+  }
+  Silica.flush($element$$, !1, $finalChanges_k$11$$);
+  Silica.isInApply = !1;
+  var $defers$$ = Silica._defers;
+  Silica._defers = [];
+  $defers$$.length && Silica.apply(function() {
+    for (var $i$$ = $defers$$.length - 1; 0 <= $i$$; $i$$--) {
+      $defers$$[$i$$].call();
+    }
+  });
   return Silica;
 }, getPropByString:function $window$Silica$getPropByString$($obj$$, $context$$, $params$$) {
   if (!$context$$) {
@@ -1338,7 +1300,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   return Silica.getPropByString($ctx$jscomp$5_raw$$, $propString$$, $params$$);
 }, isInDOM:function $window$Silica$isInDOM$($element$$) {
   for (; null != $element$$.parentElement && !$element$$._deleted;) {
-    if ($element$$.parentElement == document.body) {
+    if ($element$$.parentElement == document.firstElementChild) {
       return !0;
     }
     $element$$ = $element$$.parentElement;
@@ -1351,7 +1313,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   }
   var $paths$$ = $_i$jscomp$2_propString$$.split(".");
   var $key$$ = $paths$$[$paths$$.length - 1];
-  $ctx$jscomp$6_obj$$ = 90 >= $_i$jscomp$2_propString$$.charCodeAt(0) ? window : !$ctx$jscomp$6_obj$$.hasOwnProperty($paths$$[0]) && $ctx$jscomp$6_obj$$.$ctrl ? $ctx$jscomp$6_obj$$.$ctrl : $ctx$jscomp$6_obj$$;
+  $ctx$jscomp$6_obj$$ = 90 >= $_i$jscomp$2_propString$$.charCodeAt(0) ? window : !$ctx$jscomp$6_obj$$.hasOwnProperty($paths$$[0]) && "function" !== typeof $ctx$jscomp$6_obj$$[$paths$$[0]] && $ctx$jscomp$6_obj$$.$ctrl ? $ctx$jscomp$6_obj$$.$ctrl : $ctx$jscomp$6_obj$$;
   $_i$jscomp$2_propString$$ = 0;
   for ($_len$$ = $paths$$.length; $_i$jscomp$2_propString$$ < $_len$$; $_i$jscomp$2_propString$$++) {
     var $hook_prop$$ = $paths$$[$_i$jscomp$2_propString$$];
@@ -1365,7 +1327,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   if ($expr$$) {
     var $filter$$ = null;
     -1 !== $expr$$.indexOf("|") && ($expr$$ = $expr$$.split("|"), $filter$$ = $expr$$[1].trim(), $expr$$ = $expr$$[0].trim());
-    $ctx$$.$ctrl || ($ctx$$.$ctrl = Silica.getContext($elm$$));
+    $ctx$$.$ctrl || $elm$$ === document.firstElementChild || $ctx$$ === Silica.context || ($elm$$ = Silica.getContext($elm$$), $ctx$$.$ctrl = $elm$$ == $ctx$$ ? Silica.context : $elm$$);
     90 >= $expr$$.charCodeAt(0) && ($ctx$$ = window);
     var $value$$ = Silica.getPropByString($ctx$$, $expr$$);
     $filter$$ && ($expr$$ = ($filter$$ = $filter$$.split(/:(.+)/)) ? $filter$$[0] : null, $elm$$ = $filter$$ && 1 < $filter$$.length ? eval($filter$$[1]) : null, $value$$ = ($filter$$ = $expr$$ ? Silica.filters[$expr$$] : null) ? $filter$$($value$$, $elm$$, $ctx$$) : $value$$);
@@ -1409,11 +1371,8 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     if ($raw$jscomp$5_v$$._rt_ctrl) {
       return $raw$jscomp$5_v$$._rt_ctrl;
     }
-    if ("BODY" === $raw$jscomp$5_v$$.nodeName) {
-      return Silica.context;
-    }
-    if (9 !== $raw$jscomp$5_v$$.nodeType && 3 !== $raw$jscomp$5_v$$.nodeType && 8 !== $raw$jscomp$5_v$$.nodeType && module$build_cache$src$hax$hax.default.hasDatasetProperty($raw$jscomp$5_v$$.dataset, "controller")) {
-      $constructorName$jscomp$1_ctrl$$ = module$build_cache$src$hax$hax.default.getDatasetProperty($raw$jscomp$5_v$$.dataset, "controller");
+    if (9 !== $raw$jscomp$5_v$$.nodeType && 3 !== $raw$jscomp$5_v$$.nodeType && 8 !== $raw$jscomp$5_v$$.nodeType && module$exports$hax$safari.hasDatasetProperty($raw$jscomp$5_v$$, "controller")) {
+      $constructorName$jscomp$1_ctrl$$ = module$exports$hax$safari.getDatasetProperty($raw$jscomp$5_v$$, "controller");
       "undefined" !== typeof($_ref$jscomp$8_constructor$$ = $constructorName$jscomp$1_ctrl$$.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] && ($needsModel_pairIdx$$ = !0, $model$jscomp$4_stored$jscomp$1_watchers$$ = Silica.getValue($raw$jscomp$5_v$$.parentNode, $_ref$jscomp$8_constructor$$[2]));
       $constructorName$jscomp$1_ctrl$$ = $_ref$jscomp$8_constructor$$[1];
       $_ref$jscomp$8_constructor$$ = eval($constructorName$jscomp$1_ctrl$$);
@@ -1439,7 +1398,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
         $raw$jscomp$5_v$$._rt_ctrl = $constructorName$jscomp$1_ctrl$$;
         $_ref$jscomp$8_constructor$$ = $_ref$jscomp$8_constructor$$.watchers;
         for ($k$$ in $_ref$jscomp$8_constructor$$) {
-          $raw$jscomp$5_v$$ = $_ref$jscomp$8_constructor$$[$k$$], Silica._watch[$k$$] || (Silica._watch[$k$$] = []), Silica._watch[$k$$].push([$constructorName$jscomp$1_ctrl$$, $raw$jscomp$5_v$$]);
+          $raw$jscomp$5_v$$ = $_ref$jscomp$8_constructor$$[$k$$], Silica._watch[$k$$] || (Silica._watch[$k$$] = []), Silica._watch[$k$$].push([$constructorName$jscomp$1_ctrl$$, $raw$jscomp$5_v$$, null]);
         }
         if ("function" === typeof $constructorName$jscomp$1_ctrl$$.onLoad) {
           $constructorName$jscomp$1_ctrl$$.onLoad();
@@ -1458,15 +1417,15 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   if (null == /[a-zA-Z]+\:+/g.exec($path$$) && "#" !== $path$$ && "" !== $path$$) {
     return $evt$$.preventDefault(), $evt$$.stopPropagation(), Silica.goTo($path$$), !1;
   }
-}, _capture_links:function $window$Silica$_capture_links$($element$jscomp$20_nodes$$) {
-  $element$jscomp$20_nodes$$ = Silica.queryOfType($element$jscomp$20_nodes$$, "a", "[href]", "[data-href]");
-  for (var $node$$, $i$$ = $element$jscomp$20_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $element$jscomp$20_nodes$$[$i$$], $node$$.hostname === location.hostname && "_blank" !== $node$$.target && ($node$$.removeEventListener("click", Silica._handle_href, !0), $node$$.addEventListener("click", Silica._handle_href, !0));
+}, _capture_links:function $window$Silica$_capture_links$($element$jscomp$23_nodes$$) {
+  $element$jscomp$23_nodes$$ = Silica.queryOfType($element$jscomp$23_nodes$$, "a", "[href]", "[data-href]");
+  for (var $node$$, $i$$ = $element$jscomp$23_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $element$jscomp$23_nodes$$[$i$$], $node$$.hostname === location.hostname && "_blank" !== $node$$.target && ($node$$.removeEventListener("click", Silica._handle_href, !0), $node$$.addEventListener("click", Silica._handle_href, !0));
   }
-}, _show:function $window$Silica$_show$($element$jscomp$21_isVisible$$, $expr$$, $negate$$) {
-  $element$jscomp$21_isVisible$$ = Silica.getValue($element$jscomp$21_isVisible$$, $expr$$, null, [$element$jscomp$21_isVisible$$, $element$jscomp$21_isVisible$$.dataset.parameter]);
-  $negate$$ && ($element$jscomp$21_isVisible$$ = !$element$jscomp$21_isVisible$$);
-  return $element$jscomp$21_isVisible$$;
+}, _show:function $window$Silica$_show$($element$jscomp$24_isVisible$$, $expr$$, $negate$$) {
+  $element$jscomp$24_isVisible$$ = Silica.getValue($element$jscomp$24_isVisible$$, $expr$$, null, [$element$jscomp$24_isVisible$$, $element$jscomp$24_isVisible$$.dataset.parameter]);
+  $negate$$ && ($element$jscomp$24_isVisible$$ = !$element$jscomp$24_isVisible$$);
+  return $element$jscomp$24_isVisible$$;
 }, _call:function $window$Silica$_call$($element$$, $evnt$$, $act$$) {
   if (Silica.isInDOM($element$$)) {
     $element$$.dataset.nopreventdefault || $evnt$$.preventDefault();
@@ -1535,88 +1494,94 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   }
   return !!$child$$;
 }, query:function $window$Silica$query$($raw$$, $attributes$$) {
-  for (var $$jscomp$restParams$$ = [], $$jscomp$restIndex_filtered$$ = 1; $$jscomp$restIndex_filtered$$ < arguments.length; ++$$jscomp$restIndex_filtered$$) {
-    $$jscomp$restParams$$[$$jscomp$restIndex_filtered$$ - 1] = arguments[$$jscomp$restIndex_filtered$$];
+  for (var $$jscomp$restParams$$ = [], $$jscomp$restIndex$$ = 1; $$jscomp$restIndex$$ < arguments.length; ++$$jscomp$restIndex$$) {
+    $$jscomp$restParams$$[$$jscomp$restIndex$$ - 1] = arguments[$$jscomp$restIndex$$];
   }
   $raw$$ == document && ($raw$$ = document.firstElementChild);
-  for (var $attribute$jscomp$1_nodes$$ = $raw$$.querySelectorAll($$jscomp$restParams$$.join(",")), $$jscomp$restIndex_filtered$$ = [], $i$11_i$$ = $attribute$jscomp$1_nodes$$.length - 1; 0 <= $i$11_i$$; --$i$11_i$$) {
-    var $node$$ = $attribute$jscomp$1_nodes$$.item($i$11_i$$);
-    Silica.isInRepeat($raw$$, $node$$) || $$jscomp$restIndex_filtered$$.push($node$$);
+  var $attribute$jscomp$1_nodes$$ = $raw$$.querySelectorAll($$jscomp$restParams$$.join(","));
+  $$jscomp$restIndex$$ = [];
+  for (var $i$14_i$$ = $attribute$jscomp$1_nodes$$.length - 1; 0 <= $i$14_i$$; --$i$14_i$$) {
+    var $node$$ = $attribute$jscomp$1_nodes$$.item($i$14_i$$);
+    Silica.isInRepeat($raw$$, $node$$) || $$jscomp$restIndex$$.push($node$$);
   }
-  for ($i$11_i$$ = $$jscomp$restParams$$.length - 1; 0 <= $i$11_i$$; --$i$11_i$$) {
-    if ($attribute$jscomp$1_nodes$$ = $$jscomp$restParams$$[$i$11_i$$], $raw$$.hasAttribute($attribute$jscomp$1_nodes$$.substring(1, $attribute$jscomp$1_nodes$$.length - 1))) {
-      $$jscomp$restIndex_filtered$$.push($raw$$);
+  for ($i$14_i$$ = $$jscomp$restParams$$.length - 1; 0 <= $i$14_i$$; --$i$14_i$$) {
+    if ($attribute$jscomp$1_nodes$$ = $$jscomp$restParams$$[$i$14_i$$], $raw$$.hasAttribute($attribute$jscomp$1_nodes$$.substring(1, $attribute$jscomp$1_nodes$$.length - 1))) {
+      $$jscomp$restIndex$$.push($raw$$);
       break;
     }
   }
-  return $$jscomp$restIndex_filtered$$;
+  return $$jscomp$restIndex$$;
 }, queryWithComments:function $window$Silica$queryWithComments$($root$$, $attributes$$) {
-  for (var $$jscomp$restParams$$ = [], $$jscomp$restIndex$jscomp$1_filtered$$ = 1; $$jscomp$restIndex$jscomp$1_filtered$$ < arguments.length; ++$$jscomp$restIndex$jscomp$1_filtered$$) {
-    $$jscomp$restParams$$[$$jscomp$restIndex$jscomp$1_filtered$$ - 1] = arguments[$$jscomp$restIndex$jscomp$1_filtered$$];
+  for (var $$jscomp$restParams$$ = [], $$jscomp$restIndex$jscomp$2_filtered$$ = 1; $$jscomp$restIndex$jscomp$2_filtered$$ < arguments.length; ++$$jscomp$restIndex$jscomp$2_filtered$$) {
+    $$jscomp$restParams$$[$$jscomp$restIndex$jscomp$2_filtered$$ - 1] = arguments[$$jscomp$restIndex$jscomp$2_filtered$$];
   }
-  for (var $$jscomp$restIndex$jscomp$1_filtered$$ = Silica.query.apply(Silica, [].concat([$root$$], $jscomp.arrayFromIterable($$jscomp$restParams$$))), $comments$$ = Silica.findComments($root$$), $temp$$ = document.createElement("div"), $i$$ = $comments$$.length - 1; 0 <= $i$$; --$i$$) {
+  $$jscomp$restIndex$jscomp$2_filtered$$ = Silica.query.apply(Silica, [].concat([$root$$], $jscomp.arrayFromIterable($$jscomp$restParams$$)));
+  for (var $comments$$ = Silica.findComments($root$$), $temp$$ = document.createElement("div"), $i$$ = $comments$$.length - 1; 0 <= $i$$; --$i$$) {
     var $node$$ = $comments$$[$i$$];
     if ("<" === $node$$.nodeValue.charAt(0)) {
       $temp$$.innerHTML = $node$$.nodeValue;
       for (var $j$$ = $$jscomp$restParams$$.length - 1, $attr$$ = $$jscomp$restParams$$[$j$$]; 0 <= $j$$; $attr$$ = $$jscomp$restParams$$[--$j$$]) {
         if ($temp$$.firstElementChild.hasAttribute($attr$$)) {
-          $$jscomp$restIndex$jscomp$1_filtered$$.push($node$$);
+          $$jscomp$restIndex$jscomp$2_filtered$$.push($node$$);
           break;
         }
       }
     }
   }
-  return $$jscomp$restIndex$jscomp$1_filtered$$;
+  return $$jscomp$restIndex$jscomp$2_filtered$$;
 }, querySorted:function $window$Silica$querySorted$($root$$, $attributes$$) {
-  for (var $$jscomp$restParams$jscomp$2_filtered$$ = [], $$jscomp$restIndex$jscomp$2_i$$ = 1; $$jscomp$restIndex$jscomp$2_i$$ < arguments.length; ++$$jscomp$restIndex$jscomp$2_i$$) {
-    $$jscomp$restParams$jscomp$2_filtered$$[$$jscomp$restIndex$jscomp$2_i$$ - 1] = arguments[$$jscomp$restIndex$jscomp$2_i$$];
+  for (var $$jscomp$restParams$jscomp$3_filtered$$ = [], $$jscomp$restIndex$jscomp$3_i$$ = 1; $$jscomp$restIndex$jscomp$3_i$$ < arguments.length; ++$$jscomp$restIndex$jscomp$3_i$$) {
+    $$jscomp$restParams$jscomp$3_filtered$$[$$jscomp$restIndex$jscomp$3_i$$ - 1] = arguments[$$jscomp$restIndex$jscomp$3_i$$];
   }
-  for (var $$jscomp$restParams$jscomp$2_filtered$$ = Silica.query.apply(Silica, [].concat([$root$$], $jscomp.arrayFromIterable($$jscomp$restParams$jscomp$2_filtered$$))), $$jscomp$restIndex$jscomp$2_i$$ = 0, $list_length$$ = $$jscomp$restParams$jscomp$2_filtered$$.length; $$jscomp$restIndex$jscomp$2_i$$ < $list_length$$; $$jscomp$restIndex$jscomp$2_i$$++) {
-    for (var $node$$ = $$jscomp$restParams$jscomp$2_filtered$$[$$jscomp$restIndex$jscomp$2_i$$], $j$$ = $$jscomp$restIndex$jscomp$2_i$$ + 1; $j$$ < $list_length$$; $j$$++) {
-      var $other$$ = $$jscomp$restParams$jscomp$2_filtered$$[$j$$];
-      $other$$.contains($node$$) && ($$jscomp$restParams$jscomp$2_filtered$$[$$jscomp$restIndex$jscomp$2_i$$] = $other$$, $$jscomp$restParams$jscomp$2_filtered$$[$j$$] = $node$$);
+  $$jscomp$restParams$jscomp$3_filtered$$ = Silica.query.apply(Silica, [].concat([$root$$], $jscomp.arrayFromIterable($$jscomp$restParams$jscomp$3_filtered$$)));
+  $$jscomp$restIndex$jscomp$3_i$$ = 0;
+  for (var $list_length$$ = $$jscomp$restParams$jscomp$3_filtered$$.length; $$jscomp$restIndex$jscomp$3_i$$ < $list_length$$; $$jscomp$restIndex$jscomp$3_i$$++) {
+    for (var $node$$ = $$jscomp$restParams$jscomp$3_filtered$$[$$jscomp$restIndex$jscomp$3_i$$], $j$$ = $$jscomp$restIndex$jscomp$3_i$$ + 1; $j$$ < $list_length$$; $j$$++) {
+      var $other$$ = $$jscomp$restParams$jscomp$3_filtered$$[$j$$];
+      $other$$.contains($node$$) && ($$jscomp$restParams$jscomp$3_filtered$$[$$jscomp$restIndex$jscomp$3_i$$] = $other$$, $$jscomp$restParams$jscomp$3_filtered$$[$j$$] = $node$$);
     }
   }
-  return $$jscomp$restParams$jscomp$2_filtered$$;
+  return $$jscomp$restParams$jscomp$3_filtered$$;
 }, queryOfType:function $window$Silica$queryOfType$($raw$$, $type$$, $attributes$$) {
-  for (var $$jscomp$restParams$$ = [], $$jscomp$restIndex$jscomp$3_filtered$$ = 2; $$jscomp$restIndex$jscomp$3_filtered$$ < arguments.length; ++$$jscomp$restIndex$jscomp$3_filtered$$) {
-    $$jscomp$restParams$$[$$jscomp$restIndex$jscomp$3_filtered$$ - 2] = arguments[$$jscomp$restIndex$jscomp$3_filtered$$];
+  for (var $$jscomp$restParams$$ = [], $$jscomp$restIndex$jscomp$4_filtered$$ = 2; $$jscomp$restIndex$jscomp$4_filtered$$ < arguments.length; ++$$jscomp$restIndex$jscomp$4_filtered$$) {
+    $$jscomp$restParams$$[$$jscomp$restIndex$jscomp$4_filtered$$ - 2] = arguments[$$jscomp$restIndex$jscomp$4_filtered$$];
   }
   $raw$$ == document && ($raw$$ = document.firstElementChild);
-  var $attribute$jscomp$2_nodes$$ = $raw$$.getElementsByTagName($type$$), $$jscomp$restIndex$jscomp$3_filtered$$ = [];
+  var $attribute$jscomp$2_nodes$$ = $raw$$.getElementsByTagName($type$$);
+  $$jscomp$restIndex$jscomp$4_filtered$$ = [];
   if (0 < $$jscomp$restParams$$.length) {
-    for (var $i$15_i$$ = $attribute$jscomp$2_nodes$$.length - 1; 0 <= $i$15_i$$; --$i$15_i$$) {
-      for (var $node$$ = $attribute$jscomp$2_nodes$$.item($i$15_i$$), $j$$ = $$jscomp$restParams$$.length - 1; 0 <= $j$$; --$j$$) {
+    for (var $i$18_i$$ = $attribute$jscomp$2_nodes$$.length - 1; 0 <= $i$18_i$$; --$i$18_i$$) {
+      for (var $node$$ = $attribute$jscomp$2_nodes$$.item($i$18_i$$), $j$$ = $$jscomp$restParams$$.length - 1; 0 <= $j$$; --$j$$) {
         if ($node$$.hasAttribute($$jscomp$restParams$$[$j$$].replace(/\[|\]/g, ""))) {
-          $$jscomp$restIndex$jscomp$3_filtered$$.push($node$$);
+          $$jscomp$restIndex$jscomp$4_filtered$$.push($node$$);
           break;
         }
       }
     }
     if ($raw$$.nodeName === $type$$.toUpperCase()) {
-      for ($i$15_i$$ = $$jscomp$restParams$$.length - 1; 0 <= $i$15_i$$; --$i$15_i$$) {
-        if ($attribute$jscomp$2_nodes$$ = $$jscomp$restParams$$[$i$15_i$$], $raw$$.hasAttribute($attribute$jscomp$2_nodes$$.substring(1, $attribute$jscomp$2_nodes$$.length - 1))) {
-          $$jscomp$restIndex$jscomp$3_filtered$$.push($raw$$);
+      for ($i$18_i$$ = $$jscomp$restParams$$.length - 1; 0 <= $i$18_i$$; --$i$18_i$$) {
+        if ($attribute$jscomp$2_nodes$$ = $$jscomp$restParams$$[$i$18_i$$], $raw$$.hasAttribute($attribute$jscomp$2_nodes$$.substring(1, $attribute$jscomp$2_nodes$$.length - 1))) {
+          $$jscomp$restIndex$jscomp$4_filtered$$.push($raw$$);
           break;
         }
       }
     }
   } else {
-    $$jscomp$restIndex$jscomp$3_filtered$$ = $attribute$jscomp$2_nodes$$, $raw$$.tagName === $type$$ && $$jscomp$restIndex$jscomp$3_filtered$$.push($raw$$);
+    $$jscomp$restIndex$jscomp$4_filtered$$ = $attribute$jscomp$2_nodes$$, $raw$$.tagName === $type$$ && $$jscomp$restIndex$jscomp$4_filtered$$.push($raw$$);
   }
-  return $$jscomp$restIndex$jscomp$3_filtered$$;
+  return $$jscomp$restIndex$jscomp$4_filtered$$;
 }, removeFromDOM:function $window$Silica$removeFromDOM$($e$$) {
   for (var $removeWatchers$$ = function $$removeWatchers$$$($nodes$$) {
-    for (var $$jscomp$loop$21$$ = {}, $i$16$$ = $nodes$$.length - 1; 0 <= $i$16$$; $$jscomp$loop$21$$ = {ctrl:$$jscomp$loop$21$$.ctrl}, --$i$16$$) {
-      var $list$jscomp$5_node$$ = $nodes$$[$i$16$$];
+    for (var $$jscomp$loop$24$$ = {}, $i$19$$ = $nodes$$.length - 1; 0 <= $i$19$$; $$jscomp$loop$24$$ = {ctrl:$$jscomp$loop$24$$.ctrl}, --$i$19$$) {
+      var $list$jscomp$5_node$$ = $nodes$$[$i$19$$];
       if ($list$jscomp$5_node$$._rt_ctrl) {
-        $$jscomp$loop$21$$.ctrl = $list$jscomp$5_node$$._rt_ctrl;
-        for (var $k$$ in $$jscomp$loop$21$$.ctrl.constructor.watchers) {
-          $list$jscomp$5_node$$ = Silica._watch[$k$$], Silica._watch[$k$$] = null != $list$jscomp$5_node$$ ? $list$jscomp$5_node$$.filter(function($$jscomp$loop$21$$) {
+        $$jscomp$loop$24$$.ctrl = $list$jscomp$5_node$$._rt_ctrl;
+        for (var $k$$ in $$jscomp$loop$24$$.ctrl.constructor.watchers) {
+          $list$jscomp$5_node$$ = Silica._watch[$k$$], Silica._watch[$k$$] = null != $list$jscomp$5_node$$ ? $list$jscomp$5_node$$.filter(function($$jscomp$loop$24$$) {
             return function($obj$$) {
-              return $obj$$[0] !== $$jscomp$loop$21$$.ctrl;
+              return $obj$$[0] !== $$jscomp$loop$24$$.ctrl;
             };
-          }($$jscomp$loop$21$$)) : [];
+          }($$jscomp$loop$24$$)) : [];
         }
       }
     }
@@ -1629,8 +1594,8 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   3 !== $e$$.nodeType && 8 !== $e$$.nodeType && ($i$$ = $e$$.querySelectorAll("[data-controller]"), $removeWatchers$$($i$$), $removeWatchers$$([$e$$]));
   $e$$._deleted = !0;
   $e$$.remove();
-}, compilers:module$build_cache$src$compilers$compilers.default, watchers:module$build_cache$src$watchers$watchers.default};
-window.Silica.Controllers = module$build_cache$src$controllers$controllers.default;
+}, compilers:module$exports$compilers, watchers:module$exports$watchers};
+window.Silica.Controllers = module$exports$controllers;
 window.Silica.addDirective = Silica.addDirective;
 window.Silica.addFilter = Silica.addFilter;
 window.Silica.apply = Silica.apply;
@@ -1650,5 +1615,8 @@ window.Silica.setContext = Silica.setContext;
 window.Silica.setPropByString = Silica.setPropByString;
 window.Silica.setRouter = Silica.setRouter;
 window.Silica.usePushState = Silica.usePushState;
+window.Silica.pub = module$exports$silica$pubsub.Pub;
+window.Silica.sub = module$exports$silica$pubsub.Sub;
+window.Silica.unsub = module$exports$silica$pubsub.Unsub;
 
 }.call(window);

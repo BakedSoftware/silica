@@ -1,4 +1,6 @@
-export default function Scroll() {
+goog.module('compilers.scroll');
+
+function Scroll() {
   var nodes = Silica.query(this, "[data-scroll]");
   var node;
   for (let i = nodes.length - 1; i >= 0; --i)
@@ -11,3 +13,5 @@ export default function Scroll() {
     };
   }
 }
+
+exports = Scroll;

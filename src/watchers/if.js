@@ -1,4 +1,6 @@
-export default function _If() {
+goog.module('watchers.if');
+
+function _If() {
   var comment, compiled, elements, i, isVisible, k, negate, raw, _len, _ref;
   var wrapper = document.createElement("div");
   _ref = Silica._ifs;
@@ -76,3 +78,5 @@ export default function _If() {
     }
   }
 }
+
+exports = _If;

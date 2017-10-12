@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
 const  ClosureCompiler  =  require('google-closure-compiler').compiler;
-const  babelify         =  require("babelify");
-const  babelify_preset  =  require('babel-preset-es2015');
 const  browserify       =  require('browserify');
 const  csso             =  require('csso');
 const  fs               =  require('fs-extra');

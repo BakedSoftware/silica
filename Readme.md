@@ -4,9 +4,10 @@ Install cli via NPM
 npm install silica -g
 ```
 
-Install silica js library & save to bower.json
+Install silica js library & save to packae.json via yarn add (yarn install
+--save)
 ```
-bower install silica --save
+yarn add silica
 ```
 
 Documentation can be found in the Wiki

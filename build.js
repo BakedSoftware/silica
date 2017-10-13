@@ -4,14 +4,14 @@ const  childProcess     =  require('child_process');
 const  spawnSync        =  require('child_process').spawnSync;
 
 childProcess.execSync("rm -rf build_cache");
-childProcess.execSync("rm -rf build");
-childProcess.execSync("mkdir ./build");
+childProcess.execSync("rm -rf dist");
+childProcess.execSync("mkdir ./dist");
 childProcess.execSync("mkdir ./build_cache");
 childProcess.execSync("cp -r src build_cache/");
 childProcess.execSync("rm -rf build_cache/src/cli");
 childProcess.execSync("rm -rf build_cache/src/externs.js");
-childProcess.execSync("cp libs/md5.min.js build/silica.js");
-childProcess.execSync("cp libs/md5.min.js build/silica.min.js");
+childProcess.execSync("cp libs/md5.min.js dist/silica.js");
+childProcess.execSync("cp libs/md5.min.js dist/silica.min.js");
 
 var flags = {
   js: 'build_cache/**/*.js',
@@ -28,8 +28,8 @@ closureCompiler.run(function(exitCode, stdOut, stdErr){
   if (stdErr.length) {
     console.error(stdErr);
   }
-  fs.appendFileSync("build/silica.min.js", "!function(){\n\"use strict\";\n"+stdOut+"}.call(window);");
-  let compress = spawnSync('gzip', ["-k", "build/silica.min.js"], {
+  fs.appendFileSync("dist/silica.min.js", "!function(){\n\"use strict\";\n"+stdOut+"}.call(window);");
+  let compress = spawnSync('gzip', ["-k", "dist/silica.min.js"], {
     stdio: [0, 1, 2],
     cwd: process.cwd()
   });
@@ -52,9 +52,9 @@ closureCompiler.run(function(exitCode, stdOut, stdErr){
   if (stdErr.length) {
     console.error(stdErr);
   }
-  fs.appendFileSync("build/silica.js", "!function(){\n\"use strict\";\n"+stdOut+"}.call(window);");
+  fs.appendFileSync("dist/silica.js", "!function(){\n\"use strict\";\n"+stdOut+"}.call(window);");
   console.log("Compressing results")
-  let compress = spawnSync('gzip', ["-k", "build/silica.js"], {
+  let compress = spawnSync('gzip', ["-k", "dist/silica.js"], {
     stdio: [0, 1, 2],
     cwd: process.cwd()
   });

@@ -1,19 +1,12 @@
 ## Installation
-Install cli via NPM
+Install cli via Yarn
 ```
-npm install silica -g
+yarn global add silica
 ```
 
-Install silica js library & save to packae.json via yarn add (yarn install
---save)
+Install silica js library & save to packae.json via yarn add
 ```
 yarn add silica
-```
-
-If forked version's libraries are wanted:
-
-```
-yarn add silica@{forked_version_url_no_braces}
 ```
 
 Documentation can be found in the Wiki

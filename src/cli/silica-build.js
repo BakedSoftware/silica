@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
 const  ClosureCompiler  =  require('google-closure-compiler').compiler;
-const  babelify         =  require("babelify");
-const  babelify_preset  =  require('babel-preset-es2015');
 const  browserify       =  require('browserify');
 const  csso             =  require('csso');
 const  fs               =  require('fs-extra');
@@ -48,8 +46,7 @@ function walk(dir) {
   return results
 }
 
-function preprocessView(readPath, writePath)
-{
+function preprocessView(readPath, writePath) {
   var content         =  fs.readFileSync(readPath, 'utf8');
   var include_regex   =  /<(\w+\b(?:.|\n)+?)data-include="'(.+?)'"(.*?)>/;
   var match;
@@ -80,10 +77,22 @@ function preprocessView(readPath, writePath)
   }
 
   var dir = path.dirname(writePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
+
+  mkdirSync(dir);
   fs.writeFileSync(writePath, content);
+}
+
+function mkdirSync(dir) {
+  if (!fs.existsSync(dir)) {
+    try {
+      fs.mkdirSync(dir)
+    } catch(err) {
+      if (err.code === 'ENOENT') {
+        mkdirSync(path.dirname(dir)) // parent dir
+        mkdirSync(dir) // create dir
+      }
+    }
+  }
 }
 
 console.log("Preprocessing views...");
@@ -253,7 +262,7 @@ function writeStyles() {
     }
   } catch(err){}
 
-  fs.copySync(path.join('bower_components'), path.join('build', 'bower_components'));
+  fs.copySync(path.join('node_modules'), path.join('build', 'node_modules'));
   afterScriptCaller();
 }
 

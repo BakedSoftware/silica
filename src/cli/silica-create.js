@@ -44,7 +44,7 @@ const indexTemplate = `
   </head>
   <body class="${projectName}">
     {{name}} - {{version}}
-    <script src="bower_components/silica/silica.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="node_modules/silica/silica.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/app.js" type="text/javascript" charset="utf-8"></script>
   </body>
 </html>
@@ -99,28 +99,17 @@ fs.writeFileSync(path.join(projectName, 'src', 'controllers', 'app_cntrl.js'), a
 fs.writeFileSync(path.join(projectName, 'src', 'app.js'), appTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'styles', 'app.styl'), styleTemplate);
 
-// Setup bower
+// Setup yarn
 
-console.log("Set up bower (Choose any values)");
+console.log("Set up yarn (Choose any values)");
 
-var bower = spawnSync('bower',
+var yarn = spawnSync('yarn',
                   ['init'],
                   {
                     stdio: [0, 1, 2],
                     cwd: projectName
                   });
 
-var bower_install = spawnSync('bower',
-                              ['install', 'jquery', 'silica'],
+var yarn_add = spawnSync('yarn',
+                              ['add', 'jquery', 'silica'],
                               { 'cwd': projectName });
-
-// Setup npm
-var npm_init = spawnSync('npm',
-                         ['init'],
-                         {
-                           stdio: [0, 1, 2],
-                           cwd: projectName
-                         });
-spawnSync('npm',
-          ['install', '--save', 'babel-preset-es2015'],
-          { 'cwd': projectName});

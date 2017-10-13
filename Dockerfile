@@ -8,5 +8,5 @@ RUN apk update;
 # Install NodeJS and Git
 RUN apk add openjdk8-jre nodejs git;
 
-# Download bower and silica
-RUN npm install -g bower silica
+# Download silica
+RUN npm install -g silica yarn

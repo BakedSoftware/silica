@@ -78,21 +78,8 @@ function preprocessView(readPath, writePath) {
 
   var dir = path.dirname(writePath);
 
-  mkdirSync(dir);
+  fs.ensureDirSync(dir);
   fs.writeFileSync(writePath, content);
-}
-
-function mkdirSync(dir) {
-  if (!fs.existsSync(dir)) {
-    try {
-      fs.mkdirSync(dir)
-    } catch(err) {
-      if (err.code === 'ENOENT') {
-        mkdirSync(path.dirname(dir)) // parent dir
-        mkdirSync(dir) // create dir
-      }
-    }
-  }
 }
 
 console.log("Preprocessing views...");

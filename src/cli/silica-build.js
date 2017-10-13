@@ -248,7 +248,7 @@ function writeStyles() {
     }
   } catch(err){}
 
-  fs.ensureSync(path.join('build', 'node_modules', 'silica'));
+  fs.ensureDirSync(path.join('build', 'node_modules', 'silica'));
   fs.copySync(path.join('node_modules', 'silica', 'dist'), path.join('build', 'node_modules', 'silica', 'dist'));
   afterScriptCaller();
 }

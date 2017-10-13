@@ -46,8 +46,7 @@ function walk(dir) {
   return results
 }
 
-function preprocessView(readPath, writePath)
-{
+function preprocessView(readPath, writePath) {
   var content         =  fs.readFileSync(readPath, 'utf8');
   var include_regex   =  /<(\w+\b(?:.|\n)+?)data-include="'(.+?)'"(.*?)>/;
   var match;
@@ -78,10 +77,22 @@ function preprocessView(readPath, writePath)
   }
 
   var dir = path.dirname(writePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
+
+  mkdirSync(dir);
   fs.writeFileSync(writePath, content);
+}
+
+function mkdirSync(dir) {
+  if (!fs.existsSync(dir)) {
+    try {
+      fs.mkdirSync(dir)
+    } catch(err) {
+      if (err.code === 'ENOENT') {
+        mkdirSync(path.dirname(dir)) // parent dir
+        mkdirSync(dir) // create dir
+      }
+    }
+  }
 }
 
 console.log("Preprocessing views...");

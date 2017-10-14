@@ -42,7 +42,7 @@ function unsub(subscription_id) {
   let subs = subscriptions.get(channel);
   if (subs)
   {
-    subs.delete(parseInt(id));
+    subs.delete(parseInt(id, 10));
     if (subs.size === 0)
     {
       subscriptions.delete(channel);

@@ -44,7 +44,7 @@ const indexTemplate = `
   </head>
   <body class="${projectName}">
     {{name}} - {{version}}
-    <script src="node_modules/silica/silica.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="node_modules/silica/dist/silica.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/app.js" type="text/javascript" charset="utf-8"></script>
   </body>
 </html>
@@ -98,6 +98,7 @@ fs.writeFileSync(path.join(projectName, 'src', 'index.html'), indexTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'controllers', 'app_cntrl.js'), appCntrlTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'app.js'), appTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'styles', 'app.styl'), styleTemplate);
+fs.writeFileSync(path.join(projectName 'src', 'extern.js'), "//See closure compiler docs for usage of this file");
 
 // Setup yarn
 
@@ -111,5 +112,5 @@ var yarn = spawnSync('yarn',
                   });
 
 var yarn_add = spawnSync('yarn',
-                              ['add', 'jquery', 'silica'],
+                              ['add', 'silica'],
                               { 'cwd': projectName });

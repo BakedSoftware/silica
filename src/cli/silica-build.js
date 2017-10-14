@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const  ClosureCompiler  =  require('google-closure-compiler').compiler;
-const  browserify       =  require('browserify');
 const  csso             =  require('csso');
 const  fs               =  require('fs-extra');
 const  nsg              =  require('node-sprite-generator');
@@ -238,7 +237,7 @@ function writeStyles() {
   if (has_var != 0) {
     console.warn("There may be a fault in the css near: ", total_css.substr(has_var, 10));
   }
-  fs.writeFileSync(path.join('build', 'css', 'styles.css'), csso.minify(total_css, {debug: true}).css);
+  fs.writeFileSync(path.join('build', 'css', 'styles.css'), csso.minify(total_css).css);
   console.log("Built Style sheet");
 
   try {
@@ -249,7 +248,8 @@ function writeStyles() {
     }
   } catch(err){}
 
-  fs.copySync(path.join('node_modules'), path.join('build', 'node_modules'));
+  fs.ensureDirSync(path.join('build', 'node_modules', 'silica'));
+  fs.copySync(path.join('node_modules', 'silica', 'dist'), path.join('build', 'node_modules', 'silica', 'dist'));
   afterScriptCaller();
 }
 

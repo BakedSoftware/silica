@@ -13,10 +13,6 @@ const  serveStatic   =  require('node-static');
 const  watch         =  require('watch');
 const  program       =  require('commander');
 
-// Middleware
-const  gzip  =  require('./gzip');
-
-
 var  fileServer    =  new serveStatic.Server('./build', {gzip: true});
 
 program
@@ -71,7 +67,6 @@ watch.createMonitor('./src', { 'ignoreDotFiles': true}, function (monitor) {
 
 function handler(request, response)
 {
-  //gzip(request, response);
   request.addListener('end', function () {
     fileServer.serve(request, response, function (e, res) {
       if (e && (e.status === 404)) {

@@ -2,4 +2,4 @@ build
 build_cache
 compiled
 node_modules
-bower_components
+.idea

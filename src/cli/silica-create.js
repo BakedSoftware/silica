@@ -98,7 +98,7 @@ fs.writeFileSync(path.join(projectName, 'src', 'index.html'), indexTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'controllers', 'app_cntrl.js'), appCntrlTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'app.js'), appTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'styles', 'app.styl'), styleTemplate);
-fs.writeFileSync(path.join(projectName 'src', 'extern.js'), "//See closure compiler docs for usage of this file");
+fs.writeFileSync(path.join(projectName, 'src', 'externs.js'), "//See closure compiler docs for usage of this file");
 
 // Setup yarn
 

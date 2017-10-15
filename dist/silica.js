@@ -1112,7 +1112,7 @@ function module$exports$watchers$model() {
 }
 ;var module$exports$watchers = {_If:module$exports$watchers$if, Repeat:module$exports$watchers$repeat, Show:module$exports$watchers$show, Class:module$exports$watchers$class, Model:module$exports$watchers$model, Disabled:module$exports$compilers$disabled, Href:module$exports$compilers$href, Style:module$exports$compilers$style, Src:module$exports$compilers$src, Generic:module$exports$compilers$generic, Include:module$exports$compilers$include};
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.24.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.25.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

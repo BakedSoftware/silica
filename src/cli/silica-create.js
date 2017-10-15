@@ -20,7 +20,7 @@ if (program.args.length !== 1)
 }
 
 var projectName = program.args[0];
-var projectAbbreviation = program.shortName || projectName.toUpperCase().charAt(0);
+var projectAbbreviation = program.shortName || (projectName.charAt(0).toUpperCase() + projectName.slice(1));
 
 const structure = [
   ['src'],
@@ -51,6 +51,7 @@ const indexTemplate = `
 `
 
 const appCntrlTemplate = `
+goog.module("controllers.app");
 // ${projectName}
 // AppCntrl is the root controller of ${projectName}
 //
@@ -63,14 +64,16 @@ class AppCntrl extends Silica.Controllers.Base {
   }
 }
 
-export default AppCntrl;
+exports = AppCntrl;
 `
 
 const appTemplate = `
-import AppCntrl from './controllers/app_cntrl.js';
+goog.module("${projectName}");
 
-window.${projectAbbreviation} = {
-  AppCntrl
+const AppCntrl = goog.require("controllers.app");
+
+window["${projectAbbreviation}"] = {
+  AppCntrl: AppCntrl
 }
 
 Silica.setContext("${projectAbbreviation}");
@@ -98,7 +101,7 @@ fs.writeFileSync(path.join(projectName, 'src', 'index.html'), indexTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'controllers', 'app_cntrl.js'), appCntrlTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'app.js'), appTemplate);
 fs.writeFileSync(path.join(projectName, 'src', 'styles', 'app.styl'), styleTemplate);
-fs.writeFileSync(path.join(projectName 'src', 'extern.js'), "//See closure compiler docs for usage of this file");
+fs.writeFileSync(path.join(projectName, 'src', 'externs.js'), "//See closure compiler docs for usage of this file");
 
 // Setup yarn
 

@@ -1112,7 +1112,7 @@ function module$exports$watchers$model() {
 }
 ;var module$exports$watchers = {_If:module$exports$watchers$if, Repeat:module$exports$watchers$repeat, Show:module$exports$watchers$show, Class:module$exports$watchers$class, Model:module$exports$watchers$model, Disabled:module$exports$compilers$disabled, Href:module$exports$compilers$href, Style:module$exports$compilers$style, Src:module$exports$compilers$src, Generic:module$exports$compilers$generic, Include:module$exports$compilers$include};
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.25.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.26.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1145,7 +1145,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   $storeWatchers$$ = void 0 === $storeWatchers$$ ? !0 : $storeWatchers$$;
   null === Silica._appRoot && (Silica._appRoot = $element$$);
   if (8 != $element$$.nodeType) {
-    $element$$ == document ? ($element$$ = document.firstElementChild, $context$$ = $context$$ || {}) : $context$$ = $context$$ || Silica.getContext($element$$);
+    $element$$ == document ? ($element$$ = document.documentElement, $context$$ = $context$$ || {}) : $context$$ = $context$$ || Silica.getContext($element$$);
     Silica.cacheTemplates($element$$);
     Silica.interpolate($element$$, $context$$, $flush$$);
     for (var $key$$ in Silica.compilers) {
@@ -1177,7 +1177,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   Silica._defers.push($func$$);
 }, flush:function $window$Silica$flush$($element$$, $onlySafe$$, $changed$$, $skipSchedule$$) {
   var $k$$;
-  $element$$ = void 0 === $element$$ ? document.firstElementChild : $element$$;
+  $element$$ = void 0 === $element$$ ? document.documentElement : $element$$;
   $onlySafe$$ = void 0 === $onlySafe$$ ? !1 : $onlySafe$$;
   $changed$$ = void 0 === $changed$$ ? null : $changed$$;
   $skipSchedule$$ = void 0 === $skipSchedule$$ ? !1 : $skipSchedule$$;
@@ -1187,7 +1187,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     }
     Silica._scheduledFlush = !0;
   }
-  $element$$ == document && ($element$$ = document.firstElementChild);
+  $element$$ == document && ($element$$ = document.documentElement);
   Silica.isInFlush = !$skipSchedule$$;
   if (null === $changed$$ && Silica._isReady) {
     for ($func$jscomp$9_key$$ in Silica._watch) {
@@ -1300,7 +1300,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   return Silica.getPropByString($ctx$jscomp$5_raw$$, $propString$$, $params$$);
 }, isInDOM:function $window$Silica$isInDOM$($element$$) {
   for (; null != $element$$.parentElement && !$element$$._deleted;) {
-    if ($element$$.parentElement == document.firstElementChild) {
+    if ($element$$.parentElement == document.documentElement) {
       return !0;
     }
     $element$$ = $element$$.parentElement;
@@ -1327,7 +1327,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   if ($expr$$) {
     var $filter$$ = null;
     -1 !== $expr$$.indexOf("|") && ($expr$$ = $expr$$.split("|"), $filter$$ = $expr$$[1].trim(), $expr$$ = $expr$$[0].trim());
-    $ctx$$.$ctrl || $elm$$ === document.firstElementChild || $ctx$$ === Silica.context || ($elm$$ = Silica.getContext($elm$$), $ctx$$.$ctrl = $elm$$ == $ctx$$ ? Silica.context : $elm$$);
+    $ctx$$.$ctrl || $elm$$ === document.documentElement || $ctx$$ === Silica.context || ($elm$$ = Silica.getContext($elm$$), $ctx$$.$ctrl = $elm$$ == $ctx$$ ? Silica.context : $elm$$);
     90 >= $expr$$.charCodeAt(0) && ($ctx$$ = window);
     var $value$$ = Silica.getPropByString($ctx$$, $expr$$);
     $filter$$ && ($expr$$ = ($filter$$ = $filter$$.split(/:(.+)/)) ? $filter$$[0] : null, $elm$$ = $filter$$ && 1 < $filter$$.length ? eval($filter$$[1]) : null, $value$$ = ($filter$$ = $expr$$ ? Silica.filters[$expr$$] : null) ? $filter$$($value$$, $elm$$, $ctx$$) : $value$$);
@@ -1497,7 +1497,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   for (var $$jscomp$restParams$$ = [], $$jscomp$restIndex$$ = 1; $$jscomp$restIndex$$ < arguments.length; ++$$jscomp$restIndex$$) {
     $$jscomp$restParams$$[$$jscomp$restIndex$$ - 1] = arguments[$$jscomp$restIndex$$];
   }
-  $raw$$ == document && ($raw$$ = document.firstElementChild);
+  $raw$$ == document && ($raw$$ = document.documentElement);
   var $attribute$jscomp$1_nodes$$ = $raw$$.querySelectorAll($$jscomp$restParams$$.join(","));
   $$jscomp$restIndex$$ = [];
   for (var $i$14_i$$ = $attribute$jscomp$1_nodes$$.length - 1; 0 <= $i$14_i$$; --$i$14_i$$) {
@@ -1546,7 +1546,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   for (var $$jscomp$restParams$$ = [], $$jscomp$restIndex$jscomp$4_filtered$$ = 2; $$jscomp$restIndex$jscomp$4_filtered$$ < arguments.length; ++$$jscomp$restIndex$jscomp$4_filtered$$) {
     $$jscomp$restParams$$[$$jscomp$restIndex$jscomp$4_filtered$$ - 2] = arguments[$$jscomp$restIndex$jscomp$4_filtered$$];
   }
-  $raw$$ == document && ($raw$$ = document.firstElementChild);
+  $raw$$ == document && ($raw$$ = document.documentElement);
   var $attribute$jscomp$2_nodes$$ = $raw$$.getElementsByTagName($type$$);
   $$jscomp$restIndex$jscomp$4_filtered$$ = [];
   if (0 < $$jscomp$restParams$$.length) {

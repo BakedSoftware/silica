@@ -29,7 +29,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.25.0",
+  version               :  "0.26.0",
 
   // Set the root context
   setContext(contextName)
@@ -81,7 +81,7 @@ window['Silica'] = {
     }
     if (element == document)
     {
-      element = document.firstElementChild;
+      element = document.documentElement;
       context = context || {};
     }
     else
@@ -166,7 +166,7 @@ window['Silica'] = {
     Silica._defers.push(func);
   },
 
-  flush(element = document.firstElementChild, onlySafe = false, changed = null, skipSchedule = false)
+  flush(element = document.documentElement, onlySafe = false, changed = null, skipSchedule = false)
   {
     if (Silica.isInFlush && !skipSchedule) {
       if (Silica._scheduledFlush) {
@@ -176,7 +176,7 @@ window['Silica'] = {
       }
     }
     if (element == document) {
-      element = document.firstElementChild;
+      element = document.documentElement;
     }
     Silica.isInFlush = !skipSchedule;
     if (changed === null && Silica._isReady) {
@@ -395,7 +395,7 @@ window['Silica'] = {
 
   isInDOM(element) {
     while (element.parentElement != null && !element._deleted) {
-      if (element.parentElement == document.firstElementChild) {
+      if (element.parentElement == document.documentElement) {
         return true;
       } else {
         element = element.parentElement;
@@ -459,7 +459,7 @@ window['Silica'] = {
       filter = expr[1].trim();
       expr = expr[0].trim();
     }
-    if (!ctx.$ctrl && elm !== document.firstElementChild && ctx !== Silica.context)
+    if (!ctx.$ctrl && elm !== document.documentElement && ctx !== Silica.context)
     {
       let parentCtx = Silica.getContext(elm);
       if (parentCtx == ctx)
@@ -802,7 +802,7 @@ window['Silica'] = {
   },
   query(raw, ...attributes) {
     if (raw == document) {
-      raw = document.firstElementChild;
+      raw = document.documentElement;
     }
     var isSingle = attributes.length == 1;
     var nodes = raw.querySelectorAll(attributes.join(','));
@@ -884,7 +884,7 @@ window['Silica'] = {
   queryOfType(raw, type, ...attributes)
   {
     if (raw == document) {
-      raw = document.firstElementChild;
+      raw = document.documentElement;
     }
     var isSingle = attributes.length == 1;
     var nodes = raw.getElementsByTagName(type);

@@ -16,7 +16,7 @@ function Repeat() {
     ctx = Silica.getContext(raw);
 
     //Check if we are calling a function with a param
-    if (typeof (_ref = list.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
+    if (typeof (_ref = list.match(/((?:\w|\.)+)(?:\(([\w\.]+)\))*/))[2] !== 'undefined')
     {
       let funcName = _ref[1];
       let param = _ref[2];

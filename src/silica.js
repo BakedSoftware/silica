@@ -29,7 +29,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.26.0",
+  version               :  "0.26.1",
 
   // Set the root context
   setContext(contextName)
@@ -588,7 +588,7 @@ window['Silica'] = {
         return raw._rt_ctrl;
       } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && Hax.hasDatasetProperty(raw, 'controller')) {
         constructorName = Hax.getDatasetProperty(raw, 'controller');
-        if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
+        if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\(([\w\.]+)\))*/))[2] !== 'undefined')
         {
           needsModel = true;
           model = Silica.getValue(raw.parentNode,  _ref[2]);
@@ -718,7 +718,7 @@ window['Silica'] = {
       var idx = action.indexOf("(");
       if (idx > 0) {
         actionName = action.substr(0, idx)
-        models = action.substr(actionName.length).match(/((?:\w|\.)+)(?:\(?(\w+)\))?/g);
+        models = action.substr(actionName.length).match(/((?:\w|\.)+)(?:\(?([\w\.]+)\))?/g);
         if (models)
         {
           for (let i = 0; i < models.length; i++) {

@@ -29,7 +29,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.27.1",
+  version               :  "0.27.2",
 
   // Set the root context
   setContext(contextName)
@@ -676,7 +676,18 @@ window['Silica'] = {
     }
   },
   _show(element, expr, negate) {
-    let isVisible = Silica.getValue(element, expr, null, [element, element.dataset['parameter']]);
+    let param;
+    if (element.nodeType !== 8)
+    {
+      param = element.dataset['parameter'];
+    }
+    else
+    {
+      let temp = document.createElement("div");
+      temp.innerHTML = element.data;
+      param = Hax.getDatasetProperty(temp.firstElementChild || temp, "parameter");
+    }
+    let isVisible = Silica.getValue(element, expr, null, [element, param]);
     if (negate) {
       isVisible = !isVisible;
     }

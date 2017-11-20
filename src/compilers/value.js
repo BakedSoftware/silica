@@ -9,7 +9,7 @@ function Value() {
   {
     node = nodes[i];
     property = node.dataset['value'];
-    node.value = Silica.getValue(node, property);
+    node.setAttribute("value", Silica.getValue(node, property));
   }
 }
 

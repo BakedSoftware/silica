@@ -751,7 +751,7 @@ function module$exports$compilers$scroll() {
 }
 ;function module$exports$compilers$value() {
   for (var $nodes$$ = Silica.query(this, "[data-value]"), $node$$, $property$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $nodes$$[$i$$], $property$$ = $node$$.dataset.value, $node$$.value = Silica.getValue($node$$, $property$$);
+    $node$$ = $nodes$$[$i$$], $property$$ = $node$$.dataset.value, $node$$.setAttribute("value", Silica.getValue($node$$, $property$$));
   }
 }
 ;function module$exports$compilers$generic() {
@@ -1187,7 +1187,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.27.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.27.1", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

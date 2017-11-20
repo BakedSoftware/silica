@@ -29,7 +29,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.27.0",
+  version               :  "0.27.1",
 
   // Set the root context
   setContext(contextName)

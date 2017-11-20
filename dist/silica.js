@@ -749,6 +749,11 @@ function module$exports$compilers$scroll() {
     }($$jscomp$loop$22$$);
   }
 }
+;function module$exports$compilers$value() {
+  for (var $nodes$$ = Silica.query(this, "[data-value]"), $node$$, $property$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $nodes$$[$i$$], $property$$ = $node$$.dataset.value, $node$$.value = Silica.getValue($node$$, $property$$);
+  }
+}
 ;function module$exports$compilers$generic() {
   for (var $nodes$$ = Silica.query(this, "[data-silica]"), $node$$, $comps_valueKey$$, $attribute$$, $params$$, $paramsKeys$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$];
@@ -885,6 +890,7 @@ module$exports$compilers.Submit = module$exports$compilers$submit;
 module$exports$compilers.Src = module$exports$compilers$src;
 module$exports$compilers.Scroll = module$exports$compilers$scroll;
 module$exports$compilers.ScrollFinished = module$exports$compilers$scroll_finished;
+module$exports$compilers.Value = module$exports$compilers$value;
 module$exports$compilers.Generic = module$exports$compilers$generic;
 module$exports$compilers.MouseDown = module$exports$compilers$mousedown;
 module$exports$compilers.MouseUp = module$exports$compilers$mouseup;
@@ -1179,8 +1185,9 @@ module$exports$watchers.Style = module$exports$compilers$style;
 module$exports$watchers.Src = module$exports$compilers$src;
 module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
+module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.26.1", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.27.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

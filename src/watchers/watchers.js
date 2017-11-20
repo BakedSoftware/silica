@@ -12,6 +12,7 @@ const  Style     =  goog.require('compilers.style');
 const  Src       =  goog.require('compilers.src');
 const  Generic   =  goog.require('compilers.generic');
 const  Include   =  goog.require('compilers.include');
+const  Value     =  goog.require('compilers.value');
 
 exports = {
   _If       :  _If,
@@ -24,5 +25,6 @@ exports = {
   Style     :  Style,
   Src       :  Src,
   Generic   :  Generic,
-  Include   :  Include
+  Include   :  Include,
+  Value     :  Value
 };

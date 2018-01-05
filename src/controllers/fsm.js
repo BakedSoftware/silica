@@ -67,7 +67,7 @@ class Controller extends Base
   }
 
 
-  transition(stateName)
+  transition(stateName, ...args)
   {
     let target = this._getStateWithName(stateName);
 
@@ -81,7 +81,7 @@ class Controller extends Base
       this._currentState = target;
       this._currentStateName = stateName;
       Silica.defer(() => {
-        this._currentState['onEnter'](this);
+        this._currentState['onEnter'].apply(this._currentState, [this, ...args]);
       });
     });
   }
@@ -90,7 +90,7 @@ class Controller extends Base
    * handle will ask the current state to execute a function if it exists
    * @param {string} functionName - The name of the function to execute
    */
-  handle(functionName)
+  handle(functionName, ...args)
   {
     if (!this._currentState)
     {
@@ -102,7 +102,7 @@ class Controller extends Base
     {
       if (typeof func === "function")
       {
-        return func.call(this._currentState, this);
+        return func.apply(this._currentState, [this, ...args]);
       }
       return func;
     }

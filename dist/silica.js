@@ -580,6 +580,7 @@ function module$contents$compilers$include_loadPartial($url$$, $element$$) {
         if (4 == $xhr$$.readyState) {
           var $fragment$$ = document.createElement("div");
           $fragment$$.innerHTML = $xhr$$.responseText;
+          1 === $fragment$$.children.length && ($fragment$$ = $fragment$$.firstElementChild);
           $element$$.dataset.sio2IncludedUrl === $url$$ && (module$contents$compilers$include_clearContent($element$$), $element$$.appendChild($fragment$$), Silica.compile($element$$), Silica._includeCache[$url$$] = $fragment$$, Silica.apply(function() {
             module$contents$compilers$include_loadCallback($element$$);
           }));
@@ -1193,7 +1194,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.27.5", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.28.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1378,6 +1379,14 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   $params$$ = void 0 === $params$$ ? null : $params$$;
   $ctx$jscomp$5_raw$$ = $context$$ ? $context$$ : 90 >= $propString$$.charCodeAt(0) ? window : Silica.getContext($ctx$jscomp$5_raw$$);
   return Silica.getPropByString($ctx$jscomp$5_raw$$, $propString$$, $params$$);
+}, isChildOf:function $window$Silica$isChildOf$($child$$, $parent$$) {
+  for (; $child$$;) {
+    if ($child$$.parentElement === $parent$$) {
+      return !0;
+    }
+    $child$$ = $child$$.parentElement;
+  }
+  return !1;
 }, isInDOM:function $window$Silica$isInDOM$($element$$) {
   for (; null != $element$$.parentElement && !$element$$._deleted;) {
     if ($element$$.parentElement == document.documentElement) {
@@ -1407,7 +1416,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   if ($expr$$) {
     var $filter$$ = null;
     -1 !== $expr$$.indexOf("|") && ($expr$$ = $expr$$.split("|"), $filter$$ = $expr$$[1].trim(), $expr$$ = $expr$$[0].trim());
-    $ctx$$.$ctrl || $elm$$ === document.documentElement || $ctx$$ === Silica.context || ($elm$$ = Silica.getContext($elm$$), $ctx$$.$ctrl = $elm$$ == $ctx$$ ? Silica.context : $elm$$);
+    $ctx$$.$ctrl || $elm$$ === document.documentElement || $ctx$$ === Silica.context || (($elm$$ = Silica.getContext($elm$$), $elm$$ != $ctx$$ && $elm$$.el) ? $elm$$.el && Silica.isChildOf($ctx$$.el, $elm$$.el) && ($ctx$$.$ctrl = $elm$$) : $ctx$$.$ctrl = Silica.context);
     90 >= $expr$$.charCodeAt(0) && ($ctx$$ = window);
     var $value$$ = Silica.getPropByString($ctx$$, $expr$$);
     $filter$$ && ($expr$$ = ($filter$$ = $filter$$.split(/:(.+)/)) ? $filter$$[0] : null, $elm$$ = $filter$$ && 1 < $filter$$.length ? eval($filter$$[1]) : null, $value$$ = ($filter$$ = $expr$$ ? Silica.filters[$expr$$] : null) ? $filter$$($value$$, $elm$$, $ctx$$) : $value$$);

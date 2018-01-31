@@ -43,6 +43,10 @@ function loadPartial(url, element)
     {
       let fragment = document.createElement('div');
       fragment.innerHTML = xhr.responseText;
+      if (fragment.children.length === 1)
+      {
+        fragment = fragment.firstElementChild;
+      }
 
       if (element.dataset['sio2IncludedUrl'] === url)
       {

@@ -29,7 +29,7 @@ window['Silica'] = {
   _clickOutElements     :  new Set(),
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.27.5",
+  version               :  "0.28.0",
 
   // Set the root context
   setContext(contextName)
@@ -393,6 +393,17 @@ window['Silica'] = {
     return Silica.getPropByString(ctx, propString, params);
   },
 
+  isChildOf(child, parent) {
+    while(child) {
+      if (child.parentElement === parent)
+      {
+        return true;
+      }
+      child = child.parentElement;
+    }
+    return false;
+  },
+
   isInDOM(element) {
     while (element.parentElement != null && !element._deleted) {
       if (element.parentElement == document.documentElement) {
@@ -462,11 +473,11 @@ window['Silica'] = {
     if (!ctx.$ctrl && elm !== document.documentElement && ctx !== Silica.context)
     {
       let parentCtx = Silica.getContext(elm);
-      if (parentCtx == ctx)
+      if (parentCtx == ctx || !parentCtx.el)
       {
         ctx.$ctrl = Silica.context;
       }
-      else
+      else if (parentCtx.el && Silica.isChildOf(ctx.el, parentCtx.el))
       {
         ctx.$ctrl = parentCtx;
       }

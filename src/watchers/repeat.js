@@ -131,10 +131,10 @@ function Repeat() {
       Silica.flush(node, false, {}, true);
     }
 
-    if (ctx.renderedRepeat) {
-      ctx.renderedRepeat(raw);
-    } else if (ctx.$ctrl && ctx.$ctrl.renderedRepeat) {
-      ctx.$ctrl.renderedRepeat(raw);
+    if (ctx['renderedRepeat']) {
+      ctx['renderedRepeat'](raw);
+    } else if (ctx['$ctrl'] && ctx['$ctrl']['renderedRepeat']) {
+      ctx['$ctrl']['renderedRepeat'](raw);
     }
   }
 }

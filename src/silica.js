@@ -27,9 +27,11 @@ window['Silica'] = {
   _defers               :  [],
   _includeCache         :  {},
   _clickOutElements     :  new Set(),
+  _queue                :  [],
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.29.0",
+  version               :  "0.30.0",
+
 
   // Set the root context
   setContext(contextName)
@@ -164,6 +166,68 @@ window['Silica'] = {
   defer(func)
   {
     Silica._defers.push(func);
+  },
+
+  findCommonAncestor(a, b)
+  {
+    if (Silica.isChildOf(a, b)) {
+      return b
+    } else if (Silica.isChildOf(b, a)) {
+      return a;
+    }
+    let a_parents = [];
+    a = a.parentElement;
+    while(a) {
+      a_parents.push(a);
+      a = a.parentElement;
+    }
+    let b_parents = [];
+    b = b.parentElement;
+    while(b) {
+      b_parents.push(b);
+      b = b.parentElement;
+    }
+
+    for (a of a_parents) {
+      for (b of b_parents){
+        if (a === b) {
+          return a;
+        }
+      }
+    }
+
+    return document;
+  },
+
+  processQueue()
+  {
+
+    let outer_most_scope;
+    for (let item of Silica._queue) {
+      if (!outer_most_scope) {
+        outer_most_scope = item[1];
+      } else {
+        outer_most_scope = Silica.findCommonAncestor(item[1], outer_most_scope);
+      }
+
+      if (outer_most_scope === document) {
+        break;
+      }
+    }
+
+    Silica.apply(function(){
+      for (let item of Silica._queue) {
+        item[0]();
+      }
+    }, outer_most_scope);
+
+    Silica._queue = [];
+  },
+
+  enqueue(func, scope)
+  {
+    Silica._queue.push([func, scope]);
+    Silica.processQueue();
   },
 
   flush(element = document.documentElement, onlySafe = false, changed = null, skipSchedule = false)
@@ -732,7 +796,7 @@ window['Silica'] = {
         }
       }
     }
-    Silica.apply(function()
+    Silica.enqueue(function()
     {
       var action, ctx, objects, parameter, actionName, models = [];
       ctx = Silica.getContext(element);
@@ -989,26 +1053,29 @@ window['Silica'] = {
 };
 
 // Tell closure compiler which symbols are exported
-window['Silica']['Controllers']        =  Controllers;
-window['Silica']['addDirective']       =  Silica.addDirective;
-window['Silica']['addFilter']          =  Silica.addFilter;
-window['Silica']['apply']              =  Silica.apply;
-window['Silica']['compile']            =  Silica.compile;
-window['Silica']['debounce']           =  Silica.debounce;
-window['Silica']['defer']              =  Silica.defer;
-window['Silica']['flush']              =  Silica.flush;
-window['Silica']['getPropByString']    =  Silica.getPropByString;
-window['Silica']['getValue']           =  Silica.getValue;
-window['Silica']['goTo']               =  Silica.goTo;
-window['Silica']['query']              =  Silica.query;
-window['Silica']['queryOfType']        =  Silica.queryOfType;
-window['Silica']['querySorted']        =  Silica.querySorted;
-window['Silica']['queryWithComments']  =  Silica.queryWithComments;
-window['Silica']['router']             =  Silica.router;
-window['Silica']['setContext']         =  Silica.setContext;
-window['Silica']['setPropByString']    =  Silica.setPropByString;
-window['Silica']['setRouter']          =  Silica.setRouter;
-window['Silica']['usePushState']       =  Silica.usePushState;
-window['Silica']['pub']                =  PubSub.Pub;
-window['Silica']['sub']                =  PubSub.Sub;
-window['Silica']['unsub']              =  PubSub.Unsub;
+window['Silica']['Controllers']         =  Controllers;
+window['Silica']['addDirective']        =  Silica.addDirective;
+window['Silica']['addFilter']           =  Silica.addFilter;
+window['Silica']['apply']               =  Silica.apply;
+window['Silica']['compile']             =  Silica.compile;
+window['Silica']['debounce']            =  Silica.debounce;
+window['Silica']['defer']               =  Silica.defer;
+window['Silica']['flush']               =  Silica.flush;
+window['Silica']['findCommonAncestor']  =  Silica.findCommonAncestor;
+window['Silica']['getPropByString']     =  Silica.getPropByString;
+window['Silica']['getValue']            =  Silica.getValue;
+window['Silica']['goTo']                =  Silica.goTo;
+window['Silica']['query']               =  Silica.query;
+window['Silica']['queryOfType']         =  Silica.queryOfType;
+window['Silica']['querySorted']         =  Silica.querySorted;
+window['Silica']['queryWithComments']   =  Silica.queryWithComments;
+window['Silica']['router']              =  Silica.router;
+window['Silica']['setContext']          =  Silica.setContext;
+window['Silica']['setPropByString']     =  Silica.setPropByString;
+window['Silica']['setRouter']           =  Silica.setRouter;
+window['Silica']['usePushState']        =  Silica.usePushState;
+window['Silica']['processQueue']        =  Silica.debounce(Silica.processQueue, 0);
+window['Silica']['enqueue']             =  Silica.enqueue;
+window['Silica']['pub']                 =  PubSub.Pub;
+window['Silica']['sub']                 =  PubSub.Sub;
+window['Silica']['unsub']               =  PubSub.Unsub;

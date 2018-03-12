@@ -30,7 +30,7 @@ window['Silica'] = {
   _queue                :  [],
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.30.1",
+  version               :  "0.30.2",
 
 
   // Set the root context
@@ -1079,3 +1079,4 @@ window['Silica']['enqueue']             =  Silica.enqueue;
 window['Silica']['pub']                 =  PubSub.Pub;
 window['Silica']['sub']                 =  PubSub.Sub;
 window['Silica']['unsub']               =  PubSub.Unsub;
+window['Silica']['isInDOM']             =  Silica.isInDOM;

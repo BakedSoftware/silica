@@ -51,7 +51,6 @@ function loadPartial(url, element)
         {
           element.appendChild(fragment.children[idx]);
         }
-        element.appendChild(fragment);
         Silica.compile(element);
         Silica._includeCache[url] = fragment;
         Silica.apply(function(){

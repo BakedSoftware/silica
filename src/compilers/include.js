@@ -47,9 +47,9 @@ function loadPartial(url, element)
       if (element.dataset['sio2IncludedUrl'] === url)
       {
         clearContent(element);
-        for (let idx = 0, len = fragment.children.length; idx < len; idx++)
+        while(fragment.children.length)
         {
-          element.appendChild(fragment.children[idx]);
+          element.appendChild(fragment.children[0]);
         }
         Silica.compile(element);
         Silica._includeCache[url] = fragment;

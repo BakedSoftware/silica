@@ -581,9 +581,8 @@ function module$contents$compilers$include_loadPartial($url$$, $element$$) {
           var $fragment$$ = document.createElement("div");
           $fragment$$.innerHTML = $xhr$$.responseText;
           if ($element$$.dataset.sio2IncludedUrl === $url$$) {
-            module$contents$compilers$include_clearContent($element$$);
-            for (var $idx$$ = 0, $len$$ = $fragment$$.children.length; $idx$$ < $len$$; $idx$$++) {
-              $element$$.appendChild($fragment$$.children[$idx$$]);
+            for (module$contents$compilers$include_clearContent($element$$); $fragment$$.children.length;) {
+              $element$$.appendChild($fragment$$.children[0]);
             }
             Silica.compile($element$$);
             Silica._includeCache[$url$$] = $fragment$$;
@@ -1104,8 +1103,8 @@ function module$exports$watchers$if() {
           $list$jscomp$4_newList_param$$ = [];
           $_i_count_diff_key$$ = void 0;
           $_len$jscomp$1_fragment$jscomp$1_j$$ = 0;
-          var $len$$ = $changed_context$$.length;
-          for ($_i_count_diff_key$$ = $changed_context$$[$_len$jscomp$1_fragment$jscomp$1_j$$]; $_len$jscomp$1_fragment$jscomp$1_j$$ < $len$$; $_len$jscomp$1_fragment$jscomp$1_j$$++) {
+          var $len_modelChanged$$ = $changed_context$$.length;
+          for ($_i_count_diff_key$$ = $changed_context$$[$_len$jscomp$1_fragment$jscomp$1_j$$]; $_len$jscomp$1_fragment$jscomp$1_j$$ < $len_modelChanged$$; $_len$jscomp$1_fragment$jscomp$1_j$$++) {
             $_i_count_diff_key$$ = $changed_context$$[$_len$jscomp$1_fragment$jscomp$1_j$$], $list$jscomp$4_newList_param$$[$_len$jscomp$1_fragment$jscomp$1_j$$] = {key:$_i_count_diff_key$$, value:$child_node$$[$_i_count_diff_key$$]};
           }
         }
@@ -1128,8 +1127,8 @@ function module$exports$watchers$if() {
         $_len$jscomp$1_fragment$jscomp$1_j$$.hasChildNodes() && $raw$$.appendChild($_len$jscomp$1_fragment$jscomp$1_j$$);
         $_i_count_diff_key$$ = 0;
         for ($_len$jscomp$1_fragment$jscomp$1_j$$ = $list$jscomp$4_newList_param$$.length; $_i_count_diff_key$$ < $_len$jscomp$1_fragment$jscomp$1_j$$; $_i_count_diff_key$$++) {
-          $newListHash_obj$jscomp$38_template$$ = $list$jscomp$4_newList_param$$[$_i_count_diff_key$$], $child_node$$ = $_ref$$[$_i_count_diff_key$$], $len$$ = $model$$ != $newListHash_obj$jscomp$38_template$$, $child_node$$._rt_ctx ? $child_node$$._rt_ctx[$model$$] = $newListHash_obj$jscomp$38_template$$ : ($changed_context$$ = {}, $changed_context$$[$model$$] = $newListHash_obj$jscomp$38_template$$, $changed_context$$.$ctrl = $ctx$$, $child_node$$._rt_ctx = $changed_context$$), $len$$ && module$exports$compilers$controller.call($child_node$$, 
-          $child_node$$._rt_ctx, !0), $child_node$$._rt_ctx.index = $_i_count_diff_key$$, Silica.flush($child_node$$, !1, {}, !0);
+          $newListHash_obj$jscomp$38_template$$ = $list$jscomp$4_newList_param$$[$_i_count_diff_key$$], $child_node$$ = $_ref$$[$_i_count_diff_key$$], $len_modelChanged$$ = $model$$ != $newListHash_obj$jscomp$38_template$$, $child_node$$._rt_ctx ? $child_node$$._rt_ctx[$model$$] = $newListHash_obj$jscomp$38_template$$ : ($changed_context$$ = {}, $changed_context$$[$model$$] = $newListHash_obj$jscomp$38_template$$, $changed_context$$.$ctrl = $ctx$$, $child_node$$._rt_ctx = $changed_context$$), $len_modelChanged$$ && 
+          module$exports$compilers$controller.call($child_node$$, $child_node$$._rt_ctx, !0), $child_node$$._rt_ctx.index = $_i_count_diff_key$$, Silica.flush($child_node$$, !1, {}, !0);
         }
         $ctx$$.renderedRepeat ? $ctx$$.renderedRepeat($raw$$) : $ctx$$.$ctrl && $ctx$$.$ctrl.renderedRepeat && $ctx$$.$ctrl.renderedRepeat($raw$$);
       } else {
@@ -1201,7 +1200,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.31.1", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.31.2", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

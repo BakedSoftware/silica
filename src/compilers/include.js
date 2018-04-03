@@ -15,6 +15,22 @@ function clearContent(element)
     element.removeChild(element.lastChild);
   }
 }
+
+function processInclude(element, html)
+{
+  let fragment = document.createElement('div');
+  fragment.innerHTML = html;
+
+  clearContent(element);
+  while(fragment.children.length)
+  {
+    element.appendChild(fragment.children[0]);
+  }
+  Silica.compile(element);
+  Silica.apply(function(){
+    loadCallback(element);
+  });
+}
 //loadPartial asynchronously retreives content and replaces the elements
 //content with the loaded content.
 function loadPartial(url, element)
@@ -30,9 +46,7 @@ function loadPartial(url, element)
   let cached = Silica._includeCache[url];
   if (cached)
   {
-    element.appendChild(cached);
-    Silica.flush(element);
-    loadCallback(element);
+    processInclude(element, cached);
     return;
   }
 
@@ -41,21 +55,10 @@ function loadPartial(url, element)
   {
     if(xhr.readyState == 4)
     {
-      let fragment = document.createElement('div');
-      fragment.innerHTML = xhr.responseText;
-
+      Silica._includeCache[url] = xhr.responseText;
       if (element.dataset['sio2IncludedUrl'] === url)
       {
-        clearContent(element);
-        while(fragment.children.length)
-        {
-          element.appendChild(fragment.children[0]);
-        }
-        Silica.compile(element);
-        Silica._includeCache[url] = fragment;
-        Silica.apply(function(){
-          loadCallback(element);
-        });
+        processInclude(element, xhr.responseText);
       }
     }
   };

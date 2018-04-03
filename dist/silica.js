@@ -567,30 +567,28 @@ function module$contents$compilers$include_clearContent($element$$) {
     $element$$.removeChild($element$$.lastChild);
   }
 }
+function module$contents$compilers$include_processInclude($element$$, $html$$) {
+  var $fragment$$ = document.createElement("div");
+  $fragment$$.innerHTML = $html$$;
+  for (module$contents$compilers$include_clearContent($element$$); $fragment$$.children.length;) {
+    $element$$.appendChild($fragment$$.children[0]);
+  }
+  Silica.compile($element$$);
+  Silica.apply(function() {
+    module$contents$compilers$include_loadCallback($element$$);
+  });
+}
 function module$contents$compilers$include_loadPartial($url$$, $element$$) {
   if ($element$$.dataset.sio2IncludedUrl != $url$$) {
     $element$$.dataset.sio2IncludedUrl = $url$$;
     module$contents$compilers$include_clearContent($element$$);
     var $cached$$ = Silica._includeCache[$url$$];
     if ($cached$$) {
-      $element$$.appendChild($cached$$), Silica.flush($element$$), module$contents$compilers$include_loadCallback($element$$);
+      module$contents$compilers$include_processInclude($element$$, $cached$$);
     } else {
       var $xhr$$ = new XMLHttpRequest;
       $xhr$$.onreadystatechange = function $$xhr$$$onreadystatechange$() {
-        if (4 == $xhr$$.readyState) {
-          var $fragment$$ = document.createElement("div");
-          $fragment$$.innerHTML = $xhr$$.responseText;
-          if ($element$$.dataset.sio2IncludedUrl === $url$$) {
-            for (module$contents$compilers$include_clearContent($element$$); $fragment$$.children.length;) {
-              $element$$.appendChild($fragment$$.children[0]);
-            }
-            Silica.compile($element$$);
-            Silica._includeCache[$url$$] = $fragment$$;
-            Silica.apply(function() {
-              module$contents$compilers$include_loadCallback($element$$);
-            });
-          }
-        }
+        4 == $xhr$$.readyState && (Silica._includeCache[$url$$] = $xhr$$.responseText, $element$$.dataset.sio2IncludedUrl === $url$$ && module$contents$compilers$include_processInclude($element$$, $xhr$$.responseText));
       };
       $xhr$$.open("GET", $url$$, !0);
       $xhr$$.send(null);
@@ -1200,7 +1198,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.31.2", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.31.3", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1244,10 +1242,10 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     $element$$ === Silica._appRoot && (Silica._isReady = !0);
     return $element$$;
   }
-}, cacheTemplates:function $window$Silica$cacheTemplates$($element$jscomp$18_nodes$$) {
-  $element$jscomp$18_nodes$$ = $element$jscomp$18_nodes$$.querySelectorAll("[data-repeat]");
-  for (var $node$$, $hash$$, $context$$, $i$$ = $element$jscomp$18_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $element$jscomp$18_nodes$$[$i$$], module$exports$hax$safari.hasDatasetProperty($node$$, "_rt_repeat_template") || ($hash$$ = md5($node$$.innerHTML), 1 === $node$$.children.length ? Silica._repeat_templates[$hash$$] = $node$$.removeChild($node$$.firstElementChild) : (console.warn("Repeat has multiple children, wrapping with div", $node$$), $context$$ = document.createElement("div"), $context$$.innerHTML = $node$$.innerHTML, Silica._repeat_templates[$hash$$] = $context$$), $node$$.dataset._rt_repeat_template = 
+}, cacheTemplates:function $window$Silica$cacheTemplates$($element$jscomp$19_nodes$$) {
+  $element$jscomp$19_nodes$$ = $element$jscomp$19_nodes$$.querySelectorAll("[data-repeat]");
+  for (var $node$$, $hash$$, $context$$, $i$$ = $element$jscomp$19_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $element$jscomp$19_nodes$$[$i$$], module$exports$hax$safari.hasDatasetProperty($node$$, "_rt_repeat_template") || ($hash$$ = md5($node$$.innerHTML), 1 === $node$$.children.length ? Silica._repeat_templates[$hash$$] = $node$$.removeChild($node$$.firstElementChild) : (console.warn("Repeat has multiple children, wrapping with div", $node$$), $context$$ = document.createElement("div"), $context$$.innerHTML = $node$$.innerHTML, Silica._repeat_templates[$hash$$] = $context$$), $node$$.dataset._rt_repeat_template = 
     $hash$$, $context$$ = {}, $context$$.$ctrl = Silica.getContext($node$$), Silica._repeat_templates[$hash$$] = Silica.compile(Silica._repeat_templates[$hash$$], !1, $context$$, !0, !1), $node$$.innerHTML = "");
   }
 }, debounce:function $window$Silica$debounce$($func$$, $wait$$, $immediate$$) {
@@ -1550,20 +1548,20 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   if (null == /[a-zA-Z]+\:+/g.exec($path$$) && "#" !== $path$$ && "" !== $path$$) {
     return $evt$$.preventDefault(), $evt$$.stopPropagation(), Silica.goTo($path$$), !1;
   }
-}, _capture_links:function $window$Silica$_capture_links$($element$jscomp$23_nodes$$) {
-  $element$jscomp$23_nodes$$ = Silica.queryOfType($element$jscomp$23_nodes$$, "a", "[href]", "[data-href]");
-  for (var $node$$, $i$$ = $element$jscomp$23_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $element$jscomp$23_nodes$$[$i$$], $node$$.hostname === location.hostname && "_blank" !== $node$$.target && ($node$$.removeEventListener("click", Silica._handle_href, !0), $node$$.addEventListener("click", Silica._handle_href, !0));
+}, _capture_links:function $window$Silica$_capture_links$($element$jscomp$24_nodes$$) {
+  $element$jscomp$24_nodes$$ = Silica.queryOfType($element$jscomp$24_nodes$$, "a", "[href]", "[data-href]");
+  for (var $node$$, $i$$ = $element$jscomp$24_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $element$jscomp$24_nodes$$[$i$$], $node$$.hostname === location.hostname && "_blank" !== $node$$.target && ($node$$.removeEventListener("click", Silica._handle_href, !0), $node$$.addEventListener("click", Silica._handle_href, !0));
   }
-}, _show:function $window$Silica$_show$($element$jscomp$24_isVisible$$, $expr$$, $negate$$) {
-  if (8 !== $element$jscomp$24_isVisible$$.nodeType) {
-    var $param$jscomp$4_temp$$ = $element$jscomp$24_isVisible$$.dataset.parameter;
+}, _show:function $window$Silica$_show$($element$jscomp$25_isVisible$$, $expr$$, $negate$$) {
+  if (8 !== $element$jscomp$25_isVisible$$.nodeType) {
+    var $param$jscomp$4_temp$$ = $element$jscomp$25_isVisible$$.dataset.parameter;
   } else {
-    $param$jscomp$4_temp$$ = document.createElement("div"), $param$jscomp$4_temp$$.innerHTML = $element$jscomp$24_isVisible$$.data, $param$jscomp$4_temp$$ = module$exports$hax$safari.getDatasetProperty($param$jscomp$4_temp$$.firstElementChild || $param$jscomp$4_temp$$, "parameter");
+    $param$jscomp$4_temp$$ = document.createElement("div"), $param$jscomp$4_temp$$.innerHTML = $element$jscomp$25_isVisible$$.data, $param$jscomp$4_temp$$ = module$exports$hax$safari.getDatasetProperty($param$jscomp$4_temp$$.firstElementChild || $param$jscomp$4_temp$$, "parameter");
   }
-  $element$jscomp$24_isVisible$$ = Silica.getValue($element$jscomp$24_isVisible$$, $expr$$, null, [$element$jscomp$24_isVisible$$, $param$jscomp$4_temp$$]);
-  $negate$$ && ($element$jscomp$24_isVisible$$ = !$element$jscomp$24_isVisible$$);
-  return $element$jscomp$24_isVisible$$;
+  $element$jscomp$25_isVisible$$ = Silica.getValue($element$jscomp$25_isVisible$$, $expr$$, null, [$element$jscomp$25_isVisible$$, $param$jscomp$4_temp$$]);
+  $negate$$ && ($element$jscomp$25_isVisible$$ = !$element$jscomp$25_isVisible$$);
+  return $element$jscomp$25_isVisible$$;
 }, _call:function $window$Silica$_call$($element$$, $evnt$$, $act$$) {
   if (Silica.isInDOM($element$$)) {
     $element$$.dataset.nopreventdefault || $evnt$$.preventDefault();

@@ -39,6 +39,7 @@ const  KeyUp    =  goog.require('compilers.keyup');
 const  TouchStart   =  goog.require('compilers.touch.start');
 const  TouchCancel  =  goog.require('compilers.touch.cancel');
 const  TouchEnd     =  goog.require('compilers.touch.end');
+const  TouchMove    =  goog.require('compilers.touch.move');
 
 exports = {
   Directive       :  Directives,
@@ -77,5 +78,6 @@ exports = {
   //Touch Events
   TouchStart   :  TouchStart,
   TouchCancel  :  TouchCancel,
-  TouchEnd     :  TouchEnd
+  TouchEnd     :  TouchEnd,
+  TouchMove    :  TouchMove
 };

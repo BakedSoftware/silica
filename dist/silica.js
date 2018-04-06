@@ -875,6 +875,13 @@ function module$exports$compilers$scroll() {
     };
   }
 }
+;function module$exports$compilers$touch$move() {
+  for (var $nodes$$ = Silica.query(this, "[data-touchmove]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.ontouchmove = function $$node$$$ontouchmove$($evt$$) {
+      Silica._call(this, $evt$$, "touchmove");
+    };
+  }
+}
 ;var module$exports$compilers = {};
 module$exports$compilers.Directive = module$exports$compilers$directives;
 module$exports$compilers._if = module$exports$compilers$if;
@@ -910,6 +917,7 @@ module$exports$compilers.KeyUp = module$exports$compilers$keyup;
 module$exports$compilers.TouchStart = module$exports$compilers$touch$start;
 module$exports$compilers.TouchCancel = module$exports$compilers$touch$cancel;
 module$exports$compilers.TouchEnd = module$exports$compilers$touch$end;
+module$exports$compilers.TouchMove = module$exports$compilers$touch$move;
 var module$exports$controllers$Base = function $module$exports$controllers$Base$($el$$) {
   this.el = $el$$;
   $el$$.parentElement && (this.$ctrl = Silica.getContext($el$$.parentElement));
@@ -1198,7 +1206,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.31.3", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.32.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

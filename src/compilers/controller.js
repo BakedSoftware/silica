@@ -20,7 +20,7 @@ function ControllerCompiler(ctx, force = false, storeWatchers = true) {
     lastCtrl = node._rt_ctrl;
     delete node._rt_ctrl;
     constructorName = node.dataset['controller'];
-    if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\((\w+)\))*/))[2] !== 'undefined')
+    if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\(([\w\.]+)\))*/))[2] !== 'undefined')
     {
       let parent = node.parentNode;
       if (parent)

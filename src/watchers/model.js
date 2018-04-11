@@ -11,7 +11,7 @@ function Model() {
   for (i = elements.length - 1; i >= 0; --i)
   {
     element = elements[i];
-    if (element === activeElement)
+    if (element === activeElement && element.type !== 'radio' && element.type !== 'checkbox')
     {
       continue;
     }

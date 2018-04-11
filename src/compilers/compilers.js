@@ -19,6 +19,7 @@ const  Submit          =  goog.require('compilers.submit');
 const  Src             =  goog.require('compilers.src');
 const  Scroll          =  goog.require('compilers.scroll');
 const  ScrollFinished  =  goog.require('compilers.scroll_finished');
+const  Value           =  goog.require('compilers.value');
 const  Generic         =  goog.require('compilers.generic');
 
 // Mouse Events
@@ -38,6 +39,7 @@ const  KeyUp    =  goog.require('compilers.keyup');
 const  TouchStart   =  goog.require('compilers.touch.start');
 const  TouchCancel  =  goog.require('compilers.touch.cancel');
 const  TouchEnd     =  goog.require('compilers.touch.end');
+const  TouchMove    =  goog.require('compilers.touch.move');
 
 exports = {
   Directive       :  Directives,
@@ -59,6 +61,7 @@ exports = {
   Src             :  Src,
   Scroll          :  Scroll,
   ScrollFinished  :  ScrollFinished,
+  Value           :  Value,
   Generic         :  Generic,
   // Mouse Events
   MouseDown   :  MouseDown,
@@ -75,5 +78,6 @@ exports = {
   //Touch Events
   TouchStart   :  TouchStart,
   TouchCancel  :  TouchCancel,
-  TouchEnd     :  TouchEnd
+  TouchEnd     :  TouchEnd,
+  TouchMove    :  TouchMove
 };

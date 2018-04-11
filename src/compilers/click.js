@@ -8,6 +8,9 @@ function Click() {
     node = nodes[i];
     node._rt_live = true;
     node.onclick = function(evt) {
+      if (node !== evt.target && (evt.target.nodeName === "SELECT" || evt.target.nodeName === "INPUT")) {
+        return;
+      }
       Silica._call(this, evt, 'click');
     };
   }

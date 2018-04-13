@@ -3,7 +3,7 @@ goog.module('watchers.show');
 /** @this Element */
 function Show() {
   var element, elements, i, isVisible, k, negate;
-  elements = this.querySelectorAll("[data-show]");
+  elements = Silica.querySorted(this, "[data-show]");
   if(this.dataset['show']){
     if (elements.length == 0) {
       elements = [this];

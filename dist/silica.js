@@ -1095,7 +1095,7 @@ function module$exports$watchers$if() {
 ;function module$exports$watchers$repeat() {
   for (var $changed_context$$, $child_node$$, $ctx$$, $list$jscomp$4_newList_param$$, $model$$, $newListHash_obj$jscomp$38_template$$, $_i_count_diff_key$$, $_len$jscomp$1_fragment$jscomp$1_j$$, $_ref$$, $elements$$ = Silica.querySorted(this, "[data-repeat]"), $raw$$, $i$$ = 0, $length$$ = $elements$$.length; $i$$ < $length$$; ++$i$$) {
     if ($raw$$ = $elements$$[$i$$], $ctx$$ = $raw$$.dataset.repeat.split(/\s+in\s+/), $list$jscomp$4_newList_param$$ = $ctx$$[1], $model$$ = $ctx$$[0], $ctx$$ = Silica.getContext($raw$$), "undefined" !== typeof($_ref$$ = $list$jscomp$4_newList_param$$.match(/((?:\w|\.)+)(?:\(([\w\.]+)\))*/))[2] ? ($list$jscomp$4_newList_param$$ = $_ref$$[2], $list$jscomp$4_newList_param$$ = Silica.getValue($raw$$.parentNode, $list$jscomp$4_newList_param$$), $list$jscomp$4_newList_param$$ = Silica.getValue($raw$$, 
-    $_ref$$[1], null, $list$jscomp$4_newList_param$$)) : $list$jscomp$4_newList_param$$ = Silica.getValue($raw$$, $list$jscomp$4_newList_param$$), $newListHash_obj$jscomp$38_template$$ = md5(JSON.stringify($list$jscomp$4_newList_param$$, function($key$$, $value$$) {
+    $_ref$$[1], null, $list$jscomp$4_newList_param$$)) : $list$jscomp$4_newList_param$$ = Silica.getValue($raw$$, $list$jscomp$4_newList_param$$), $newListHash_obj$jscomp$38_template$$ = Silica.hasher(JSON.stringify($list$jscomp$4_newList_param$$, function($key$$, $value$$) {
       if ($key$$.constructor != String || "__elm" != $key$$ && "$ctrl" != $key$$ && 95 !== $key$$.charCodeAt(0)) {
         return $value$$;
       }
@@ -1147,7 +1147,7 @@ function module$exports$watchers$if() {
 }
 ;function module$exports$watchers$show() {
   var $i$$, $negate$$;
-  var $elements$$ = this.querySelectorAll("[data-show]");
+  var $elements$$ = Silica.querySorted(this, "[data-show]");
   if (this.dataset.show) {
     if (0 == $elements$$.length) {
       $elements$$ = [this];
@@ -1174,7 +1174,7 @@ function module$exports$watchers$if() {
   null != $element$$.dataset.show && ($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ = $element$$.dataset.show, ($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ = Silica._show($element$$, $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$, "!" == $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$[0])) && $element$$.classList.contains("hidden") ? $element$$.classList.remove("hidden") : $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ || $element$$.classList.contains("hidden") || $element$$.classList.add("hidden"));
 }
 function module$exports$watchers$class() {
-  var $elements$$ = this.querySelectorAll("[data-class]");
+  var $elements$$ = Silica.querySorted(this, "[data-class]");
   this.dataset["class"] && module$contents$watchers$class_updater(this);
   for (var $i$$ = $elements$$.length - 1; 0 <= $i$$; --$i$$) {
     module$contents$watchers$class_updater($elements$$[$i$$]);
@@ -1182,7 +1182,7 @@ function module$exports$watchers$class() {
 }
 ;var module$contents$watchers$model_inputTimeRegexp = /date|time/i, module$contents$watchers$model_inputTypes = "text file number email password tel search url range date month week time datetime datetime-local color textarea select select-one".split(" ");
 function module$exports$watchers$model() {
-  var $elements$$ = this.querySelectorAll("[data-model]"), $i$$, $activeElement$$ = document.activeElement || Silica.__activeElement;
+  var $elements$$ = Silica.querySorted(this, "[data-model]"), $i$$, $activeElement$$ = document.activeElement || Silica.__activeElement;
   for ($i$$ = $elements$$.length - 1; 0 <= $i$$; --$i$$) {
     var $element$$ = $elements$$[$i$$];
     if ($element$$ !== $activeElement$$ || "radio" === $element$$.type || "checkbox" === $element$$.type) {
@@ -1206,7 +1206,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.32.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.33.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1253,7 +1253,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
 }, cacheTemplates:function $window$Silica$cacheTemplates$($element$jscomp$19_nodes$$) {
   $element$jscomp$19_nodes$$ = $element$jscomp$19_nodes$$.querySelectorAll("[data-repeat]");
   for (var $node$$, $hash$$, $context$$, $i$$ = $element$jscomp$19_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $element$jscomp$19_nodes$$[$i$$], module$exports$hax$safari.hasDatasetProperty($node$$, "_rt_repeat_template") || ($hash$$ = md5($node$$.innerHTML), 1 === $node$$.children.length ? Silica._repeat_templates[$hash$$] = $node$$.removeChild($node$$.firstElementChild) : (console.warn("Repeat has multiple children, wrapping with div", $node$$), $context$$ = document.createElement("div"), $context$$.innerHTML = $node$$.innerHTML, Silica._repeat_templates[$hash$$] = $context$$), $node$$.dataset._rt_repeat_template = 
+    $node$$ = $element$jscomp$19_nodes$$[$i$$], module$exports$hax$safari.hasDatasetProperty($node$$, "_rt_repeat_template") || ($hash$$ = Silica.hasher($node$$.innerHTML), 1 === $node$$.children.length ? Silica._repeat_templates[$hash$$] = $node$$.removeChild($node$$.firstElementChild) : (console.warn("Repeat has multiple children, wrapping with div", $node$$), $context$$ = document.createElement("div"), $context$$.innerHTML = $node$$.innerHTML, Silica._repeat_templates[$hash$$] = $context$$), $node$$.dataset._rt_repeat_template = 
     $hash$$, $context$$ = {}, $context$$.$ctrl = Silica.getContext($node$$), Silica._repeat_templates[$hash$$] = Silica.compile(Silica._repeat_templates[$hash$$], !1, $context$$, !0, !1), $node$$.innerHTML = "");
   }
 }, debounce:function $window$Silica$debounce$($func$$, $wait$$, $immediate$$) {
@@ -1766,5 +1766,6 @@ window.Silica.pub = module$exports$silica$pubsub.Pub;
 window.Silica.sub = module$exports$silica$pubsub.Sub;
 window.Silica.unsub = module$exports$silica$pubsub.Unsub;
 window.Silica.isInDOM = Silica.isInDOM;
+window.Silica.hasher = Silica.hasher;
 
 }.call(window);

@@ -181,21 +181,23 @@ $jscomp.polyfill("Reflect.get", function($orig$$) {
     }
   };
 }, "es6", "es5");
+$jscomp.checkEs6ConformanceViaProxy = function $$jscomp$checkEs6ConformanceViaProxy$() {
+  try {
+    var $proxied$$ = {}, $proxy$$ = Object.create(new $jscomp.global.Proxy($proxied$$, {get:function($target$$, $key$$, $receiver$$) {
+      return $target$$ == $proxied$$ && "q" == $key$$ && $receiver$$ == $proxy$$;
+    }}));
+    return !0 === $proxy$$.q;
+  } catch ($err$$) {
+    return !1;
+  }
+};
+$jscomp.USE_PROXY_FOR_ES6_CONFORMANCE_CHECKS = !1;
+$jscomp.ES6_CONFORMANCE = $jscomp.USE_PROXY_FOR_ES6_CONFORMANCE_CHECKS && $jscomp.checkEs6ConformanceViaProxy();
 $jscomp.owns = function $$jscomp$owns$($obj$$, $prop$$) {
   return Object.prototype.hasOwnProperty.call($obj$$, $prop$$);
 };
 $jscomp.polyfill("WeakMap", function($NativeWeakMap$$) {
-  function $insert$$($target$$) {
-    $jscomp.owns($target$$, $prop$$) || $jscomp.defineProperty($target$$, $prop$$, {value:{}});
-  }
-  function $patch$$($name$$) {
-    var $prev$$ = Object[$name$$];
-    $prev$$ && (Object[$name$$] = function $Object$$name$$$($target$$) {
-      $insert$$($target$$);
-      return $prev$$($target$$);
-    });
-  }
-  if (function isConformant() {
+  function $isConformant$$() {
     if (!$NativeWeakMap$$ || !Object.seal) {
       return !1;
     }
@@ -210,10 +212,27 @@ $jscomp.polyfill("WeakMap", function($NativeWeakMap$$) {
     } catch ($err$$) {
       return !1;
     }
-  }()) {
-    return $NativeWeakMap$$;
   }
-  var $prop$$ = "$jscomp_hidden_" + Math.random().toString().substring(2);
+  function $insert$$($target$$) {
+    $jscomp.owns($target$$, $prop$$) || $jscomp.defineProperty($target$$, $prop$$, {value:{}});
+  }
+  function $patch$$($name$$) {
+    var $prev$$ = Object[$name$$];
+    $prev$$ && (Object[$name$$] = function $Object$$name$$$($target$$) {
+      $insert$$($target$$);
+      return $prev$$($target$$);
+    });
+  }
+  if ($jscomp.USE_PROXY_FOR_ES6_CONFORMANCE_CHECKS) {
+    if ($NativeWeakMap$$ && $jscomp.ES6_CONFORMANCE) {
+      return $NativeWeakMap$$;
+    }
+  } else {
+    if ($isConformant$$()) {
+      return $NativeWeakMap$$;
+    }
+  }
+  var $prop$$ = "$jscomp_hidden_" + Math.random();
   $patch$$("freeze");
   $patch$$("preventExtensions");
   $patch$$("seal");
@@ -250,8 +269,8 @@ $jscomp.polyfill("WeakMap", function($NativeWeakMap$$) {
 $jscomp.MapEntry = function $$jscomp$MapEntry$() {
 };
 $jscomp.polyfill("Map", function($NativeMap$$) {
-  if (!$jscomp.ASSUME_NO_NATIVE_MAP && function() {
-    if (!$NativeMap$$ || !$NativeMap$$.prototype.entries || "function" != typeof Object.seal) {
+  function $isConformant$$() {
+    if ($jscomp.ASSUME_NO_NATIVE_MAP || !$NativeMap$$ || "function" != typeof $NativeMap$$ || !$NativeMap$$.prototype.entries || "function" != typeof Object.seal) {
       return !1;
     }
     try {
@@ -268,8 +287,15 @@ $jscomp.polyfill("Map", function($NativeMap$$) {
     } catch ($err$$) {
       return !1;
     }
-  }()) {
-    return $NativeMap$$;
+  }
+  if ($jscomp.USE_PROXY_FOR_ES6_CONFORMANCE_CHECKS) {
+    if ($NativeMap$$ && $jscomp.ES6_CONFORMANCE) {
+      return $NativeMap$$;
+    }
+  } else {
+    if ($isConformant$$()) {
+      return $NativeMap$$;
+    }
   }
   $jscomp.initSymbol();
   $jscomp.initSymbolIterator();
@@ -290,9 +316,9 @@ $jscomp.polyfill("Map", function($NativeMap$$) {
     $r$$.entry ? $r$$.entry.value = $value$$ : ($r$$.entry = {next:this.head_, previous:this.head_.previous, head:this.head_, key:$key$$, value:$value$$}, $r$$.list.push($r$$.entry), this.head_.previous.next = $r$$.entry, this.head_.previous = $r$$.entry, this.size++);
     return this;
   };
-  $PolyfillMap$$.prototype.delete = function $$PolyfillMap$$$$delete$($key$jscomp$34_r$$) {
-    $key$jscomp$34_r$$ = $maybeGetEntry$$(this, $key$jscomp$34_r$$);
-    return $key$jscomp$34_r$$.entry && $key$jscomp$34_r$$.list ? ($key$jscomp$34_r$$.list.splice($key$jscomp$34_r$$.index, 1), $key$jscomp$34_r$$.list.length || delete this.data_[$key$jscomp$34_r$$.id], $key$jscomp$34_r$$.entry.previous.next = $key$jscomp$34_r$$.entry.next, $key$jscomp$34_r$$.entry.next.previous = $key$jscomp$34_r$$.entry.previous, $key$jscomp$34_r$$.entry.head = null, this.size--, !0) : !1;
+  $PolyfillMap$$.prototype.delete = function $$PolyfillMap$$$$delete$($key$jscomp$43_r$$) {
+    $key$jscomp$43_r$$ = $maybeGetEntry$$(this, $key$jscomp$43_r$$);
+    return $key$jscomp$43_r$$.entry && $key$jscomp$43_r$$.list ? ($key$jscomp$43_r$$.list.splice($key$jscomp$43_r$$.index, 1), $key$jscomp$43_r$$.list.length || delete this.data_[$key$jscomp$43_r$$.id], $key$jscomp$43_r$$.entry.previous.next = $key$jscomp$43_r$$.entry.next, $key$jscomp$43_r$$.entry.next.previous = $key$jscomp$43_r$$.entry.previous, $key$jscomp$43_r$$.entry.head = null, this.size--, !0) : !1;
   };
   $PolyfillMap$$.prototype.clear = function $$PolyfillMap$$$$clear$() {
     this.data_ = {};
@@ -326,15 +352,15 @@ $jscomp.polyfill("Map", function($NativeMap$$) {
     }
   };
   $PolyfillMap$$.prototype[Symbol.iterator] = $PolyfillMap$$.prototype.entries;
-  var $maybeGetEntry$$ = function $$maybeGetEntry$$$($index$jscomp$46_map$$, $key$$) {
+  var $maybeGetEntry$$ = function $$maybeGetEntry$$$($index$jscomp$57_map$$, $key$$) {
     var $id$jscomp$5_id$jscomp$inline_36_type$$ = $key$$ && typeof $key$$;
     "object" == $id$jscomp$5_id$jscomp$inline_36_type$$ || "function" == $id$jscomp$5_id$jscomp$inline_36_type$$ ? $idMap$$.has($key$$) ? $id$jscomp$5_id$jscomp$inline_36_type$$ = $idMap$$.get($key$$) : ($id$jscomp$5_id$jscomp$inline_36_type$$ = "" + ++$mapIndex$$, $idMap$$.set($key$$, $id$jscomp$5_id$jscomp$inline_36_type$$)) : $id$jscomp$5_id$jscomp$inline_36_type$$ = "p_" + $key$$;
-    var $list$$ = $index$jscomp$46_map$$.data_[$id$jscomp$5_id$jscomp$inline_36_type$$];
-    if ($list$$ && $jscomp.owns($index$jscomp$46_map$$.data_, $id$jscomp$5_id$jscomp$inline_36_type$$)) {
-      for ($index$jscomp$46_map$$ = 0; $index$jscomp$46_map$$ < $list$$.length; $index$jscomp$46_map$$++) {
-        var $entry$$ = $list$$[$index$jscomp$46_map$$];
+    var $list$$ = $index$jscomp$57_map$$.data_[$id$jscomp$5_id$jscomp$inline_36_type$$];
+    if ($list$$ && $jscomp.owns($index$jscomp$57_map$$.data_, $id$jscomp$5_id$jscomp$inline_36_type$$)) {
+      for ($index$jscomp$57_map$$ = 0; $index$jscomp$57_map$$ < $list$$.length; $index$jscomp$57_map$$++) {
+        var $entry$$ = $list$$[$index$jscomp$57_map$$];
         if ($key$$ !== $key$$ && $entry$$.key !== $entry$$.key || $key$$ === $entry$$.key) {
-          return {id:$id$jscomp$5_id$jscomp$inline_36_type$$, list:$list$$, index:$index$jscomp$46_map$$, entry:$entry$$};
+          return {id:$id$jscomp$5_id$jscomp$inline_36_type$$, list:$list$$, index:$index$jscomp$57_map$$, entry:$entry$$};
         }
       }
     }
@@ -360,8 +386,8 @@ $jscomp.polyfill("Map", function($NativeMap$$) {
   return $PolyfillMap$$;
 }, "es6", "es3");
 $jscomp.polyfill("Set", function($NativeSet$$) {
-  if (!$jscomp.ASSUME_NO_NATIVE_SET && function() {
-    if (!$NativeSet$$ || !$NativeSet$$.prototype.entries || "function" != typeof Object.seal) {
+  function $isConformant$$() {
+    if ($jscomp.ASSUME_NO_NATIVE_SET || !$NativeSet$$ || "function" != typeof $NativeSet$$ || !$NativeSet$$.prototype.entries || "function" != typeof Object.seal) {
       return !1;
     }
     try {
@@ -378,8 +404,15 @@ $jscomp.polyfill("Set", function($NativeSet$$) {
     } catch ($err$$) {
       return !1;
     }
-  }()) {
-    return $NativeSet$$;
+  }
+  if ($jscomp.USE_PROXY_FOR_ES6_CONFORMANCE_CHECKS) {
+    if ($NativeSet$$ && $jscomp.ES6_CONFORMANCE) {
+      return $NativeSet$$;
+    }
+  } else {
+    if ($isConformant$$()) {
+      return $NativeSet$$;
+    }
   }
   $jscomp.initSymbol();
   $jscomp.initSymbolIterator();
@@ -661,9 +694,9 @@ function module$exports$compilers$include() {
 }
 ;var module$contents$compilers$model_inputTimeRegexp = /date|time/i, module$contents$compilers$model_inputTypes = "text file number email password tel search url range date month week time datetime datetime-local color textarea select select-one".split(" ");
 function module$exports$compilers$model($context_elm$$) {
-  for (var $change_ctx$$, $model$jscomp$0$$, $type$jscomp$105_val$$, $elements$$ = Silica.query(this, "input[data-model]", "select[data-model]", "textarea[data-model]", "option[data-model]"), $i$$ = $elements$$.length - 1; 0 <= $i$$; $i$$--) {
-    $context_elm$$ = $elements$$[$i$$], $change_ctx$$ = Silica.getContext($context_elm$$), $model$jscomp$0$$ = $context_elm$$.dataset.model, $type$jscomp$105_val$$ = $context_elm$$.type, -1 !== module$contents$compilers$model_inputTypes.indexOf($type$jscomp$105_val$$) ? $context_elm$$.value = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) : "radio" === $type$jscomp$105_val$$ ? ($type$jscomp$105_val$$ = $context_elm$$.value, $type$jscomp$105_val$$.match(/[0-9]/) && ($type$jscomp$105_val$$ = 
-    parseInt($type$jscomp$105_val$$, 10)), $context_elm$$.checked = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) === $type$jscomp$105_val$$) : "checkbox" === $type$jscomp$105_val$$ ? $context_elm$$.checked = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) : "OPTION" === $context_elm$$.nodeName && ($context_elm$$.value = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$)), $change_ctx$$ = function $$change_ctx$$$() {
+  for (var $change_ctx$$, $model$jscomp$0$$, $type$jscomp$118_val$$, $elements$$ = Silica.query(this, "input[data-model]", "select[data-model]", "textarea[data-model]", "option[data-model]"), $i$$ = $elements$$.length - 1; 0 <= $i$$; $i$$--) {
+    $context_elm$$ = $elements$$[$i$$], $change_ctx$$ = Silica.getContext($context_elm$$), $model$jscomp$0$$ = $context_elm$$.dataset.model, $type$jscomp$118_val$$ = $context_elm$$.type, -1 !== module$contents$compilers$model_inputTypes.indexOf($type$jscomp$118_val$$) ? $context_elm$$.value = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) : "radio" === $type$jscomp$118_val$$ ? ($type$jscomp$118_val$$ = $context_elm$$.value, $type$jscomp$118_val$$.match(/[0-9]/) && ($type$jscomp$118_val$$ = 
+    parseInt($type$jscomp$118_val$$, 10)), $context_elm$$.checked = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) === $type$jscomp$118_val$$) : "checkbox" === $type$jscomp$118_val$$ ? $context_elm$$.checked = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$) : "OPTION" === $context_elm$$.nodeName && ($context_elm$$.value = Silica.getValue($context_elm$$, $model$jscomp$0$$, $change_ctx$$)), $change_ctx$$ = function $$change_ctx$$$() {
       var $_ref$$, $_ref1$$, $val$$ = this.value, $ctx$$ = Silica.getContext(this), $model$$ = this.dataset.model;
       "radio" === this.type ? $val$$.match(/[0-9]/) && ($val$$ = parseInt($val$$, 10)) : "checkbox" === this.type && ($val$$ = this.checked);
       if (Silica.isInApply) {
@@ -968,7 +1001,7 @@ module$contents$controllers$FSM_Controller.prototype.transition = function $modu
     $$jscomp$this$$._currentState = $target$$;
     $$jscomp$this$$._currentStateName = $stateName$$;
     Silica.defer(function() {
-      $$jscomp$this$$._currentState.onEnter.apply($$jscomp$this$$._currentState, [].concat([$$jscomp$this$$], $jscomp.arrayFromIterable($$jscomp$restParams$$)));
+      $$jscomp$this$$._currentState.onEnter.apply($$jscomp$this$$._currentState, [$$jscomp$this$$].concat($jscomp.arrayFromIterable($$jscomp$restParams$$)));
     });
   });
 };
@@ -977,7 +1010,7 @@ module$contents$controllers$FSM_Controller.prototype.handle = function $module$c
     $$jscomp$restParams$$[$$jscomp$restIndex$jscomp$1_func$$ - 1] = arguments[$$jscomp$restIndex$jscomp$1_func$$];
   }
   if (this._currentState && ($$jscomp$restIndex$jscomp$1_func$$ = this._currentState[$functionName$$])) {
-    return "function" === typeof $$jscomp$restIndex$jscomp$1_func$$ ? $$jscomp$restIndex$jscomp$1_func$$.apply(this._currentState, [].concat([this], $jscomp.arrayFromIterable($$jscomp$restParams$$))) : $$jscomp$restIndex$jscomp$1_func$$;
+    return "function" === typeof $$jscomp$restIndex$jscomp$1_func$$ ? $$jscomp$restIndex$jscomp$1_func$$.apply(this._currentState, [this].concat($jscomp.arrayFromIterable($$jscomp$restParams$$))) : $$jscomp$restIndex$jscomp$1_func$$;
   }
 };
 $jscomp.global.Object.defineProperties(module$contents$controllers$FSM_Controller, {states:{configurable:!0, enumerable:!0, get:function() {
@@ -1025,7 +1058,7 @@ module$exports$silica$pubsub.Pub = function $module$exports$silica$pubsub$Pub$($
   $subs$$ && setTimeout(function() {
     Silica.apply(function() {
       for (var $$jscomp$iter$1$$ = $jscomp.makeIterator($subs$$), $$jscomp$destructuring$var1_$jscomp$key$$$ = $$jscomp$iter$1$$.next(); !$$jscomp$destructuring$var1_$jscomp$key$$$.done; $$jscomp$destructuring$var1_$jscomp$key$$$ = $$jscomp$iter$1$$.next()) {
-        $$jscomp$destructuring$var1_$jscomp$key$$$ = $jscomp.makeIterator($$jscomp$destructuring$var1_$jscomp$key$$$.value), $$jscomp$destructuring$var1_$jscomp$key$$$.next(), $$jscomp$destructuring$var1_$jscomp$key$$$.next().value.apply(null, [].concat($jscomp.arrayFromIterable($$jscomp$restParams$$)));
+        $$jscomp$destructuring$var1_$jscomp$key$$$ = $jscomp.makeIterator($$jscomp$destructuring$var1_$jscomp$key$$$.value), $$jscomp$destructuring$var1_$jscomp$key$$$.next(), $$jscomp$destructuring$var1_$jscomp$key$$$.next().value.apply(null, $jscomp.arrayFromIterable($$jscomp$restParams$$));
       }
     });
   }, 0);
@@ -1168,10 +1201,10 @@ function module$exports$watchers$if() {
   }
 }
 ;function module$contents$watchers$class_updater($element$$) {
-  var $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ = $element$$.dataset._rt_hard_klass;
-  $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ && 0 < $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$.length ? $element$$.className = $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ : "" == $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ ? $element$$.className = "" : $element$$.dataset._rt_hard_klass = $element$$.className;
-  ($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ = Silica.getValue($element$$, $element$$.dataset["class"], null, [$element$$, $element$$.dataset.parameter])) && ($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ instanceof Array ? $element$$.classList.add.apply($element$$.classList, $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$) : $element$$.classList.add($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$));
-  null != $element$$.dataset.show && ($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ = $element$$.dataset.show, ($hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ = Silica._show($element$$, $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$, "!" == $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$[0])) && $element$$.classList.contains("hidden") ? $element$$.classList.remove("hidden") : $hardClass_isVisible$jscomp$4_key$jscomp$40_klass$$ || $element$$.classList.contains("hidden") || $element$$.classList.add("hidden"));
+  var $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ = $element$$.dataset._rt_hard_klass;
+  $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ && 0 < $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$.length ? $element$$.className = $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ : "" == $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ ? $element$$.className = "" : $element$$.dataset._rt_hard_klass = $element$$.className;
+  ($hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ = Silica.getValue($element$$, $element$$.dataset["class"], null, [$element$$, $element$$.dataset.parameter])) && ($hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ instanceof Array ? $element$$.classList.add.apply($element$$.classList, $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$) : $element$$.classList.add($hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$));
+  null != $element$$.dataset.show && ($hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ = $element$$.dataset.show, ($hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ = Silica._show($element$$, $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$, "!" == $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$[0])) && $element$$.classList.contains("hidden") ? $element$$.classList.remove("hidden") : $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ || $element$$.classList.contains("hidden") || $element$$.classList.add("hidden"));
 }
 function module$exports$watchers$class() {
   var $elements$$ = Silica.querySorted(this, "[data-class]");
@@ -1186,9 +1219,9 @@ function module$exports$watchers$model() {
   for ($i$$ = $elements$$.length - 1; 0 <= $i$$; --$i$$) {
     var $element$$ = $elements$$[$i$$];
     if ($element$$ !== $activeElement$$ || "radio" === $element$$.type || "checkbox" === $element$$.type) {
-      var $type$jscomp$106_val$$ = $element$$.type;
-      -1 !== module$contents$watchers$model_inputTypes.indexOf($type$jscomp$106_val$$) ? $element$$.value = Silica._model_get_val($element$$) : "radio" === $type$jscomp$106_val$$ ? ($type$jscomp$106_val$$ = $element$$.value, -1 != $type$jscomp$106_val$$.search(/[0-9]/) && ($type$jscomp$106_val$$ = parseInt($type$jscomp$106_val$$, 10)), $element$$.checked = Silica.getValue($element$$, $element$$.dataset.model) === $type$jscomp$106_val$$) : "checkbox" === $type$jscomp$106_val$$ ? $element$$.checked = 
-      Silica.getValue($element$$, $element$$.dataset.model) : "SPAN" === $element$$.nodeName || "PRE" === $element$$.nodeName || "DIV" === $element$$.nodeName || "P" === $element$$.nodeName ? ($type$jscomp$106_val$$ = Silica._model_get_val($element$$)) && $type$jscomp$106_val$$.nodeName ? ($element$$.innerHTML = "", $element$$.appendChild($type$jscomp$106_val$$)) : $element$$.innerHTML = $type$jscomp$106_val$$ : "OPTION" === $element$$.nodeName && ($element$$.value = Silica._model_get_val($element$$));
+      var $type$jscomp$119_val$$ = $element$$.type;
+      -1 !== module$contents$watchers$model_inputTypes.indexOf($type$jscomp$119_val$$) ? $element$$.value = Silica._model_get_val($element$$) : "radio" === $type$jscomp$119_val$$ ? ($type$jscomp$119_val$$ = $element$$.value, -1 != $type$jscomp$119_val$$.search(/[0-9]/) && ($type$jscomp$119_val$$ = parseInt($type$jscomp$119_val$$, 10)), $element$$.checked = Silica.getValue($element$$, $element$$.dataset.model) === $type$jscomp$119_val$$) : "checkbox" === $type$jscomp$119_val$$ ? $element$$.checked = 
+      Silica.getValue($element$$, $element$$.dataset.model) : "SPAN" === $element$$.nodeName || "PRE" === $element$$.nodeName || "DIV" === $element$$.nodeName || "P" === $element$$.nodeName ? ($type$jscomp$119_val$$ = Silica._model_get_val($element$$)) && $type$jscomp$119_val$$.nodeName ? ($element$$.innerHTML = "", $element$$.appendChild($type$jscomp$119_val$$)) : $element$$.innerHTML = $type$jscomp$119_val$$ : "OPTION" === $element$$.nodeName && ($element$$.value = Silica._model_get_val($element$$));
     }
   }
 }
@@ -1206,7 +1239,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.33.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.33.1", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1329,7 +1362,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     }
   } else {
     for (var $k$$ in $changed$$) {
-      for ($funcs_watchers$$ = $changed$$[$k$$], !0 === $funcs_watchers$$ && ($funcs_watchers$$ = Silica._watch[$k$$]), $i$17_i$$ = $funcs_watchers$$.length - 1; 0 <= $i$17_i$$; --$i$17_i$$) {
+      for ($funcs_watchers$$ = $changed$$[$k$$], !0 !== $funcs_watchers$$ ? $i$17_i$$ = $funcs_watchers$$.length - 1 : ($funcs_watchers$$ = Silica._watch[$k$$], $i$17_i$$ = $funcs_watchers$$.length - 1); 0 <= $i$17_i$$; --$i$17_i$$) {
         var $func$jscomp$10_key$$ = $funcs_watchers$$[$i$17_i$$];
         $func$jscomp$10_key$$[1].apply($func$jscomp$10_key$$[0], [$func$jscomp$10_key$$[2], $func$jscomp$10_key$$[3]]);
       }
@@ -1553,7 +1586,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   }
 }, _handle_href:function $window$Silica$_handle_href$($evt$$) {
   var $path$$ = this.getAttribute("href");
-  if (null == /[a-zA-Z]+\:+/g.exec($path$$) && "#" !== $path$$ && "" !== $path$$) {
+  if (null == /[a-zA-Z]+:+/g.exec($path$$) && "#" !== $path$$ && "" !== $path$$) {
     return $evt$$.preventDefault(), $evt$$.stopPropagation(), Silica.goTo($path$$), !1;
   }
 }, _capture_links:function $window$Silica$_capture_links$($element$jscomp$24_nodes$$) {
@@ -1607,7 +1640,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
         $ctx$$ = $ctx$$.$ctrl;
       }
       $element$$.dataset.parameter && ($parameter$$ = $element$$.dataset.parameter);
-      return "undefined" !== typeof $ctx$$[$actionName_idx$$] ? $ctx$$[$actionName_idx$$].apply($ctx$$, [].concat([$element$$], $jscomp.arrayFromIterable($models$$), [$parameter$$, $evnt$$])) : null != Silica.context[$actionName_idx$$] ? Silica.context[$actionName_idx$$].apply(Silica.ctx, [].concat([$element$$], $jscomp.arrayFromIterable($models$$), [$parameter$$, $evnt$$])) : console.error("Unknown action '" + $actionName_idx$$ + "' for " + $element$$.outerHTML + " in " + $ctx$$.constructor.name);
+      return "undefined" !== typeof $ctx$$[$actionName_idx$$] ? $ctx$$[$actionName_idx$$].apply($ctx$$, [$element$$].concat($jscomp.arrayFromIterable($models$$), [$parameter$$, $evnt$$])) : null != Silica.context[$actionName_idx$$] ? Silica.context[$actionName_idx$$].apply(Silica.ctx, [$element$$].concat($jscomp.arrayFromIterable($models$$), [$parameter$$, $evnt$$])) : console.error("Unknown action '" + $actionName_idx$$ + "' for " + $element$$.outerHTML + " in " + $ctx$$.constructor.name);
     }, $scope$$);
   }
 }, _model_get_val:function $window$Silica$_model_get_val$($raw$jscomp$6_value$$) {
@@ -1659,7 +1692,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   for (var $$jscomp$restParams$$ = [], $$jscomp$restIndex$jscomp$4_filtered$$ = 1; $$jscomp$restIndex$jscomp$4_filtered$$ < arguments.length; ++$$jscomp$restIndex$jscomp$4_filtered$$) {
     $$jscomp$restParams$$[$$jscomp$restIndex$jscomp$4_filtered$$ - 1] = arguments[$$jscomp$restIndex$jscomp$4_filtered$$];
   }
-  $$jscomp$restIndex$jscomp$4_filtered$$ = Silica.query.apply(Silica, [].concat([$root$$], $jscomp.arrayFromIterable($$jscomp$restParams$$)));
+  $$jscomp$restIndex$jscomp$4_filtered$$ = Silica.query.apply(Silica, [$root$$].concat($jscomp.arrayFromIterable($$jscomp$restParams$$)));
   for (var $comments$$ = Silica.findComments($root$$), $temp$$ = document.createElement("div"), $i$$ = $comments$$.length - 1; 0 <= $i$$; --$i$$) {
     var $node$$ = $comments$$[$i$$];
     if ("<" === $node$$.nodeValue.charAt(0)) {
@@ -1677,7 +1710,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   for (var $$jscomp$restParams$jscomp$5_filtered$$ = [], $$jscomp$restIndex$jscomp$5_i$$ = 1; $$jscomp$restIndex$jscomp$5_i$$ < arguments.length; ++$$jscomp$restIndex$jscomp$5_i$$) {
     $$jscomp$restParams$jscomp$5_filtered$$[$$jscomp$restIndex$jscomp$5_i$$ - 1] = arguments[$$jscomp$restIndex$jscomp$5_i$$];
   }
-  $$jscomp$restParams$jscomp$5_filtered$$ = Silica.query.apply(Silica, [].concat([$root$$], $jscomp.arrayFromIterable($$jscomp$restParams$jscomp$5_filtered$$)));
+  $$jscomp$restParams$jscomp$5_filtered$$ = Silica.query.apply(Silica, [$root$$].concat($jscomp.arrayFromIterable($$jscomp$restParams$jscomp$5_filtered$$)));
   $$jscomp$restIndex$jscomp$5_i$$ = 0;
   for (var $list_length$$ = $$jscomp$restParams$jscomp$5_filtered$$.length; $$jscomp$restIndex$jscomp$5_i$$ < $list_length$$; $$jscomp$restIndex$jscomp$5_i$$++) {
     for (var $node$$ = $$jscomp$restParams$jscomp$5_filtered$$[$$jscomp$restIndex$jscomp$5_i$$], $j$$ = $$jscomp$restIndex$jscomp$5_i$$ + 1; $j$$ < $list_length$$; $j$$++) {

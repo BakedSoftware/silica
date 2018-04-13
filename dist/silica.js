@@ -1180,7 +1180,7 @@ function module$exports$watchers$if() {
 }
 ;function module$exports$watchers$show() {
   var $i$$, $negate$$;
-  var $elements$$ = Silica.querySorted(this, "[data-show]");
+  var $elements$$ = Silica.query(this, "[data-show]");
   if (this.dataset.show) {
     if (0 == $elements$$.length) {
       $elements$$ = [this];
@@ -1207,7 +1207,7 @@ function module$exports$watchers$if() {
   null != $element$$.dataset.show && ($hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ = $element$$.dataset.show, ($hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ = Silica._show($element$$, $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$, "!" == $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$[0])) && $element$$.classList.contains("hidden") ? $element$$.classList.remove("hidden") : $hardClass_isVisible$jscomp$4_key$jscomp$49_klass$$ || $element$$.classList.contains("hidden") || $element$$.classList.add("hidden"));
 }
 function module$exports$watchers$class() {
-  var $elements$$ = Silica.querySorted(this, "[data-class]");
+  var $elements$$ = Silica.query(this, "[data-class]");
   this.dataset["class"] && module$contents$watchers$class_updater(this);
   for (var $i$$ = $elements$$.length - 1; 0 <= $i$$; --$i$$) {
     module$contents$watchers$class_updater($elements$$[$i$$]);
@@ -1215,7 +1215,7 @@ function module$exports$watchers$class() {
 }
 ;var module$contents$watchers$model_inputTimeRegexp = /date|time/i, module$contents$watchers$model_inputTypes = "text file number email password tel search url range date month week time datetime datetime-local color textarea select select-one".split(" ");
 function module$exports$watchers$model() {
-  var $elements$$ = Silica.querySorted(this, "[data-model]"), $i$$, $activeElement$$ = document.activeElement || Silica.__activeElement;
+  var $elements$$ = Silica.query(this, "[data-model]"), $i$$, $activeElement$$ = document.activeElement || Silica.__activeElement;
   for ($i$$ = $elements$$.length - 1; 0 <= $i$$; --$i$$) {
     var $element$$ = $elements$$[$i$$];
     if ($element$$ !== $activeElement$$ || "radio" === $element$$.type || "checkbox" === $element$$.type) {
@@ -1239,7 +1239,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.33.1", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.33.2", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

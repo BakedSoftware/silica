@@ -5,7 +5,7 @@ var inputTypes = ["text", "file", "number", "email", "password", "tel", "search"
 
 /** @this Element */
 function Model() {
-  var elements = Silica.querySorted(this, '[data-model]');
+  var elements = Silica.query(this, '[data-model]');
   var element, i, type, val;
   var activeElement = document.activeElement || Silica.__activeElement;
   for (i = elements.length - 1; i >= 0; --i)

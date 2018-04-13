@@ -35,7 +35,7 @@ function updater(element) {
 
 /** @this Element */
 function Class() {
-  var elements = Silica.querySorted(this, '[data-class]');
+  var elements = Silica.query(this, '[data-class]');
   if (this.dataset['class']) {
     updater(this);
   }

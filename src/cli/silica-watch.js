@@ -2,9 +2,9 @@
 
 // Node Provided modules
 const  exec  =  require('child_process').exec;
-const  path  =  require('path');
 const  fs    =  require('fs');
 const  net   =  require('net');
+const  path  =  require('path');
 
 // Third party dependencies
 const  livereload    =  require('livereload');
@@ -20,7 +20,6 @@ program
   .option('-s --styles [path]', "Directory of additional style imports relative to the src directory")
   .option('-z --nolivereload', "Don't turn on livereload")
   .option('-d --done [script]', "Path to a script to run after build")
-  .option('-2 --http2', "Enable http2 support. Make sure localhost.daplie.me resolves to 127.0.0.1")
   .parse(process.argv);
 
 var  afterScript    =  program.done;
@@ -94,25 +93,7 @@ function httpConnection(req, res) {
     res.end();
 }
 
-if (program.http2)
-{
-  var  baseAddress      =  program.port || 8080;
-  var  redirectAddress  =  baseAddress + 1;
-  var  httpsAddress     =  baseAddress + 2;
-  var  httpsOptions     =  require('localhost.daplie.me-certificates').merge({});
-
-  net.createServer(tcpConnection).listen(baseAddress);
-  require('http').createServer(httpConnection).listen(redirectAddress);
-  require('http2').createServer(httpsOptions, handler).listen(httpsAddress);
-
-  console.log("HTTPS server is listening on: ", baseAddress);
-  console.log("For a secure certificate use localhost.daplie.me and make sure it resolves to 127.0.0.1");
-  console.log("On Mac OS X -> Edit /etc/hosts and add '127.0.0.1 localhost.daplie.me'");
-}
-else
-{
-  require('http').createServer(handler).listen(program.port || 8080);
-}
+require('http').createServer(handler).listen(program.port || 8080);
 
 rebuild();
 

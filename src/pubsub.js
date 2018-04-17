@@ -8,7 +8,7 @@ function next_subscription_id() {
   return (subscription_id++);
 }
 
-function sub(channel, handler) {
+function sub(channel, handler, context) {
   let subs = subscriptions.get(channel);
   if (!subs)
   {
@@ -16,7 +16,7 @@ function sub(channel, handler) {
     subscriptions.set(channel, subs);
   }
   let id = next_subscription_id();
-  subs.set(id, handler);
+  subs.set(id, [handler, context]);
   return `${channel}${subscription_separator}${id}`;
 }
 
@@ -26,13 +26,13 @@ function pub(channel, ...args) {
   {
     setTimeout(function()
     {
-      Silica.apply(function()
+      for (let [_, value] of subs)
       {
-        for (let [_, value] of subs)
+        Silica.enqueue(function()
         {
-          value(...args);
-        }
-      });
+          value[0](...args);
+        }, value[1]);
+      }
     }, 0);
   }
 }

@@ -31,7 +31,7 @@ window['Silica'] = {
   _queue                :  [],
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.33.5",
+  version               :  "0.33.6",
 
   // Set the root context
   setContext(contextName)
@@ -1026,6 +1026,10 @@ window['Silica'] = {
             Silica._watch[k] = (list != null ? list.filter(function(obj) {
               return obj[0] !== ctrl;
             }) : []);
+            if (Silica._watch[k].length === 0)
+            {
+              delete Silica._watch[k];
+            }
           }
         }
       }

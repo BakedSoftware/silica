@@ -12,7 +12,7 @@ function clearContent(element)
 {
   while(element.hasChildNodes())
   {
-    element.removeChild(element.lastChild);
+    Silica.removeFromDOM(element.lastChild);
   }
 }
 

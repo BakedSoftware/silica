@@ -7,10 +7,14 @@ function Src() {
   for (let i = nodes.length - 1; i >= 0; --i)
   {
     node = nodes[i];
-    let rect = node.getBoundingClientRect();
-    if (rect.width > 0 && rect.height > 0 && rect.top <= bounds.h && rect.left < bounds.w)
+    let target = Silica.getValue(node, node.dataset['src']) || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+    if (node.src !== target)
     {
-      node.src = Silica.getValue(node, node.dataset['src']) || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+      let rect = node.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0 && rect.top <= bounds.h && rect.left < bounds.w)
+      {
+        node.src = target;
+      }
     }
   }
 }

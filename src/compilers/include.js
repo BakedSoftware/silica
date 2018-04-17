@@ -29,7 +29,7 @@ function processInclude(element, html)
   Silica.compile(element);
   Silica.apply(function(){
     loadCallback(element);
-  });
+  }, Silica.getContext(element).el);
 }
 //loadPartial asynchronously retreives content and replaces the elements
 //content with the loaded content.

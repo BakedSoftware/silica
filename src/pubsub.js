@@ -8,7 +8,7 @@ function next_subscription_id() {
   return (subscription_id++);
 }
 
-function sub(channel, handler, context) {
+function sub(channel, handler, context = document) {
   let subs = subscriptions.get(channel);
   if (!subs)
   {

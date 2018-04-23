@@ -1,10 +1,10 @@
 ## Installation
-Install cli via Yarn
+Install Silica cli via Yarn
 ```
 yarn global add silica
 ```
 
-Install silica js library & save to packae.json via yarn add
+Install Silica js library & save to package.json
 ```
 yarn add silica
 ```

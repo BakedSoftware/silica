@@ -92,7 +92,7 @@ function Repeat() {
     while (count_diff < 0)
     {
       context = {};
-      context[model] = newList[0 - count_diff - 1];
+      context[model] = newList[newList.length + count_diff];
       context.$ctrl = ctx;
       child = template.cloneNode(true);
       child._rt_ctx = context;

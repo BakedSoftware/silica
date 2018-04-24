@@ -922,42 +922,9 @@ function module$exports$compilers$scroll() {
     };
   }
 }
-;var module$exports$compilers = {};
-module$exports$compilers.Directive = module$exports$compilers$directives;
-module$exports$compilers._if = module$exports$compilers$if;
-module$exports$compilers.Show = module$exports$compilers$show;
-module$exports$compilers.Class = module$exports$compilers$class;
-module$exports$compilers.Disabled = module$exports$compilers$disabled;
-module$exports$compilers.Href = module$exports$compilers$href;
-module$exports$compilers.Style = module$exports$compilers$style;
-module$exports$compilers.Include = module$exports$compilers$include;
-module$exports$compilers.Controller = module$exports$compilers$controller;
-module$exports$compilers.Click = module$exports$compilers$click;
-module$exports$compilers.ClickOutside = module$exports$compilers$clickoutside;
-module$exports$compilers.DoubleClick = module$exports$compilers$double_click;
-module$exports$compilers.Blur = module$exports$compilers$blur;
-module$exports$compilers.Focus = module$exports$compilers$focus;
-module$exports$compilers.Model = module$exports$compilers$model;
-module$exports$compilers.Submit = module$exports$compilers$submit;
-module$exports$compilers.Src = module$exports$compilers$src;
-module$exports$compilers.Scroll = module$exports$compilers$scroll;
-module$exports$compilers.ScrollFinished = module$exports$compilers$scroll_finished;
-module$exports$compilers.Value = module$exports$compilers$value;
-module$exports$compilers.Generic = module$exports$compilers$generic;
-module$exports$compilers.MouseDown = module$exports$compilers$mousedown;
-module$exports$compilers.MouseUp = module$exports$compilers$mouseup;
-module$exports$compilers.MouseOut = module$exports$compilers$mouseout;
-module$exports$compilers.MouseMove = module$exports$compilers$mousemove;
-module$exports$compilers.MouseWheel = module$exports$compilers$mousewheel;
-module$exports$compilers.MouseLeave = module$exports$compilers$mouseleave;
-module$exports$compilers.MouseEnter = module$exports$compilers$mouseenter;
-module$exports$compilers.MouseOver = module$exports$compilers$mouseover;
-module$exports$compilers.KeyDown = module$exports$compilers$keydown;
-module$exports$compilers.KeyUp = module$exports$compilers$keyup;
-module$exports$compilers.TouchStart = module$exports$compilers$touch$start;
-module$exports$compilers.TouchCancel = module$exports$compilers$touch$cancel;
-module$exports$compilers.TouchEnd = module$exports$compilers$touch$end;
-module$exports$compilers.TouchMove = module$exports$compilers$touch$move;
+;var module$exports$compilers = {"1_Directive":module$exports$compilers$directives, _if:module$exports$compilers$if, "2_Value":module$exports$compilers$value, Show:module$exports$compilers$show, Class:module$exports$compilers$class, Disabled:module$exports$compilers$disabled, Href:module$exports$compilers$href, Style:module$exports$compilers$style, Include:module$exports$compilers$include, Controller:module$exports$compilers$controller, Click:module$exports$compilers$click, ClickOutside:module$exports$compilers$clickoutside, 
+DoubleClick:module$exports$compilers$double_click, Blur:module$exports$compilers$blur, Focus:module$exports$compilers$focus, Submit:module$exports$compilers$submit, Src:module$exports$compilers$src, Scroll:module$exports$compilers$scroll, ScrollFinished:module$exports$compilers$scroll_finished, Generic:module$exports$compilers$generic, Model:module$exports$compilers$model, MouseDown:module$exports$compilers$mousedown, MouseUp:module$exports$compilers$mouseup, MouseOut:module$exports$compilers$mouseout, 
+MouseMove:module$exports$compilers$mousemove, MouseWheel:module$exports$compilers$mousewheel, MouseLeave:module$exports$compilers$mouseleave, MouseEnter:module$exports$compilers$mouseenter, MouseOver:module$exports$compilers$mouseover, KeyDown:module$exports$compilers$keydown, KeyUp:module$exports$compilers$keyup, TouchStart:module$exports$compilers$touch$start, TouchCancel:module$exports$compilers$touch$cancel, TouchEnd:module$exports$compilers$touch$end, TouchMove:module$exports$compilers$touch$move};
 var module$exports$controllers$Base = function $module$exports$controllers$Base$($el$$) {
   this.el = $el$$;
   $el$$.parentElement && (this.$ctrl = Silica.getContext($el$$.parentElement));
@@ -1163,7 +1130,7 @@ function module$exports$watchers$if() {
         }
         for ($_len$jscomp$1_fragment$jscomp$1_j$$ = document.createDocumentFragment(); 0 > $_i_count_diff_key$$;) {
           $changed_context$$ = {};
-          $changed_context$$[$model$$] = $list$jscomp$4_newList_param$$[0 - $_i_count_diff_key$$ - 1];
+          $changed_context$$[$model$$] = $list$jscomp$4_newList_param$$[$list$jscomp$4_newList_param$$.length + $_i_count_diff_key$$];
           $changed_context$$.$ctrl = $ctx$$;
           $child_node$$ = $newListHash_obj$jscomp$38_template$$.cloneNode(!0);
           $child_node$$._rt_ctx = $changed_context$$;
@@ -1249,7 +1216,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.34.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.34.1", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

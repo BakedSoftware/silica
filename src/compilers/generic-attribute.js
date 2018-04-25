@@ -1,18 +1,31 @@
 goog.module('compilers.generic');
 
 function Generic() {
-  var nodes = Silica.query(this, '[data-silica]');
+  var nodeList = Silica.query(this, '[data-silica]');
   var node;
   var entries;
   var comps, attribute, valueKey;
   var params, paramsKeys;
-  for (let i = nodes.length - 1; i >= 0; --i)
+  for (let i = nodeList.length - 1; i >= 0; --i)
   {
-    node     =  nodes[i];
-    entries  =  node.dataset['silica'];
+    node = nodeList[i];
 
-    if (typeof entries === 'string') {
-      entries = [entries];
+    if (node._silica_generic)
+    {
+      entries = node._silica_generic
+    }
+    else
+    {
+      entries = node.dataset['silica'];
+      if (entries.charAt(0) === '[')
+      {
+        entries = JSON.parse(entries);
+      }
+      else
+      {
+        entries = [entries];
+      }
+      node._silica_generic = entries;
     }
 
     for (let j = entries.length - 1; j >= 0; --j)

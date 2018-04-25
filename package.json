@@ -1,6 +1,6 @@
 {
   "name": "silica",
-  "version": "0.34.1",
+  "version": "0.34.2",
   "description": "Silica is a fast lightweight javascript framework for building applications. Silica's usage is designed to be as transparent as possible",
   "bin": {
     "silica": "src/cli/silica-cli.js"
@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jdejesus007/silica.git"
+    "url": "git+https://github.com/BakedSoftware/silica.git"
   },
   "author": "Kayle Gishen",
   "license": "GPL-3.0",

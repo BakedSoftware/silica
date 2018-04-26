@@ -36,10 +36,10 @@ function debounce(func, wait, immediate) {
 
 window.addEventListener("scroll", debounce(function DataSrcCheck() {
   Src.call(document.body);
-}, 16, false));
+}, 16, false), {passive: true});
 
 window.addEventListener("resize", debounce(function DataSrcCheck() {
   Src.call(document.body);
-}, 16, false));
+}, 16, false), {passive: true});
 
 exports = Src;

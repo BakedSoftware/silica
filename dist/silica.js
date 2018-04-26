@@ -796,8 +796,8 @@ function module$exports$compilers$scroll() {
   }
 }
 ;function module$exports$compilers$generic() {
-  for (var $nodes$$ = Silica.query(this, "[data-silica]"), $node$$, $entries$$, $comps_valueKey$$, $attribute$$, $params$$, $paramsKeys$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $nodes$$[$i$$];
+  for (var $nodeList$$ = Silica.query(this, "[data-silica]"), $node$$, $entries$$, $comps_valueKey$$, $attribute$$, $params$$, $paramsKeys$$, $i$$ = $nodeList$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $nodeList$$[$i$$];
     $node$$._silica_generic ? $entries$$ = $node$$._silica_generic : ($entries$$ = $node$$.dataset.silica, $entries$$ = "[" === $entries$$.charAt(0) ? JSON.parse($entries$$) : [$entries$$], $node$$._silica_generic = $entries$$);
     for (var $j$$ = $entries$$.length - 1; 0 <= $j$$; --$j$$) {
       $comps_valueKey$$ = $entries$$[$j$$].split("=");
@@ -952,6 +952,7 @@ var module$contents$controllers$FSM_Controller = function $module$contents$contr
   this.handle = this.handle;
   this.transition = this.transition;
   this._currentState = new module$contents$controllers$FSM_State;
+  this._previousStateName = "";
   this.initialState && (this._currentStateName = this.initialState(), this._currentState = this._getStateWithName(this._currentStateName), Silica.defer(function() {
     $$jscomp$this$$._currentState.onEnter($$jscomp$this$$);
   }));
@@ -970,6 +971,7 @@ module$contents$controllers$FSM_Controller.prototype.transition = function $modu
   }
   var $$jscomp$this$$ = this, $target$$ = this._getStateWithName($stateName$$);
   $target$$ != this._currentState && Silica.defer(function() {
+    $$jscomp$this$$._previousStateName = $$jscomp$this$$._currentStateName;
     $$jscomp$this$$._currentState.onExit($$jscomp$this$$);
     $$jscomp$this$$._currentState = $target$$;
     $$jscomp$this$$._currentStateName = $stateName$$;
@@ -991,6 +993,8 @@ $jscomp.global.Object.defineProperties(module$contents$controllers$FSM_Controlle
 }}});
 Object.defineProperties(module$contents$controllers$FSM_Controller.prototype, {currentState:{configurable:0, enumerable:0, get:function() {
   return this._currentStateName;
+}}, previousState:{configurable:0, enumerable:0, get:function() {
+  return this._previousStateName;
 }}});
 module$exports$controllers$FSM.Controller = module$contents$controllers$FSM_Controller;
 module$exports$controllers$FSM.State = module$contents$controllers$FSM_State;
@@ -1215,7 +1219,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.34.2", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.35.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

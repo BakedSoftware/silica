@@ -40,6 +40,7 @@ class Controller extends Base
      * @private {State}
      */
     this._currentState = new State();
+    this._previousStateName = "";
 
     if (this["initialState"]) {
       this._currentStateName = this["initialState"]();
@@ -77,6 +78,7 @@ class Controller extends Base
     }
 
     Silica.defer(() => {
+      this._previousStateName = this._currentStateName;
       this._currentState['onExit'](this);
       this._currentState = target;
       this._currentStateName = stateName;
@@ -117,6 +119,15 @@ Object.defineProperties(Controller.prototype, {
     /** @suppress {globalThis} */
     get: function() {
       return this._currentStateName;
+    }
+  },
+
+  'previousState': {
+    configurable: 0,
+    enumerable: 0,
+    /** @suppress {globalThis} */
+    get: function() {
+      return this._previousStateName;
     }
   }
 });

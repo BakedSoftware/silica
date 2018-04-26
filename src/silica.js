@@ -31,7 +31,7 @@ window['Silica'] = {
   _queue                :  [],
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.34.2",
+  version               :  "0.35.0",
 
   // Set the root context
   setContext(contextName)

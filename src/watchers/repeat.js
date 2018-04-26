@@ -29,7 +29,7 @@ function Repeat() {
       newList = Silica.getValue(raw, list);
     }
 
-    newListHash = md5(JSON.stringify(newList, function(key, value){
+    newListHash = Silica.hasher(JSON.stringify(newList, function(key, value){
       //Keys starting with an underscore (char code 95) will be ignored
       if (key.constructor == String && (key == '__elm' || key == '$ctrl' || key.charCodeAt(0) === 95))
       {
@@ -92,7 +92,7 @@ function Repeat() {
     while (count_diff < 0)
     {
       context = {};
-      context[model] = newList[0 - count_diff - 1];
+      context[model] = newList[newList.length + count_diff];
       context.$ctrl = ctx;
       child = template.cloneNode(true);
       child._rt_ctx = context;

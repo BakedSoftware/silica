@@ -42,8 +42,9 @@ const  TouchEnd     =  goog.require('compilers.touch.end');
 const  TouchMove    =  goog.require('compilers.touch.move');
 
 exports = {
-  Directive       :  Directives,
+  '1_Directive'   :  Directives,
   _if             :  If,
+  '2_Value'       :  Value,
   Show            :  Show,
   Class           :  Class,
   Disabled        :  Disabled,
@@ -56,13 +57,12 @@ exports = {
   DoubleClick     :  DoubleClick,
   Blur            :  Blur,
   Focus           :  Focus,
-  Model           :  Model,
   Submit          :  Submit,
   Src             :  Src,
   Scroll          :  Scroll,
   ScrollFinished  :  ScrollFinished,
-  Value           :  Value,
   Generic         :  Generic,
+  Model           :  Model,
   // Mouse Events
   MouseDown   :  MouseDown,
   MouseUp     :  MouseUp,

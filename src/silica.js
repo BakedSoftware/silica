@@ -16,6 +16,7 @@ window['Silica'] = {
   directives            :  {},
   components            :  {},
   filters               :  {},
+  hasher                :  md5,
   'router'              :  null,
   _ifs                  :  {}, // Stores the registered ifs
   _shws                 :  {}, // Stores the registered shows
@@ -30,8 +31,7 @@ window['Silica'] = {
   _queue                :  [],
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.33.0",
-
+  version               :  "0.34.2",
 
   // Set the root context
   setContext(contextName)
@@ -126,7 +126,7 @@ window['Silica'] = {
       node = nodes[i];
       if (!Hax.hasDatasetProperty(node, '_rt_repeat_template'))
       {
-        hash                              =  md5(node.innerHTML);
+        hash                              =  Silica.hasher(node.innerHTML);
         if (node.children.length === 1) {
           Silica._repeat_templates[hash]   =  node.removeChild(node.firstElementChild);
         } else {
@@ -1026,6 +1026,10 @@ window['Silica'] = {
             Silica._watch[k] = (list != null ? list.filter(function(obj) {
               return obj[0] !== ctrl;
             }) : []);
+            if (Silica._watch[k].length === 0)
+            {
+              delete Silica._watch[k];
+            }
           }
         }
       }
@@ -1080,3 +1084,4 @@ window['Silica']['pub']                 =  PubSub.Pub;
 window['Silica']['sub']                 =  PubSub.Sub;
 window['Silica']['unsub']               =  PubSub.Unsub;
 window['Silica']['isInDOM']             =  Silica.isInDOM;
+window['Silica']['hasher']              =  Silica.hasher;

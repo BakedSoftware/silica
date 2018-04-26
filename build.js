@@ -10,8 +10,11 @@ childProcess.execSync("mkdir ./build_cache");
 childProcess.execSync("cp -r src build_cache/");
 childProcess.execSync("rm -rf build_cache/src/cli");
 childProcess.execSync("rm -rf build_cache/src/externs.js");
-childProcess.execSync("cp libs/md5.min.js dist/silica.js");
-childProcess.execSync("cp libs/md5.min.js dist/silica.min.js");
+
+//childProcess.execSync("cp ./node_modules/xxhashjs/build/xxhash.min.js dist/silica.js");
+//childProcess.execSync("cp ./node_modules/xxhashjs/build/xxhash.min.js dist/silica.min.js");
+childProcess.execSync("cat libs/md5.min.js >> dist/silica.js");
+childProcess.execSync("cat libs/md5.min.js >> dist/silica.min.js");
 
 var flags = {
   js: 'build_cache/**/*.js',

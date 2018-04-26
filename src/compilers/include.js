@@ -12,7 +12,7 @@ function clearContent(element)
 {
   while(element.hasChildNodes())
   {
-    element.removeChild(element.lastChild);
+    Silica.removeFromDOM(element.lastChild);
   }
 }
 
@@ -29,7 +29,7 @@ function processInclude(element, html)
   Silica.compile(element);
   Silica.apply(function(){
     loadCallback(element);
-  });
+  }, Silica.getContext(element).el);
 }
 //loadPartial asynchronously retreives content and replaces the elements
 //content with the loaded content.

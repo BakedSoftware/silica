@@ -31,7 +31,7 @@ window['Silica'] = {
   _queue                :  [],
   interpolationPattern  :  /\{\{(.*?)\}\}/,
   usePushState          :  true,
-  version               :  "0.35.0",
+  version               :  "0.36.0",
 
   // Set the root context
   setContext(contextName)
@@ -732,6 +732,7 @@ window['Silica'] = {
     }
     evt.preventDefault();
     evt.stopPropagation();
+    Silica.pub("SiO2-HREF", evt);
     Silica.goTo(path);
     return false;
   },

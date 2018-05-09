@@ -353,18 +353,18 @@ $jscomp.polyfill("Map", function($NativeMap$$) {
   };
   $PolyfillMap$$.prototype[Symbol.iterator] = $PolyfillMap$$.prototype.entries;
   var $maybeGetEntry$$ = function $$maybeGetEntry$$$($index$jscomp$57_map$$, $key$$) {
-    var $id$jscomp$5_id$jscomp$inline_38_type$$ = $key$$ && typeof $key$$;
-    "object" == $id$jscomp$5_id$jscomp$inline_38_type$$ || "function" == $id$jscomp$5_id$jscomp$inline_38_type$$ ? $idMap$$.has($key$$) ? $id$jscomp$5_id$jscomp$inline_38_type$$ = $idMap$$.get($key$$) : ($id$jscomp$5_id$jscomp$inline_38_type$$ = "" + ++$mapIndex$$, $idMap$$.set($key$$, $id$jscomp$5_id$jscomp$inline_38_type$$)) : $id$jscomp$5_id$jscomp$inline_38_type$$ = "p_" + $key$$;
-    var $list$$ = $index$jscomp$57_map$$.data_[$id$jscomp$5_id$jscomp$inline_38_type$$];
-    if ($list$$ && $jscomp.owns($index$jscomp$57_map$$.data_, $id$jscomp$5_id$jscomp$inline_38_type$$)) {
+    var $id$jscomp$5_id$jscomp$inline_36_type$$ = $key$$ && typeof $key$$;
+    "object" == $id$jscomp$5_id$jscomp$inline_36_type$$ || "function" == $id$jscomp$5_id$jscomp$inline_36_type$$ ? $idMap$$.has($key$$) ? $id$jscomp$5_id$jscomp$inline_36_type$$ = $idMap$$.get($key$$) : ($id$jscomp$5_id$jscomp$inline_36_type$$ = "" + ++$mapIndex$$, $idMap$$.set($key$$, $id$jscomp$5_id$jscomp$inline_36_type$$)) : $id$jscomp$5_id$jscomp$inline_36_type$$ = "p_" + $key$$;
+    var $list$$ = $index$jscomp$57_map$$.data_[$id$jscomp$5_id$jscomp$inline_36_type$$];
+    if ($list$$ && $jscomp.owns($index$jscomp$57_map$$.data_, $id$jscomp$5_id$jscomp$inline_36_type$$)) {
       for ($index$jscomp$57_map$$ = 0; $index$jscomp$57_map$$ < $list$$.length; $index$jscomp$57_map$$++) {
         var $entry$$ = $list$$[$index$jscomp$57_map$$];
         if ($key$$ !== $key$$ && $entry$$.key !== $entry$$.key || $key$$ === $entry$$.key) {
-          return {id:$id$jscomp$5_id$jscomp$inline_38_type$$, list:$list$$, index:$index$jscomp$57_map$$, entry:$entry$$};
+          return {id:$id$jscomp$5_id$jscomp$inline_36_type$$, list:$list$$, index:$index$jscomp$57_map$$, entry:$entry$$};
         }
       }
     }
-    return {id:$id$jscomp$5_id$jscomp$inline_38_type$$, list:$list$$, index:-1, entry:void 0};
+    return {id:$id$jscomp$5_id$jscomp$inline_36_type$$, list:$list$$, index:-1, entry:void 0};
   }, $makeIterator$$ = function $$makeIterator$$$($map$$, $func$$) {
     var $entry$$ = $map$$.head_;
     return $jscomp.iteratorPrototype(function() {
@@ -740,13 +740,10 @@ function module$exports$compilers$model($context_elm$$) {
   }
 }
 ;function module$exports$compilers$src() {
-  for (var $nodes$$ = Silica.queryOfType(this, "img", "[data-src]"), $node$$, $JSCompiler_object_inline_w_34$$ = window.innerWidth, $JSCompiler_object_inline_h_35$$ = window.innerHeight, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+  for (var $nodes$$ = Silica.queryOfType(this, "img", "[data-src]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$];
     var $target$$ = Silica.getValue($node$$, $node$$.dataset.src) || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
-    if ($node$$.src !== $target$$) {
-      var $rect$$ = $node$$.getBoundingClientRect();
-      0 < $rect$$.width && 0 < $rect$$.height && $rect$$.top <= $JSCompiler_object_inline_h_35$$ && $rect$$.left < $JSCompiler_object_inline_w_34$$ && ($node$$.src = $target$$);
-    }
+    $node$$.src = $target$$;
   }
 }
 function module$contents$compilers$src_debounce($func$$, $wait$$, $immediate$$) {
@@ -1219,7 +1216,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.36.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.37.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

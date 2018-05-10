@@ -37,7 +37,7 @@ function debounce(func, wait, immediate) {
     if (callNow) func.apply(context, args);
   };
 }
-
+/*
 window.addEventListener("scroll", debounce(function DataSrcCheck() {
   Src.call(document.body);
 }, 16, false));
@@ -45,5 +45,6 @@ window.addEventListener("scroll", debounce(function DataSrcCheck() {
 window.addEventListener("resize", debounce(function DataSrcCheck() {
   Src.call(document.body);
 }, 16, false));
+*/
 
 exports = Src;

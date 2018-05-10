@@ -758,13 +758,7 @@ function module$contents$compilers$src_debounce($func$$, $wait$$, $immediate$$) 
     $callNow$$ && $func$$.apply($context$$, $args$$);
   };
 }
-window.addEventListener("scroll", module$contents$compilers$src_debounce(function DataSrcCheck() {
-  module$exports$compilers$src.call(document.body);
-}, 16, !1));
-window.addEventListener("resize", module$contents$compilers$src_debounce(function DataSrcCheck() {
-  module$exports$compilers$src.call(document.body);
-}, 16, !1));
-function module$exports$compilers$scroll() {
+;function module$exports$compilers$scroll() {
   for (var $nodes$$ = Silica.query(this, "[data-scroll]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$], $node$$._rt_live = !0, $node$$.onscroll = function $$node$$$onscroll$($evt$$) {
       Silica._call(this, $evt$$, "scroll");
@@ -1216,7 +1210,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.37.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.37.1", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

@@ -21,6 +21,7 @@ const  Scroll          =  goog.require('compilers.scroll');
 const  ScrollFinished  =  goog.require('compilers.scroll_finished');
 const  Value           =  goog.require('compilers.value');
 const  Generic         =  goog.require('compilers.generic');
+const  Load            =  goog.require('compilers.load');
 
 // Mouse Events
 const  MouseDown   =  goog.require('compilers.mousedown');

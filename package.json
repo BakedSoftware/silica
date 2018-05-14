@@ -36,7 +36,8 @@
     "globals":
     [
       "Silica",
-      "goog"
+      "goog",
+      "XMLHttpRequest"
     ]
   }
 }

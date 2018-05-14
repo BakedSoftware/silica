@@ -1,4 +1,4 @@
-goog.module('controllers.Base');
+goog.module('controllers.Base')
 /*
 
 Controller
@@ -25,26 +25,22 @@ The value of `data-controller` must be accessible from the window scope
 
 */
 
-
 // ##Silica.Controllers.Base
 // This is a basic controller that all controllers must subclass from
 /** @unrestricted */
-class Base
-{
+class Base {
   // The constructor binds the element to the controller and sets its scope
   // When subclassing remember to **call super**
-  constructor(el)
-  {
-    this['el'] = el;
+  constructor (el) {
+    this['el'] = el
     if (el.parentElement) {
-      this.$ctrl = Silica.getContext(el.parentElement);
+      this.$ctrl = Silica.getContext(el.parentElement)
     }
   }
 
   // A convenience proxy to querySelectorAll with the instance's element as the scope
-  $(selector)
-  {
-    return this['el'].querySelectorAll(selector);
+  $ (selector) {
+    return this['el'].querySelectorAll(selector)
   }
 
   /*
@@ -61,8 +57,8 @@ class Base
   */
 };
 
-Base['watchers'] = {};
+Base['watchers'] = {}
 
-Base.prototype['$'] = Base.prototype.$;
+Base.prototype['$'] = Base.prototype.$
 
-exports = Base;
+exports = Base

@@ -1,115 +1,101 @@
-goog.module('controllers.FSM');
+goog.module('controllers.FSM')
 
-const Base  = goog.require('controllers.Base');
+const Base = goog.require('controllers.Base')
 
 /**
  * @dict
  */
 class State {
-  onEnter(ctrl)
-  {
+  onEnter (ctrl) {
   }
 
-  onExit(ctrl)
-  {
+  onExit (ctrl) {
   }
 }
 
-State.prototype['onEnter'] = State.prototype.onEnter;
-State.prototype['onExit'] = State.prototype.onExit;
+State.prototype['onEnter'] = State.prototype.onEnter
+State.prototype['onExit'] = State.prototype.onExit
 
 // ##Silica.Controllers.FSM
 // This is a Finite state machine based controller
 /** @unrestricted */
-class Controller extends Base
-{
+class Controller extends Base {
   // The constructor binds the element to the controller and sets its scope
   // When subclassing remember to **call super**
-  constructor(el)
-  {
+  constructor (el) {
     super(el)
-    let stateDefinitions = this.constructor['states'];
-    this._states = {};
+    let stateDefinitions = this.constructor['states']
+    this._states = {}
     for (const stateName in stateDefinitions) {
-      this._states[stateName] = new stateDefinitions[stateName];
+      this._states[stateName] = new stateDefinitions[stateName]()
     }
-    this['handle'] = this.handle;
-    this['transition'] = this.transition;
+    this['handle'] = this.handle
+    this['transition'] = this.transition
 
     /**
      * @private {State}
      */
-    this._currentState = new State();
-    this._previousStateName = "";
+    this._currentState = new State()
+    this._previousStateName = ''
 
-    if (this["initialState"]) {
-      this._currentStateName = this["initialState"]();
-      this._currentState = this._getStateWithName(this._currentStateName);
+    if (this['initialState']) {
+      this._currentStateName = this['initialState']()
+      this._currentState = this._getStateWithName(this._currentStateName)
       Silica.defer(() => {
-        this._currentState['onEnter'](this);
-      });
+        this._currentState['onEnter'](this)
+      })
     }
   }
 
-  static get states()
-  {
+  static get states () {
     return {
-      "base": State
+      'base': State
     }
   }
 
-  _getStateWithName(stateName) {
-    let target = this._states[stateName];
-    if (!target)
-    {
-      throw "Unknown state " + stateName +" in " + this.constructor.name;
+  _getStateWithName (stateName) {
+    let target = this._states[stateName]
+    if (!target) {
+      throw new Error(`Unknown state ${stateName} in ${this.constructor.name}`)
     }
-    return target;
+    return target
   }
 
+  transition (stateName, ...args) {
+    let target = this._getStateWithName(stateName)
 
-  transition(stateName, ...args)
-  {
-    let target = this._getStateWithName(stateName);
-
-    if (target == this._currentState)
-    {
-      return;
+    if (target === this._currentState) {
+      return
     }
 
     Silica.defer(() => {
-      this._previousStateName = this._currentStateName;
-      this._currentState['onExit'](this);
-      this._currentState = target;
-      this._currentStateName = stateName;
+      this._previousStateName = this._currentStateName
+      this._currentState['onExit'](this)
+      this._currentState = target
+      this._currentStateName = stateName
       Silica.defer(() => {
-        this._currentState['onEnter'].apply(this._currentState, [this, ...args]);
-      });
-    });
+        this._currentState['onEnter'](this, ...args)
+      })
+    })
   }
 
   /**
    * handle will ask the current state to execute a function if it exists
    * @param {string} functionName - The name of the function to execute
    */
-  handle(functionName, ...args)
-  {
-    if (!this._currentState)
-    {
-      return;
+  handle (functionName, ...args) {
+    if (!this._currentState) {
+      return
     }
 
     let func = this._currentState[functionName]
-    if (func)
-    {
-      if (typeof func === "function")
-      {
-        return func.apply(this._currentState, [this, ...args]);
+    if (func) {
+      if (typeof func === 'function') {
+        return func.apply(this._currentState, [this, ...args])
       }
-      return func;
+      return func
     }
   }
-
 }
 
 Object.defineProperties(Controller.prototype, {
@@ -117,8 +103,8 @@ Object.defineProperties(Controller.prototype, {
     configurable: 0,
     enumerable: 0,
     /** @suppress {globalThis} */
-    get: function() {
-      return this._currentStateName;
+    get: function () {
+      return this._currentStateName
     }
   },
 
@@ -126,11 +112,11 @@ Object.defineProperties(Controller.prototype, {
     configurable: 0,
     enumerable: 0,
     /** @suppress {globalThis} */
-    get: function() {
-      return this._previousStateName;
+    get: function () {
+      return this._previousStateName
     }
   }
-});
+})
 
-exports['Controller']  =  Controller;
-exports['State']       =  State;
+exports['Controller'] = Controller
+exports['State'] = State

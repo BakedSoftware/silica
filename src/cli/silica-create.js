@@ -1,26 +1,24 @@
 #!/usr/bin/env node
 
 // Node provided modules
-const  fs         =  require('fs');
-const  path       =  require('path');
-const  spawn      =  require('child_process').spawn;
-const  spawnSync  =  require('child_process').spawnSync;
+const fs = require('fs')
+const path = require('path')
+const spawnSync = require('child_process').spawnSync
 
 // Third party dependencies
-const program = require('commander');
+const program = require('commander')
 
 program
-  .option('-s --short [name]', "A custom top level global name")
-  .parse(process.argv);
+  .option('-s --short [name]', 'A custom top level global name')
+  .parse(process.argv)
 
-if (program.args.length !== 1)
-{
-  console.error("A single project name is required");
-  process.exit(1);
+if (program.args.length !== 1) {
+  console.error('A single project name is required')
+  process.exit(1)
 }
 
-var projectName = program.args[0];
-var projectAbbreviation = program.shortName || (projectName.charAt(0).toUpperCase() + projectName.slice(1));
+var projectName = program.args[0]
+var projectAbbreviation = program.shortName || (projectName.charAt(0).toUpperCase() + projectName.slice(1))
 
 const structure = [
   ['src'],
@@ -31,7 +29,7 @@ const structure = [
   ['src', 'models'],
   ['src', 'styles'],
   ['src', 'views']
-];
+]
 
 const indexTemplate = `
 <!DOCTYPE html>
@@ -89,31 +87,30 @@ const styleTemplate = `
 `
 
 // Create the directory structure
-fs.mkdirSync(projectName);
+fs.mkdirSync(projectName)
 
-for (var tree of structure)
-{
-  fs.mkdirSync(path.join(projectName, ...tree));
+for (var tree of structure) {
+  fs.mkdirSync(path.join(projectName, ...tree))
 }
 
 // Create the template files
-fs.writeFileSync(path.join(projectName, 'src', 'index.html'), indexTemplate);
-fs.writeFileSync(path.join(projectName, 'src', 'controllers', 'app_cntrl.js'), appCntrlTemplate);
-fs.writeFileSync(path.join(projectName, 'src', 'app.js'), appTemplate);
-fs.writeFileSync(path.join(projectName, 'src', 'styles', 'app.styl'), styleTemplate);
-fs.writeFileSync(path.join(projectName, 'src', 'externs.js'), "//See closure compiler docs for usage of this file");
+fs.writeFileSync(path.join(projectName, 'src', 'index.html'), indexTemplate)
+fs.writeFileSync(path.join(projectName, 'src', 'controllers', 'app_cntrl.js'), appCntrlTemplate)
+fs.writeFileSync(path.join(projectName, 'src', 'app.js'), appTemplate)
+fs.writeFileSync(path.join(projectName, 'src', 'styles', 'app.styl'), styleTemplate)
+fs.writeFileSync(path.join(projectName, 'src', 'externs.js'), '//See closure compiler docs for usage of this file')
 
 // Setup yarn
 
-console.log("Set up yarn (Choose any values)");
+console.log('Set up yarn (Choose any values)')
 
 var yarn = spawnSync('yarn',
-                  ['init'],
-                  {
-                    stdio: [0, 1, 2],
-                    cwd: projectName
-                  });
+  ['init'],
+  {
+    stdio: [0, 1, 2],
+    cwd: projectName
+  })
 
-var yarn_add = spawnSync('yarn',
-                              ['add', 'silica'],
-                              { 'cwd': projectName });
+var yarnAdd = spawnSync('yarn',
+  ['add', 'silica'],
+  { 'cwd': projectName })

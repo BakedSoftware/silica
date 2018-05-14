@@ -44,6 +44,23 @@ function walk (dir) {
   return results
 }
 
+function removeTestDirs (dir) {
+  var list = fs.readdirSync(dir)
+  list.forEach(function (file) {
+    if (file[0] !== '.') {
+      file = path.join(dir, file)
+      var stat = fs.statSync(file)
+      if (stat && stat.isDirectory()) {
+        if (file.indexOf('test') !== -1) {
+          fs.removeSync(path.join(dir, file))
+        }
+      }
+    }
+  })
+}
+
+removeTestDirs(cachePath)
+
 function preprocessView (readPath, writePath) {
   var content = fs.readFileSync(readPath, 'utf8')
   var includeRegExp = /<(\w+\b(?:.|\n)+?)data-include="'(.+?)'"(.*?)>/

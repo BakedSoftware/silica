@@ -7,7 +7,9 @@ function Src () {
   for (let i = nodes.length - 1; i >= 0; --i) {
     node = nodes[i]
     let target = Silica.getValue(node, node.dataset['src']) || 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
-    node.src = target
+    if (node.src !== target) {
+      node.src = target
+    }
     /*
     if (node.src !== target)
     {

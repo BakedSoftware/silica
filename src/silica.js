@@ -31,7 +31,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.38.0',
+  version: '0.39.0',
 
   // Set the root context
   setContext (contextName) {
@@ -523,14 +523,14 @@ window['Silica'] = {
     var text, match, expr, comps, property, fmt, filter, evald
 
     /** @type {NodeFilter} */
-    var nodeFilter = /** @type {NodeFilter} */ function (node) {
+    var nodeFilter = /** @type {NodeFilter} */ (function (node) {
       // Logic to determine whether to accept, reject or skip node
       // In this case, only accept nodes that have content
       // matching the interpolation pattern
       if (Silica.interpolationPattern.test(node.data)) {
         return NodeFilter.FILTER_ACCEPT
       }
-    }
+    })
     var nodeIterator = document.createNodeIterator(
       // Node to use as root
       element,

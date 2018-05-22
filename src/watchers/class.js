@@ -1,24 +1,25 @@
 goog.module('watchers.class')
 
 function updater (element) {
-  var hardClass = element.dataset._rt_hard_klass
-  if (hardClass && hardClass.length > 0) {
-    element.className = hardClass
-  } else {
-    if (hardClass === '') {
-      element.className = ''
-    } else {
-      element.dataset._rt_hard_klass = element.className
-    }
-  }
+  var hardClass = element.dataset._rt_hard_klass || ''
   var klass = Silica.getValue(element, element.dataset['class'], null, [element, element.dataset['parameter']])
   if (klass) {
     if (klass instanceof Array) {
-      element.classList.add.apply(element.classList, klass)
+      for (let k of klass) {
+        if (!element.classList.contains(k)) {
+          element.className = hardClass
+          element.classList.add.apply(element.classList, klass)
+          break
+        }
+      }
     } else {
-      element.classList.add(klass)
+      if (!element.classList.contains(klass)) {
+        element.className = hardClass
+        element.classList.add(klass)
+      }
     }
   }
+
   if (element.dataset['show'] != null) {
     var key = element.dataset['show']
     var negate = key[0] === '!'

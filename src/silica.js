@@ -31,7 +31,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.39.4',
+  version: '0.39.5',
 
   // Set the root context
   setContext (contextName) {
@@ -943,9 +943,8 @@ window['Silica'] = {
     }
 
     if (e.nodeType !== 3 && e.nodeType !== 8) {
-      var nodesWithControllers = e.querySelectorAll('[data-controller]')
-        .concat(e.querySelectorAll['[sio2-directive]'])
-      removeWatchers(nodesWithControllers)
+      removeWatchers(e.querySelectorAll('[data-controller]'))
+      removeWatchers(e.querySelectorAll['[sio2-directive]'])
       removeWatchers([e])
     }
 

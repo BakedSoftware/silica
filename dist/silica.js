@@ -1222,7 +1222,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.39.4", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.39.5", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1750,7 +1750,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
       $child$$.onremove();
     }
   }
-  3 !== $e$$.nodeType && 8 !== $e$$.nodeType && ($i$$ = $e$$.querySelectorAll("[data-controller]").concat($e$$.querySelectorAll["[sio2-directive]"]), $removeWatchers$$($i$$), $removeWatchers$$([$e$$]));
+  3 !== $e$$.nodeType && 8 !== $e$$.nodeType && ($removeWatchers$$($e$$.querySelectorAll("[data-controller]")), $removeWatchers$$($e$$.querySelectorAll["[sio2-directive]"]), $removeWatchers$$([$e$$]));
   $e$$._deleted = !0;
   $e$$.remove();
 }, compilers:module$exports$compilers, watchers:module$exports$watchers};

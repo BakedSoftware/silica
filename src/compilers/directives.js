@@ -22,6 +22,7 @@ function directives () {
       }
       newChild._rt_ctrl = new obj['controller'](newChild)
       newChild._rt_ctrl.$ctrl = Silica.getContext(node.parentElement)
+      newChild.dataset['SiO2-directive'] = true
       Silica.cacheTemplates(newChild)
       Silica.interpolate(newChild, newChild._rt_ctrl, false)
       node.parentNode.replaceChild(newChild, node)

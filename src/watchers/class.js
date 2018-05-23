@@ -5,28 +5,25 @@ function updater (element) {
   var klass = Silica.getValue(element, element.dataset['class'], null, [element, element.dataset['parameter']])
   if (klass) {
     if (klass instanceof Array) {
-      if (hardClass === '') {
-        if (element.classList.length !== klass.length) {
-          element.className = hardClass
-          element.classList.add.apply(element.classList, klass)
-        } else {
-          let applied = false
-          for (let k of klass) {
-            if (!element.classList.contains(k)) {
+      if (element.classList.length !== klass.length) {
+        element.className = hardClass
+        element.classList.add.apply(element.classList, klass)
+      } else {
+        let applied = false
+        for (let k of klass) {
+          if (!element.classList.contains(k)) {
+            element.className = hardClass
+            element.classList.add.apply(element.classList, klass)
+            applied = true
+            break
+          }
+        }
+        if (!applied) {
+          for (let k of element.classList.values()) {
+            if (!klass.includes(k)) {
               element.className = hardClass
               element.classList.add.apply(element.classList, klass)
-              applied = true
               break
-            }
-          }
-          if (!applied) {
-            for (let k of element.classList.values()) {
-              if (!klass.includes(k)) {
-                element.className = hardClass
-                element.classList.add.apply(element.classList, klass)
-                applied = true
-                break
-              }
             }
           }
         }

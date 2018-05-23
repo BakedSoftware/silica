@@ -4,32 +4,36 @@ function updater (element) {
   var hardClass = element.dataset._rt_hard_klass || ''
   var klass = Silica.getValue(element, element.dataset['class'], null, [element, element.dataset['parameter']]) || ''
 
-  if (!(klass instanceof Array)) {
-    klass = [klass]
-  }
-
-  // Different lengths, just reset and apply all new
-  if (element.classList.length !== klass.length) {
+  if (klass === '' && element.className !== hardClass) {
     element.className = hardClass
-    element.classList.add.apply(element.classList, klass)
   } else {
-    let applied = false
-    // Look for missing classes on the element, reset and apply all new if found
-    for (let k of klass) {
-      if (!element.classList.contains(k)) {
-        element.className = hardClass
-        element.classList.add.apply(element.classList, klass)
-        applied = true
-        break
-      }
+    if (!(klass instanceof Array)) {
+      klass = [klass]
     }
-    if (!applied) {
-      // Look for classes which should no longer be attached
-      for (let k of element.classList.values()) {
-        if (!klass.includes(k)) {
+
+    // Different lengths, just reset and apply all new
+    if (element.classList.length !== klass.length) {
+      element.className = hardClass
+      element.classList.add.apply(element.classList, klass)
+    } else {
+      let applied = false
+      // Look for missing classes on the element, reset and apply all new if found
+      for (let k of klass) {
+        if (!element.classList.contains(k)) {
           element.className = hardClass
           element.classList.add.apply(element.classList, klass)
+          applied = true
           break
+        }
+      }
+      if (!applied) {
+        // Look for classes which should no longer be attached
+        for (let k of element.classList.values()) {
+          if (!klass.includes(k)) {
+            element.className = hardClass
+            element.classList.add.apply(element.classList, klass)
+            break
+          }
         }
       }
     }

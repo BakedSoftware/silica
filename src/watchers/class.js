@@ -4,7 +4,10 @@ function updater (element) {
   var hardClass = element.dataset._rt_hard_klass || ''
   var klass = Silica.getValue(element, element.dataset['class'], null, [element, element.dataset['parameter']]) || ''
 
-  if (klass === '' && element.className !== hardClass) {
+  if (klass === '') {
+    if (element.className === hardClass) {
+      return
+    }
     element.className = hardClass
   } else {
     if (!(klass instanceof Array)) {

@@ -1215,7 +1215,10 @@ function module$exports$watchers$if() {
 }
 ;function module$contents$watchers$class_updater($element$$) {
   var $hardClass_isVisible$jscomp$4_key$$ = $element$$.dataset._rt_hard_klass || "", $klass$$ = Silica.getValue($element$$, $element$$.dataset["class"], null, [$element$$, $element$$.dataset.parameter]) || "";
-  if ("" === $klass$$ && $element$$.className !== $hardClass_isVisible$jscomp$4_key$$) {
+  if ("" === $klass$$) {
+    if ($element$$.className === $hardClass_isVisible$jscomp$4_key$$) {
+      return;
+    }
     $element$$.className = $hardClass_isVisible$jscomp$4_key$$;
   } else {
     if ($klass$$ instanceof Array || ($klass$$ = [$klass$$]), $element$$.classList.length !== $klass$$.length) {

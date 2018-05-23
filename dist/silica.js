@@ -1216,30 +1216,26 @@ function module$exports$watchers$if() {
 ;function module$contents$watchers$class_updater($element$$) {
   var $hardClass_isVisible$jscomp$4_key$$ = $element$$.dataset._rt_hard_klass || "", $klass$$ = Silica.getValue($element$$, $element$$.dataset["class"], null, [$element$$, $element$$.dataset.parameter]);
   if ($klass$$) {
-    if ($klass$$ instanceof Array) {
-      if ($element$$.classList.length !== $klass$$.length) {
-        $element$$.className = $hardClass_isVisible$jscomp$4_key$$, $element$$.classList.add.apply($element$$.classList, $klass$$);
-      } else {
-        for (var $$jscomp$iter$3_applied$$ = !1, $$jscomp$iter$2$$ = $jscomp.makeIterator($klass$$), $$jscomp$key$k$$ = $$jscomp$iter$2$$.next(); !$$jscomp$key$k$$.done; $$jscomp$key$k$$ = $$jscomp$iter$2$$.next()) {
-          if (!$element$$.classList.contains($$jscomp$key$k$$.value)) {
+    if ($klass$$ instanceof Array || ($klass$$ = [$klass$$]), $element$$.classList.length !== $klass$$.length) {
+      $element$$.className = $hardClass_isVisible$jscomp$4_key$$, $element$$.classList.add.apply($element$$.classList, $klass$$);
+    } else {
+      for (var $$jscomp$iter$3_applied$$ = !1, $$jscomp$iter$2$$ = $jscomp.makeIterator($klass$$), $$jscomp$key$k$$ = $$jscomp$iter$2$$.next(); !$$jscomp$key$k$$.done; $$jscomp$key$k$$ = $$jscomp$iter$2$$.next()) {
+        if (!$element$$.classList.contains($$jscomp$key$k$$.value)) {
+          $element$$.className = $hardClass_isVisible$jscomp$4_key$$;
+          $element$$.classList.add.apply($element$$.classList, $klass$$);
+          $$jscomp$iter$3_applied$$ = !0;
+          break;
+        }
+      }
+      if (!$$jscomp$iter$3_applied$$) {
+        for ($$jscomp$iter$3_applied$$ = $jscomp.makeIterator($element$$.classList.values()), $$jscomp$key$k$$ = $$jscomp$iter$3_applied$$.next(); !$$jscomp$key$k$$.done; $$jscomp$key$k$$ = $$jscomp$iter$3_applied$$.next()) {
+          if (!$klass$$.includes($$jscomp$key$k$$.value)) {
             $element$$.className = $hardClass_isVisible$jscomp$4_key$$;
             $element$$.classList.add.apply($element$$.classList, $klass$$);
-            $$jscomp$iter$3_applied$$ = !0;
             break;
           }
         }
-        if (!$$jscomp$iter$3_applied$$) {
-          for ($$jscomp$iter$3_applied$$ = $jscomp.makeIterator($element$$.classList.values()), $$jscomp$key$k$$ = $$jscomp$iter$3_applied$$.next(); !$$jscomp$key$k$$.done; $$jscomp$key$k$$ = $$jscomp$iter$3_applied$$.next()) {
-            if (!$klass$$.includes($$jscomp$key$k$$.value)) {
-              $element$$.className = $hardClass_isVisible$jscomp$4_key$$;
-              $element$$.classList.add.apply($element$$.classList, $klass$$);
-              break;
-            }
-          }
-        }
       }
-    } else {
-      "" === $klass$$ ? $element$$.className = $hardClass_isVisible$jscomp$4_key$$ : $element$$.classList.contains($klass$$) || ($element$$.className = $hardClass_isVisible$jscomp$4_key$$, $element$$.classList.add($klass$$));
     }
   }
   null != $element$$.dataset.show && ($hardClass_isVisible$jscomp$4_key$$ = $element$$.dataset.show, ($hardClass_isVisible$jscomp$4_key$$ = Silica._show($element$$, $hardClass_isVisible$jscomp$4_key$$, "!" === $hardClass_isVisible$jscomp$4_key$$[0])) && $element$$.classList.contains("hidden") ? $element$$.classList.remove("hidden") : $hardClass_isVisible$jscomp$4_key$$ || $element$$.classList.contains("hidden") || $element$$.classList.add("hidden"));
@@ -1277,7 +1273,7 @@ module$exports$watchers.Generic = module$exports$compilers$generic;
 module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.39.9", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.39.10", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

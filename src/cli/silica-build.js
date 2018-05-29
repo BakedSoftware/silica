@@ -12,6 +12,7 @@ const stylus = require('stylus')
 program
   .option('-d --done [script]', 'The path to a script to run after build')
   .option('-s --styles [path]', 'Directory of additional style imports relative to the src directory')
+  .option('-n --noviews', 'do not process any views, styles, or images')
   .parse(process.argv)
 
 var afterScript = program.done
@@ -26,8 +27,12 @@ fs.removeSync('build')
 
 fs.mkdirSync('build')
 fs.mkdirSync(path.join('build', 'js'))
-fs.mkdirSync(path.join('build', 'css'))
-fs.mkdirSync(path.join('build', 'views'))
+
+if (!program.noviews) {
+  fs.mkdirSync(path.join('build', 'css'))
+  fs.mkdirSync(path.join('build', 'views'))
+}
+
 fs.copySync('src', path.join(cachePath, 'src'))
 
 function walk (dir) {
@@ -93,20 +98,22 @@ function preprocessView (readPath, writePath) {
   fs.writeFileSync(writePath, content)
 }
 
-console.log('Preprocessing views...')
+if (!program.noviews) {
+  console.log('Preprocessing views...')
 
-// Check the index file
-preprocessView(path.join(cachePath, 'src', 'index.html'), path.join('build', 'index.html'))
+  // Check the index file
+  preprocessView(path.join(cachePath, 'src', 'index.html'), path.join('build', 'index.html'))
 
-// Check all other views
-var views = walk(path.join(cachePath, 'src', 'views'))
-for (var i = 0, len = views.length; i < len; i++) {
-  var writeTo = views[i].split(path.sep)
-  writeTo.shift()
-  writeTo.shift()
-  preprocessView(views[i], path.join('build', writeTo.join(path.sep)))
+  // Check all other views
+  var views = walk(path.join(cachePath, 'src', 'views'))
+  for (var i = 0, len = views.length; i < len; i++) {
+    var writeTo = views[i].split(path.sep)
+    writeTo.shift()
+    writeTo.shift()
+    preprocessView(views[i], path.join('build', writeTo.join(path.sep)))
+  }
+  console.log('Preprocess Finished')
 }
-console.log('Preprocess Finished')
 
 var asyncLock = 0
 
@@ -196,8 +203,18 @@ closureCompiler.run(function (exitCode, stdOut, stdErr) {
 })
 
 // Generate sprite styles
-var spriteCSSPath = path.join(cachePath, 'src', 'styles', 'sprite.css')
-var totalCSS = ''
+if (!program.noviews) {
+  var spriteCSSPath = path.join(cachePath, 'src', 'styles', 'sprite.css')
+  var totalCSS = ''
+
+  try {
+    fs.statSync(path.join('src', 'images')).isDirectory()
+    fs.copySync(path.join('src', 'images'), path.join('build', 'images'))
+  } catch (err) {
+  }
+
+  var spriteSrc = path.join('src', 'images', 'sprites')
+}
 
 function stylusCallback (err, css) {
   if (err) {
@@ -207,14 +224,6 @@ function stylusCallback (err, css) {
     totalCSS += css
   }
 }
-
-try {
-  fs.statSync(path.join('src', 'images')).isDirectory()
-  fs.copySync(path.join('src', 'images'), path.join('build', 'images'))
-} catch (err) {
-}
-
-var spriteSrc = path.join('src', 'images', 'sprites')
 
 function stylusRender () {
   var styles = walk(path.join(cachePath, 'src', 'styles')).filter(function (name) {
@@ -258,40 +267,42 @@ function writeStyles () {
   afterScriptCaller()
 }
 
-try {
-  fs.statSync(spriteSrc)
-  if (fs.readdirSync(spriteSrc).length > 0) {
-    nsg({
-      src: [
-        path.join(spriteSrc, '*.png')
-      ],
-      spritePath: path.join('build', 'images', 'sprite.png'),
-      stylesheetPath: spriteCSSPath,
-      stylesheet: 'css',
-      stylesheetOptions: {
-        prefix: 'icon-',
-        pixelRatio: 2,
-        spritePath: '../images/sprite.png'
-      },
-      compositor: require('node-sprite-generator-jimp')
-    }, function (err) {
-      if (err) {
-        if (fs.readdirSync(spriteSrc).length > 0) {
-          console.log('Error Generating Sprites', err)
+if (!program.noviews) {
+  try {
+    fs.statSync(spriteSrc)
+    if (fs.readdirSync(spriteSrc).length > 0) {
+      nsg({
+        src: [
+          path.join(spriteSrc, '*.png')
+        ],
+        spritePath: path.join('build', 'images', 'sprite.png'),
+        stylesheetPath: spriteCSSPath,
+        stylesheet: 'css',
+        stylesheetOptions: {
+          prefix: 'icon-',
+          pixelRatio: 2,
+          spritePath: '../images/sprite.png'
+        },
+        compositor: require('node-sprite-generator-jimp')
+      }, function (err) {
+        if (err) {
+          if (fs.readdirSync(spriteSrc).length > 0) {
+            console.log('Error Generating Sprites', err)
+          }
+        } else {
+          console.log('Sprite Generated')
         }
-      } else {
-        console.log('Sprite Generated')
-      }
-
+  
+        stylusRender()
+        totalCSS += fs.readFileSync(spriteCSSPath, 'utf8')
+        writeStyles()
+      })
+    } else {
       stylusRender()
-      totalCSS += fs.readFileSync(spriteCSSPath, 'utf8')
       writeStyles()
-    })
-  } else {
+    }
+  } catch (err) {
     stylusRender()
     writeStyles()
   }
-} catch (err) {
-  stylusRender()
-  writeStyles()
 }

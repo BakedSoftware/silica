@@ -49,14 +49,23 @@ function removeTests (dir) {
   list.forEach(function (file) {
     if (file[0] !== '.') {
       file = path.join(dir, file)
-      if (file.indexOf('test') !== -1) {
-        fs.removeSync(path.join(dir, file))
+      var stat = fs.statSync(file)
+      if (stat && stat.isDirectory()) {
+        removeTests(file)
+      } else if (file.indexOf('test') !== -1) {
+        try {
+          fs.removeSync(file)
+        } catch (e) {
+          console.error('Failed removing test:', file)
+        }
       }
     }
   })
 }
 
+console.log('Removing tests...')
 removeTests(cachePath)
+console.log('Done Removing tests')
 
 function preprocessView (readPath, writePath) {
   var content = fs.readFileSync(readPath, 'utf8')

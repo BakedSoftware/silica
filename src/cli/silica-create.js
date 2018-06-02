@@ -101,7 +101,6 @@ fs.writeFileSync(path.join(projectName, 'src', 'styles', 'app.styl'), styleTempl
 fs.writeFileSync(path.join(projectName, 'src', 'externs.js'), '//See closure compiler docs for usage of this file')
 
 // Setup yarn
-
 console.log('Set up yarn (Choose any values)')
 
 var yarn = spawnSync('yarn',

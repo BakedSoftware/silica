@@ -12,7 +12,7 @@ const stylus = require('stylus')
 program
   .option('-d --done [script]', 'The path to a script to run after build')
   .option('-s --styles [path]', 'Directory of additional style imports relative to the src directory')
-  .option('-n --noviews', 'do not process any views, styles, or images')
+  .option('-j --js-only', 'do not process any views, styles, or images')
   .parse(process.argv)
 
 var afterScript = program.done
@@ -28,7 +28,7 @@ fs.removeSync('build')
 fs.mkdirSync('build')
 fs.mkdirSync(path.join('build', 'js'))
 
-if (!program.noviews) {
+if (!program.jsOnly) {
   fs.mkdirSync(path.join('build', 'css'))
   fs.mkdirSync(path.join('build', 'views'))
 }
@@ -98,7 +98,7 @@ function preprocessView (readPath, writePath) {
   fs.writeFileSync(writePath, content)
 }
 
-if (!program.noviews) {
+if (!program.jsOnly) {
   console.log('Preprocessing views...')
 
   // Check the index file
@@ -203,7 +203,7 @@ closureCompiler.run(function (exitCode, stdOut, stdErr) {
 })
 
 // Generate sprite styles
-if (!program.noviews) {
+if (!program.jsOnly) {
   var spriteCSSPath = path.join(cachePath, 'src', 'styles', 'sprite.css')
   var totalCSS = ''
 
@@ -267,7 +267,7 @@ function writeStyles () {
   afterScriptCaller()
 }
 
-if (!program.noviews) {
+if (!program.jsOnly) {
   try {
     fs.statSync(spriteSrc)
     if (fs.readdirSync(spriteSrc).length > 0) {
@@ -292,7 +292,7 @@ if (!program.noviews) {
         } else {
           console.log('Sprite Generated')
         }
-  
+
         stylusRender()
         totalCSS += fs.readFileSync(spriteCSSPath, 'utf8')
         writeStyles()

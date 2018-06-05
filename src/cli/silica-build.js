@@ -12,6 +12,8 @@ const stylus = require('stylus')
 program
   .option('-d --done [script]', 'The path to a script to run after build')
   .option('-s --styles [path]', 'Directory of additional style imports relative to the src directory')
+  .option('-i --ignore [pattern]', 'RegExp pattern of files/folders to ignore. (Tests are ignored by default)')
+  .option('-a --additional [path]', 'Directory of additional JS imports relative to the src directory')
   .parse(process.argv)
 
 var afterScript = program.done
@@ -30,6 +32,10 @@ fs.mkdirSync(path.join('build', 'css'))
 fs.mkdirSync(path.join('build', 'views'))
 fs.copySync('src', path.join(cachePath, 'src'))
 
+if (program.additional && program.additional !== '') {
+  fs.copySync(path.join('src', program.additional), path.join(cachePath, '__additional_sources__'))
+}
+
 function walk (dir) {
   var results = []
   var list = fs.readdirSync(dir)
@@ -44,23 +50,35 @@ function walk (dir) {
   return results
 }
 
-function removeTests (dir) {
+function removeIgnored (dir, pattern) {
   var list = fs.readdirSync(dir)
   list.forEach(function (file) {
     if (file[0] !== '.') {
       file = path.join(dir, file)
-      var stat = fs.statSync(file)
-      if (stat && stat.isDirectory()) {
-        removeTests(file)
-      } else if (file.indexOf('test') !== -1) {
+      if (pattern.test(file)) {
         try {
           fs.removeSync(file)
         } catch (e) {
-          console.error('Failed removing test:', file)
+          console.error('Failed removing file/folder:', file)
+        }
+      } else {
+        var stat = fs.statSync(file)
+        if (stat && stat.isDirectory()) {
+          removeIgnored(file, pattern)
         }
       }
     }
   })
+}
+
+function removeTests (dir) {
+  removeIgnored(dir, /test/)
+}
+
+if (program.ignore && program.ignore !== '') {
+  console.log('Removing Ignored...')
+  removeIgnored(cachePath, new RegExp(program.ignore))
+  console.log('Done Removing Ignored')
 }
 
 console.log('Removing tests...')

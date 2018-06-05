@@ -17,6 +17,8 @@ program
   .option('-s --styles [path]', 'Directory of additional style imports relative to the src directory')
   .option('-z --nolivereload', "Don't turn on livereload")
   .option('-d --done [script]', 'Path to a script to run after build')
+  .option('-i --ignore [patteern]', 'RegExp pattern of files/folders to ignore')
+  .option('-a --additional [path]', 'Directory of additional JS imports relative to the src directory')
   .parse(process.argv)
 
 var afterScript = program.done
@@ -50,6 +52,12 @@ var rebuild = function () {
   }
   if (afterScript && afterScript.length > 0) {
     cmd += ' -d ' + afterScript
+  }
+  if (program.ignore && program.ignore.length > 0) {
+    cmd += ' -i ' + program.ignore
+  }
+  if (program.additional && program.additional.length > 0) {
+    cmd += ' -a ' + program.additional
   }
   exec(cmd, childCallback)
 }

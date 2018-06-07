@@ -29,14 +29,32 @@ var flags = {
 
 const moduleRegex = /goog\.module\('(.*?)'\)/
 
-module.exports = {
-  process (src, path) {
-    let match = src.match(moduleRegex)
-    if (match.length > 1) {
-      flags['entry_point'] = `goog:${match[1]}`
-    }
-    let closureCompiler = new ClosureCompiler(flags)
-    let child = closureCompiler.runSync()
-    return child.stdout.toString()
+const crypto = require('crypto')
+
+function createCacheKey () {
+  return (src, file, configString, options) => {
+    return crypto
+      .createHash('md5')
+      .update(process(src, file))
+      .update(options && options.instrument ? 'instrument' : '')
+      .digest('hex')
   }
+}
+
+function process (src, path) {
+  let match = src.match(moduleRegex)
+  if (match.length > 1) {
+    flags['entry_point'] = `goog:${match[1]}`
+  }
+  let closureCompiler = new ClosureCompiler(flags)
+  let child = closureCompiler.runSync()
+  if (child.status !== 0) {
+    throw new Error(child.stderr.toString())
+  }
+  return child.stdout.toString()
+}
+
+module.exports = {
+  process: process,
+  getCacheKey: createCacheKey()
 }

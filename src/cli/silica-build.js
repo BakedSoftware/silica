@@ -14,6 +14,7 @@ program
   .option('-s --styles [path]', 'Directory of additional style imports relative to the src directory')
   .option('-i --ignore [pattern]', 'RegExp pattern of files/folders to ignore. (Tests are ignored by default)')
   .option('-a --additional [path]', 'Directory of additional JS imports relative to the src directory')
+  .option('-m --source-map [bool]', 'Create a source map (default = false)')
   .parse(process.argv)
 
 var afterScript = program.done
@@ -35,6 +36,7 @@ fs.copySync('src', path.join(cachePath, 'src'))
 if (program.additional && program.additional !== '') {
   fs.copySync(path.join('src', program.additional), path.join(cachePath, '__additional_sources__'))
 }
+
 
 function walk (dir) {
   var results = []
@@ -191,11 +193,23 @@ var flags = {
   externs: 'src/externs.js'
 }
 
+const moduleRegex = /goog\.module\((?:'|")(.*?)(?:'|")\)/
+{
+  let src = fs.readFileSync(path.join(cachePath, 'src', 'app.js')).toString()
+  let match = src.match(moduleRegex)
+  if (match.length > 1) {
+    flags['dependency_mode'] = 'strict'
+    flags['entry_point'] = `goog:${match[1]}`
+  }
+}
+
 // Build debug version
 flags['compilation_level'] = 'SIMPLE'
 flags['debug'] = true
 flags['formatting'] = 'pretty_print'
-flags['create_source_map'] = path.join('build', 'js', 'app.js.map')
+if (program.sourceMap) {
+  flags['create_source_map'] = path.join('build', 'js', 'app.js.map')
+}
 
 console.log('Compiling js')
 const closureCompiler = new ClosureCompiler(flags)
@@ -209,8 +223,12 @@ closureCompiler.run(function (exitCode, stdOut, stdErr) {
   let out = path.join('build', 'js', 'app.js')
   let output = envReplaceTransform(stdOut)
 
-  fs.appendFileSync(out, '(function(window){\n"use strict";\n' + output + '}.call(window, window));\n//# sourceMappingURL=/js/app.js.map')
-  spawnSync('cp', ['-R', cachePath, 'build/js/build_cache'], { stdio: [0, 1, 2], cwd: process.cwd() })
+  if (program.sourceMap) {
+    fs.appendFileSync(out, '(function(window){\n"use strict";\n' + output + '}.call(window, window));\n//# sourceMappingURL=/js/app.js.map')
+    spawnSync('cp', ['-R', cachePath, 'build/js/build_cache'], { stdio: [0, 1, 2], cwd: process.cwd() })
+  } else {
+    fs.appendFileSync(out, '(function(window){\n"use strict";\n' + output + '}.call(window, window));')
+  }
   // let sourceMapMod = spawnSync('sed', ['-i.bak', 's/build_cache/..\\\/..\\\/build_cache/g', flags['create_source_map']], {
   //  stdio: [0, 1, 2],
   //  cwd: process.cwd()

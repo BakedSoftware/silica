@@ -27,7 +27,7 @@ var flags = {
  * })
  */
 
-const moduleRegex = /goog\.module\('(.*?)'\)/
+const moduleRegex = /goog\.module\((?:'|")(.*?)(?:'|")\)/
 
 const crypto = require('crypto')
 

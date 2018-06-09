@@ -19,6 +19,7 @@ program
   .option('-d --done [script]', 'Path to a script to run after build')
   .option('-i --ignore [patteern]', 'RegExp pattern of files/folders to ignore')
   .option('-a --additional [path]', 'Directory of additional JS imports relative to the src directory')
+  .option('-m --source-map [bool]', 'Create a source map (default = false)')
   .parse(process.argv)
 
 var afterScript = program.done
@@ -58,6 +59,9 @@ var rebuild = function () {
   }
   if (program.additional && program.additional.length > 0) {
     cmd += ' -a ' + program.additional
+  }
+  if (program.sourceMap) {
+    cmd += ' -m ' + program.sourceMap
   }
   exec(cmd, childCallback)
 }

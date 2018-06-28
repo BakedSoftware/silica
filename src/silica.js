@@ -10,6 +10,9 @@ var Watchers = goog.require('watchers')
 // Import browser hax
 var Hax = goog.require('hax')
 
+// Install polyfills
+Hax.init()
+
 window['Silica'] = {
   context: window,
   contextName: '',
@@ -31,7 +34,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.43.0',
+  version: '0.44.0',
 
   // Set the root context
   setContext (contextName) {

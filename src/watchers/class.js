@@ -1,5 +1,13 @@
 goog.module('watchers.class')
 
+var getClassList = null
+
+if (DOMTokenList && DOMTokenList.prototype.values) {
+  getClassList = function (e) { return e.classList.values() }
+} else {
+  getClassList = function (e) { return e.className.split(' ') }
+}
+
 function updater (element) {
   var hardClass = element.dataset._rt_hard_klass || ''
   var klass = Silica.getValue(element, element.dataset['class'], null, [element, element.dataset['parameter']]) || ''
@@ -31,7 +39,7 @@ function updater (element) {
       }
       if (!applied) {
         // Look for classes which should no longer be attached
-        for (let k of element.classList.values()) {
+        for (let k of getClassList(element)) {
           if (!klass.includes(k)) {
             element.className = hardClass
             element.classList.add.apply(element.classList, klass)

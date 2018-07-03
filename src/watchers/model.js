@@ -25,11 +25,13 @@ function Model () {
       element.checked = Silica.getValue(element, element.dataset['model'])
     } else if (element.nodeName === 'SPAN' || element.nodeName === 'PRE' || element.nodeName === 'DIV' || element.nodeName === 'P') {
       val = Silica._model_get_val(element)
-      if (val && val.nodeName) {
-        element.innerHTML = ''
-        element.appendChild(val)
-      } else {
-        element.innerHTML = val
+      element.innerHTML = ''
+      if (val) {
+        if (val.nodeName) {
+          element.appendChild(val)
+        } else {
+          element.innerHTML = val
+        }
       }
     } else if (element.nodeName === 'OPTION') {
       element.value = Silica._model_get_val(element)

@@ -34,7 +34,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.44.2',
+  version: '0.45.0',
 
   // Set the root context
   setContext (contextName) {
@@ -933,6 +933,9 @@ window['Silica'] = {
             if (Silica._watch[k].length === 0) {
               delete Silica._watch[k]
             }
+          }
+          if (typeof ctrl.onDestroy === 'function') {
+            ctrl.onDestroy()
           }
         }
       }

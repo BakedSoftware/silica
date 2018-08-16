@@ -143,7 +143,7 @@ function afterScriptCaller () {
   asyncLock++
   if (asyncLock === 2) {
     console.log('Compressing results')
-    let compress = spawnSync('gzip', ['-k', '-r', 'build'], {
+    let compress = spawnSync('gzip', ['-k', '-f', '-r', 'build'], {
       stdio: [0, 1, 2],
       cwd: process.cwd()
     })

@@ -1324,7 +1324,7 @@ module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
 module$exports$hax.init();
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.45.1", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.46.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1583,7 +1583,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   if ($expr$$) {
     var $filter$$ = null;
     -1 !== $expr$$.indexOf("|") && ($expr$$ = $expr$$.split("|"), $filter$$ = $expr$$[1].trim(), $expr$$ = $expr$$[0].trim());
-    $ctx$$.$ctrl || $elm$$ === document.documentElement || $ctx$$ === Silica.context || (($elm$$ = Silica.getContext($elm$$), $elm$$ != $ctx$$ && $elm$$.el) ? $elm$$.el && Silica.isChildOf($ctx$$.el, $elm$$.el) && ($ctx$$.$ctrl = $elm$$) : $ctx$$.$ctrl = Silica.context);
+    $ctx$$.$ctrl || $elm$$ === document.documentElement || $ctx$$ === Silica.context || (($elm$$ = Silica.getContext($elm$$), $elm$$ !== $ctx$$ && $elm$$.el) ? $elm$$.el && Silica.isChildOf($ctx$$.el, $elm$$.el) && ($ctx$$.$ctrl = $elm$$) : $ctx$$.$ctrl = Silica.context);
     90 >= $expr$$.charCodeAt(0) && ($ctx$$ = window);
     var $value$$ = Silica.getPropByString($ctx$$, $expr$$);
     $filter$$ && ($expr$$ = ($filter$$ = $filter$$.split(/:(.+)/)) ? $filter$$[0] : null, $elm$$ = $filter$$ && 1 < $filter$$.length ? eval($filter$$[1]) : null, $value$$ = ($filter$$ = $expr$$ ? Silica.filters[$expr$$] : null) ? $filter$$($value$$, $elm$$, $ctx$$) : $value$$);

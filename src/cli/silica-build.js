@@ -15,7 +15,10 @@ program
   .option('-i --ignore [pattern]', 'RegExp pattern of files/folders to ignore. (Tests are ignored by default)')
   .option('-a --additional [path]', 'Directory of additional JS imports relative to the src directory')
   .option('-m --source-map [bool]', 'Create a source map (default = false)')
+  .option('-o --optimization-level [int]', 'Optimization level (0 = debug+simple, 1=simple, 2=advanced)')
   .parse(process.argv)
+
+program.optimizationLevel = parseInt(program.optimizationLevel || 0)
 
 var afterScript = program.done
 var styleIncludes = program.styles
@@ -28,6 +31,7 @@ fs.removeSync(cachePath)
 fs.removeSync('build')
 
 fs.mkdirSync('build')
+fs.mkdirSync(cachePath)
 fs.mkdirSync(path.join('build', 'js'))
 fs.mkdirSync(path.join('build', 'css'))
 fs.mkdirSync(path.join('build', 'views'))
@@ -36,7 +40,6 @@ fs.copySync('src', path.join(cachePath, 'src'))
 if (program.additional && program.additional !== '') {
   fs.copySync(path.join('src', program.additional), path.join(cachePath, '__additional_sources__'))
 }
-
 
 function walk (dir) {
   var results = []
@@ -204,8 +207,8 @@ const moduleRegex = /goog\.module\((?:'|")(.*?)(?:'|")\)/
 }
 
 // Build debug version
-flags['compilation_level'] = 'SIMPLE'
-flags['debug'] = true
+flags['compilation_level'] = program.optimizationLevel === 2 ? 'ADVANCED' : 'SIMPLE'
+flags['debug'] = program.optimizationLevel === 0
 flags['formatting'] = 'pretty_print'
 if (program.sourceMap) {
   flags['create_source_map'] = path.join('build', 'js', 'app.js.map')

@@ -34,7 +34,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.45.1',
+  version: '0.46.0',
 
   // Set the root context
   setContext (contextName) {
@@ -495,7 +495,7 @@ window['Silica'] = {
     }
     if (!ctx.$ctrl && elm !== document.documentElement && ctx !== Silica.context) {
       let parentCtx = Silica.getContext(elm)
-      if (parentCtx == ctx || !parentCtx.el) {
+      if (parentCtx === ctx || !parentCtx.el) {
         ctx.$ctrl = Silica.context
       } else if (parentCtx.el && Silica.isChildOf(ctx.el, parentCtx.el)) {
         ctx.$ctrl = parentCtx

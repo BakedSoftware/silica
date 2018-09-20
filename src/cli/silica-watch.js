@@ -20,6 +20,7 @@ program
   .option('-i --ignore [patteern]', 'RegExp pattern of files/folders to ignore')
   .option('-a --additional [path]', 'Directory of additional JS imports relative to the src directory')
   .option('-m --source-map [bool]', 'Create a source map (default = false)')
+  .option('-o --optimization-level [int]', 'Optimization level (0 = debug+simple, 1=simple, 2=advanced)')
   .parse(process.argv)
 
 var afterScript = program.done
@@ -62,6 +63,9 @@ var rebuild = function () {
   }
   if (program.sourceMap) {
     cmd += ' -m ' + program.sourceMap
+  }
+  if (program.optimizationLevel) {
+    cmd += ' -o ' + program.optimizationLevel
   }
   exec(cmd, childCallback)
 }

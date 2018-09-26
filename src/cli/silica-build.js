@@ -24,7 +24,7 @@ program.optimizationLevel = parseInt(program.optimizationLevel || 0)
 var afterScript = program.done
 var styleIncludes = program.styles
 var cachePath = 'build_cache'
-var envRegExp = /\$\{(\w+)(?:\:=(.+?))?\}/
+var envRegExp = /\$ENV\$\{(\w+?)(?::=(.+?))?\}/
 
 console.log('Starting Build')
 
@@ -133,8 +133,8 @@ preprocessView(path.join(cachePath, 'src', 'index.html'), path.join('build', 'in
 
 // Check all other views
 var views = walk(path.join(cachePath, 'src', 'views'))
-for (var i = 0, len = views.length; i < len; i++) {
-  var writeTo = views[i].split(path.sep)
+for (let i = 0, len = views.length; i < len; i++) {
+  let writeTo = views[i].split(path.sep)
   writeTo.shift()
   writeTo.shift()
   preprocessView(views[i], path.join('build', writeTo.join(path.sep)))
@@ -229,8 +229,8 @@ function envReplaceTransform (chunk) {
 
 var flags = {
   js: 'build_cache/**/*.js',
-  compilation_level: 'ADVANCED',
   externs: 'src/externs.js'
+
 }
 
 const moduleRegex = /goog\.module\((?:'|")(.*?)(?:'|")\)/
@@ -244,9 +244,14 @@ const moduleRegex = /goog\.module\((?:'|")(.*?)(?:'|")\)/
 }
 
 // Build debug version
+flags['assume_function_wrapper'] = true
+flags['language_out'] = 'ECMASCRIPT_2017'
+flags['language_in'] = 'ECMASCRIPT_2017'
 flags['compilation_level'] = program.optimizationLevel === 2 ? 'ADVANCED' : 'SIMPLE'
-flags['debug'] = program.optimizationLevel === 0
-flags['formatting'] = 'pretty_print'
+if (program.optimizationLevel === 0) {
+  flags['debug'] = true
+  flags['formatting'] = 'pretty_print'
+}
 if (program.sourceMap) {
   flags['create_source_map'] = path.join('build', 'js', 'app.js.map')
 }

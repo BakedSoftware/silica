@@ -8,6 +8,7 @@ const path = require('path')
 const program = require('commander')
 const spawnSync = require('child_process').spawnSync
 const stylus = require('stylus')
+const glob = require('glob')
 
 program
   .option('-d --done [script]', 'The path to a script to run after build')
@@ -145,7 +146,7 @@ var asyncLock = 0
 function afterScriptCaller () {
   asyncLock++
   if (asyncLock === 2) {
-    console.log('Compressing results')
+    console.log('GZipping results')
     let compress = spawnSync('gzip', ['-k', '-f', '-r', 'build'], {
       stdio: [0, 1, 2],
       cwd: process.cwd()
@@ -155,6 +156,42 @@ function afterScriptCaller () {
       console.error(compress.error)
     } else {
       console.log('Compression finished')
+    }
+    console.log('Brotli Compressing JS')
+    let files = glob.sync('build/**/*.js', {cwd: process.cwd()})
+    compress = spawnSync('brotli', ['-f'].concat(files), {
+      stdio: [0, 1, 2],
+      cwd: process.cwd()
+    })
+    if (compress.error) {
+      console.log('An error occurred during compression')
+      console.error(compress.error)
+    } else {
+      console.log('JS compression finished')
+    }
+    console.log('Brotli Compressing CSS')
+    files = glob.sync('build/**/*.css', {cwd: process.cwd()})
+    compress = spawnSync('brotli', ['-f'].concat(files), {
+      stdio: [0, 1, 2],
+      cwd: process.cwd()
+    })
+    if (compress.error) {
+      console.log('An error occurred during compression')
+      console.error(compress.error)
+    } else {
+      console.log('CSS compression finished')
+    }
+    console.log('Brotli Compressing HTML')
+    files = glob.sync('build/**/*.html', {cwd: process.cwd()})
+    compress = spawnSync('brotli', ['-f'].concat(files), {
+      stdio: [0, 1, 2],
+      cwd: process.cwd()
+    })
+    if (compress.error) {
+      console.log('An error occurred during compression')
+      console.error(compress.error)
+    } else {
+      console.log('HTML compression finished')
     }
     if (!afterScript) {
       return

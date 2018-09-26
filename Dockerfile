@@ -6,7 +6,7 @@ MAINTAINER Kayle Gishen <k@bkdsw.com>
 
 RUN apk update;
 # Install NodeJS and Git
-RUN apk add openjdk8-jre nodejs git yarn gzip;
+RUN apk add openjdk8-jre nodejs git yarn gzip brotli;
 
 # Download silica
 RUN yarn global add silica

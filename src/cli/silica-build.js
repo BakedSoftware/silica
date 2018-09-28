@@ -129,7 +129,13 @@ function preprocessView (readPath, writePath) {
 console.log('Preprocessing views...')
 
 // Check the index file
-preprocessView(path.join(cachePath, 'src', 'index.html'), path.join('build', 'index.html'))
+try {
+  let index = path.join(cachePath, 'src', 'index.html')
+  fs.accessSync(index, fs.constants.R_OK)
+  preprocessView(index, path.join('build', 'index.html'))
+} catch (err) {
+  console.warn('No index.html file found - hope you know what you are doing')
+}
 
 // Check all other views
 var views = walk(path.join(cachePath, 'src', 'views'))

@@ -34,7 +34,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.49.0',
+  version: '0.49.1',
 
   // Set the root context
   setContext (contextName) {
@@ -189,26 +189,26 @@ window['Silica'] = {
   },
 
   processQueue () {
-    let outer_most_scope
+    // let outer_most_scope
+    // for (let i = 0, len = Silica._queue.length; i < len; i++) {
+    //   let item = Silica._queue[i]
+    //   if (!outer_most_scope) {
+    //     outer_most_scope = item[1]
+    //   } else {
+    //     outer_most_scope = Silica.findCommonAncestor(item[1], outer_most_scope)
+    //   }
+
+    //   if (outer_most_scope === document) {
+    //     break
+    //   }
+    // }
+
     for (let i = 0, len = Silica._queue.length; i < len; i++) {
       let item = Silica._queue[i]
-      if (!outer_most_scope) {
-        outer_most_scope = item[1]
-      } else {
-        outer_most_scope = Silica.findCommonAncestor(item[1], outer_most_scope)
-      }
-
-      if (outer_most_scope === document) {
-        break
-      }
+      Silica.apply(function () {
+        item[0]()
+      }, item[1])
     }
-
-    let actions = Silica._queue
-    Silica.apply(function () {
-      for (let i = 0, len = actions.length; i < len; i++) {
-        actions[i][0]()
-      }
-    }, outer_most_scope)
 
     Silica._queue = []
   },
@@ -216,6 +216,18 @@ window['Silica'] = {
   enqueue (func, scope) {
     Silica._queue.push([func, scope])
     Silica.processQueue()
+  },
+
+  updateDOM (element, onlySafe) {
+    let watchers = Silica.watchers
+    let func
+    for (let k in watchers) {
+      if (onlySafe && k[0] === '_') {
+        continue
+      }
+      func = watchers[k]
+      func.apply(element)
+    }
   },
 
   flush (element = document.documentElement, onlySafe = false, changed = null, skipSchedule = false) {
@@ -226,7 +238,7 @@ window['Silica'] = {
         Silica._scheduledFlush = true
       }
     }
-    if (element == document) {
+    if (element === document) {
       element = document.documentElement
     }
     Silica.isInFlush = !skipSchedule
@@ -258,15 +270,9 @@ window['Silica'] = {
         }
       }
     }
-    let watchers = Silica.watchers
-    let func
-    for (let k in watchers) {
-      if (onlySafe && k[0] === '_') {
-        continue
-      }
-      func = watchers[k]
-      func.apply(element)
-    }
+
+    Silica.updateDOM(element, onlySafe)
+
     Silica.isInFlush = skipSchedule
     if (Silica._scheduledFlush === true && !skipSchedule) {
       Silica._scheduledFlush = false

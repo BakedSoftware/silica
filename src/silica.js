@@ -34,7 +34,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.48.1',
+  version: '0.49.0',
 
   // Set the root context
   setContext (contextName) {
@@ -190,7 +190,8 @@ window['Silica'] = {
 
   processQueue () {
     let outer_most_scope
-    for (let item of Silica._queue) {
+    for (let i = 0, len = Silica._queue.length; i < len; i++) {
+      let item = Silica._queue[i]
       if (!outer_most_scope) {
         outer_most_scope = item[1]
       } else {
@@ -202,9 +203,10 @@ window['Silica'] = {
       }
     }
 
+    let actions = Silica._queue
     Silica.apply(function () {
-      for (let item of Silica._queue) {
-        item[0]()
+      for (let i = 0, len = actions.length; i < len; i++) {
+        actions[i][0]()
       }
     }, outer_most_scope)
 
@@ -274,96 +276,100 @@ window['Silica'] = {
   },
 
   apply (func, element = document) {
-    var args, assoc, changed, changes, finalChanges, funcs, k, oldVal, old_values, v, val, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2
     if (Silica.isInApply) {
-      return func.call()
-    }
-    // Mark we are about to execute the function
-    // If the function to execute triggers another apply, the flag is checked
-    // and the additional applies can be executed with out the need to diff the
-    // properties since no flush has executed.
-    Silica.isInApply = true
-    // Execute the function
-    try {
       func.call()
-    } catch (err) {
-      // Clear mark
-      Silica.isInApply = false
-      console.error(err)
       return Silica
     }
 
-    // Compute the differences
-    changes = {}
-    for (let k in Silica._watch) {
-      let watchers = Silica._watch[k]
-      changes[k] = []
-      // Check if we are looking at Global or object property key
-      if (k.charCodeAt(0) >= 97) {
-        for (_j = 0, _len1 = watchers.length; _j < _len1; _j++) {
-          let watcher = watchers[_j]
-          if (k.match(/\.\*$/)) {
-            changes[k].push(watcher)
-          } else {
-            watcher[3] = oldVal = watcher[2]
-            watcher[2] = val = Silica.getPropByString(watcher[0], k)
-            changed = oldVal !== val
-            if (!changed && Array.isArray(val) && Array.isArray(oldVal)) {
-              changed = oldVal && val ? oldVal.length !== val.length : true
-              if (!changed) {
-                changed = oldVal.some(function (e, idx) {
-                  return val[idx] !== e
-                })
+    window.requestAnimationFrame(() => {
+      var changed, changes, finalChanges, k, oldVal, v, val, _j, _len, _len1
+      // Mark we are about to execute the function
+      // If the function to execute triggers another apply, the flag is checked
+      // and the additional applies can be executed with out the need to diff the
+      // properties since no flush has executed.
+      Silica.isInApply = true
+      // Execute the function
+      try {
+        func.call()
+      } catch (err) {
+        // Clear mark
+        Silica.isInApply = false
+        console.error(err)
+        return Silica
+      }
+
+      // Compute the differences
+      changes = {}
+      for (let k in Silica._watch) {
+        let watchers = Silica._watch[k]
+        changes[k] = []
+        // Check if we are looking at Global or object property key
+        if (k.charCodeAt(0) >= 97) {
+          for (_j = 0, _len1 = watchers.length; _j < _len1; _j++) {
+            let watcher = watchers[_j]
+            if (k.match(/\.\*$/)) {
+              changes[k].push(watcher)
+            } else {
+              watcher[3] = oldVal = watcher[2]
+              watcher[2] = val = Silica.getPropByString(watcher[0], k)
+              changed = oldVal !== val
+              if (!changed && Array.isArray(val) && Array.isArray(oldVal)) {
+                changed = oldVal && val ? oldVal.length !== val.length : true
+                if (!changed) {
+                  changed = oldVal.some(function (e, idx) {
+                    return val[idx] !== e
+                  })
+                }
+              }
+              if (changed) {
+                changes[k].push(watcher)
               }
             }
-            if (changed) {
-              changes[k].push(watcher)
+          }
+        } else {
+          let watcher = watchers[0]
+          watcher[3] = oldVal = watcher[2]
+          watcher[2] = val = Silica.getPropByString(window, k)
+          changed = val !== oldVal
+          if (!changed && Array.isArray(val) && Array.isArray(oldVal)) {
+            changed = oldVal && val ? oldVal.length !== val.length : true
+            if (!changed) {
+              changed = oldVal.some(function (e, idx) {
+                return val[idx] !== e
+              })
+            }
+          }
+          if (changed) {
+            changes[k].push(watcher)
+            for (_j = 1, _len = watchers.length; _j < _len; _j++) {
+              let additional = watchers[_j]
+              additional[2] = watcher[2]
+              additional[3] = watcher[3]
+              changes[k].push(additional)
             }
           }
         }
-      } else {
-        let watcher = watchers[0]
-        watcher[3] = oldVal = watcher[2]
-        watcher[2] = val = Silica.getPropByString(window, k)
-        changed = val !== oldVal
-        if (!changed && Array.isArray(val) && Array.isArray(oldVal)) {
-          changed = oldVal && val ? oldVal.length !== val.length : true
-          if (!changed) {
-            changed = oldVal.some(function (e, idx) {
-              return val[idx] !== e
-            })
-          }
-        }
-        if (changed) {
-          changes[k].push(watcher)
-          for (_j = 1, _len = watchers.length; _j < _len; _j++) {
-            let additional = watchers[_j]
-            additional[2] = watcher[2]
-            additional[3] = watcher[3]
-            changes[k].push(additional)
-          }
+      }
+      finalChanges = {}
+      for (k in changes) {
+        v = changes[k]
+        if (Array.isArray(v) && v.length) {
+          finalChanges[k] = v
         }
       }
-    }
-    finalChanges = {}
-    for (k in changes) {
-      v = changes[k]
-      if (Array.isArray(v) && v.length) {
-        finalChanges[k] = v
-      }
-    }
-    Silica.flush(element, false, finalChanges)
-    Silica.isInApply = false
-    let defers = Silica._defers
-    Silica._defers = []
+      Silica.flush(element, false, finalChanges)
+      Silica.isInApply = false
+      let defers = Silica._defers
+      Silica._defers = []
 
-    if (defers.length) {
-      Silica.apply(() => {
-        for (let i = defers.length - 1; i >= 0; i--) {
-          defers[i].call()
-        }
-      })
-    }
+      if (defers.length) {
+        Silica.apply(() => {
+          for (let i = defers.length - 1; i >= 0; i--) {
+            defers[i].call()
+          }
+        })
+      }
+    })
     return Silica
   },
 

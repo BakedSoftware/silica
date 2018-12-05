@@ -34,7 +34,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.49.2',
+  version: '0.49.3',
 
   // Set the root context
   setContext (contextName) {
@@ -398,8 +398,8 @@ window['Silica'] = {
       propertyPath = propString.split('.')
       obj.__property_map[propString] = propertyPath
     }
-
-    if (Object.getOwnPropertyDescriptor(obj, propertyPath[0]) === undefined) {
+    let descriptor = Object.getOwnPropertyDescriptor(obj, propertyPath[0])
+    if (!(descriptor && descriptor.get)) {
       while (typeof obj[propertyPath[0]] === 'undefined') {
         if (obj.$ctrl) {
           obj = obj.$ctrl

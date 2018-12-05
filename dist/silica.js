@@ -1324,7 +1324,7 @@ module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
 module$exports$hax.init();
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.49.1", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.49.2", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1534,24 +1534,26 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
   });
   return Silica;
 }, getPropByString:function $window$Silica$getPropByString$($obj$$, $context$$, $params$$) {
-  if (!$context$$) {
+  if (!$context$$ || 0 === $context$$.length) {
     return $obj$$;
   }
   void 0 === $obj$$.__property_map && ($obj$$.__property_map = {});
   if ($obj$$.__property_map.hasOwnProperty($context$$)) {
-    var $property_path$$ = $obj$$.__property_map[$context$$];
+    var $propertyPath$$ = $obj$$.__property_map[$context$$];
   } else {
-    $property_path$$ = $context$$.split("."), $obj$$.__property_map[$context$$] = $property_path$$;
+    $propertyPath$$ = $context$$.split("."), $obj$$.__property_map[$context$$] = $propertyPath$$;
   }
-  for (; null == $obj$$[$property_path$$[0]] || void 0 == $obj$$[$property_path$$[0]];) {
-    if ($obj$$.$ctrl) {
-      $obj$$ = $obj$$.$ctrl;
-    } else {
-      return null;
+  if (void 0 === Object.getOwnPropertyDescriptor($obj$$, $propertyPath$$[0])) {
+    for (; "undefined" === typeof $obj$$[$propertyPath$$[0]];) {
+      if ($obj$$.$ctrl) {
+        $obj$$ = $obj$$.$ctrl;
+      } else {
+        return null;
+      }
     }
   }
-  for (var $path_length$$ = $property_path$$.length, $property$$, $i$$ = 0; $i$$ < $path_length$$; ++$i$$) {
-    if ($property$$ = $property_path$$[$i$$], $context$$ = $obj$$, $obj$$ = $obj$$[$property$$], "function" === typeof $obj$$ && ($obj$$ = $obj$$.apply($context$$, $params$$)), null === $obj$$ || void 0 === $obj$$) {
+  for (var $pathLength$$ = $propertyPath$$.length, $i$$ = 0; $i$$ < $pathLength$$; ++$i$$) {
+    if ($context$$ = $obj$$, $obj$$ = $obj$$[$propertyPath$$[$i$$]], "function" === typeof $obj$$ && ($obj$$ = $obj$$.apply($context$$, $params$$)), null === $obj$$ || void 0 === $obj$$) {
       return null;
     }
   }

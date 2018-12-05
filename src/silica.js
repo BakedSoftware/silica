@@ -34,7 +34,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.49.1',
+  version: '0.49.2',
 
   // Set the root context
   setContext (contextName) {
@@ -383,7 +383,7 @@ window['Silica'] = {
   // Nested properties are specified using '.' syntax
   // Function properties will be called and the result will be walked as well
   getPropByString (obj, propString, params) {
-    if (!propString) {
+    if (!propString || propString.length === 0) {
       return obj
     }
 
@@ -391,29 +391,29 @@ window['Silica'] = {
       obj.__property_map = {}
     }
 
-    let /** @type {?Array<string>} */ property_path
+    let /** @type {?Array<string>} */ propertyPath
     if (obj.__property_map.hasOwnProperty(propString)) {
-      property_path = obj.__property_map[propString]
+      propertyPath = obj.__property_map[propString]
     } else {
-      property_path = propString.split('.')
-      obj.__property_map[propString] = property_path
+      propertyPath = propString.split('.')
+      obj.__property_map[propString] = propertyPath
     }
 
-    while (obj[property_path[0]] == null || obj[property_path[0]] == undefined) {
-      if (obj.$ctrl) {
-        obj = obj.$ctrl
-      } else {
-        return null
+    if (Object.getOwnPropertyDescriptor(obj, propertyPath[0]) === undefined) {
+      while (typeof obj[propertyPath[0]] === 'undefined') {
+        if (obj.$ctrl) {
+          obj = obj.$ctrl
+        } else {
+          return null
+        }
       }
     }
 
     let context
-    let path_length = property_path.length
-    let property
-    for (let i = 0; i < path_length; ++i) {
-      property = property_path[i]
+    let pathLength = propertyPath.length
+    for (let i = 0; i < pathLength; ++i) {
       context = obj
-      obj = obj[property]
+      obj = obj[propertyPath[i]]
       if (typeof obj === 'function') {
         obj = obj.apply(context, params)
       }

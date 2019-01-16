@@ -1324,7 +1324,7 @@ module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
 module$exports$hax.init();
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.49.3", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.50.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1559,10 +1559,18 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     }
   }
   return $obj$$;
-}, getValue:function $window$Silica$getValue$($ctx$jscomp$5_raw$$, $propString$$, $context$$, $params$$) {
-  $params$$ = void 0 === $params$$ ? null : $params$$;
-  $ctx$jscomp$5_raw$$ = (void 0 === $context$$ ? null : $context$$) || (90 >= $propString$$.charCodeAt(0) ? window : Silica.getContext($ctx$jscomp$5_raw$$));
-  return Silica.getPropByString($ctx$jscomp$5_raw$$, $propString$$, $params$$);
+}, getValue:function $window$Silica$getValue$($param$jscomp$4_raw$$, $propString$$, $context$jscomp$9_ctx$$, $params$$) {
+  $params$$ = void 0 === $params$$ ? [] : $params$$;
+  $context$jscomp$9_ctx$$ = (void 0 === $context$jscomp$9_ctx$$ ? null : $context$jscomp$9_ctx$$) || (90 >= $propString$$.charCodeAt(0) ? window : Silica.getContext($param$jscomp$4_raw$$));
+  if (8 !== $param$jscomp$4_raw$$.nodeType) {
+    $param$jscomp$4_raw$$ = $param$jscomp$4_raw$$.dataset.parameter;
+  } else {
+    var $temp$$ = document.createElement("div");
+    $temp$$.innerHTML = $param$jscomp$4_raw$$.data;
+    $param$jscomp$4_raw$$ = module$exports$hax$safari.getDatasetProperty($temp$$.firstElementChild || $temp$$, "parameter");
+  }
+  $param$jscomp$4_raw$$ && $params$$.push($param$jscomp$4_raw$$);
+  return Silica.getPropByString($context$jscomp$9_ctx$$, $propString$$, $params$$);
 }, isChildOf:function $window$Silica$isChildOf$($child$$, $parent$$) {
   for (; $child$$;) {
     if ($child$$.parentElement === $parent$$) {
@@ -1696,12 +1704,7 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
     $node$$ = $element$jscomp$26_nodes$$[$i$$], $node$$.hostname === window.location.hostname && "_blank" !== $node$$.target && ($node$$.removeEventListener("click", Silica._handle_href, !0), $node$$.addEventListener("click", Silica._handle_href, !0));
   }
 }, _show:function $window$Silica$_show$($element$jscomp$27_isVisible$$, $expr$$, $negate$$) {
-  if (8 !== $element$jscomp$27_isVisible$$.nodeType) {
-    var $param$jscomp$4_temp$$ = $element$jscomp$27_isVisible$$.dataset.parameter;
-  } else {
-    $param$jscomp$4_temp$$ = document.createElement("div"), $param$jscomp$4_temp$$.innerHTML = $element$jscomp$27_isVisible$$.data, $param$jscomp$4_temp$$ = module$exports$hax$safari.getDatasetProperty($param$jscomp$4_temp$$.firstElementChild || $param$jscomp$4_temp$$, "parameter");
-  }
-  $element$jscomp$27_isVisible$$ = Silica.getValue($element$jscomp$27_isVisible$$, $expr$$, null, [$element$jscomp$27_isVisible$$, $param$jscomp$4_temp$$]);
+  $element$jscomp$27_isVisible$$ = Silica.getValue($element$jscomp$27_isVisible$$, $expr$$, null, [$element$jscomp$27_isVisible$$]);
   $negate$$ && ($element$jscomp$27_isVisible$$ = !$element$jscomp$27_isVisible$$);
   return $element$jscomp$27_isVisible$$;
 }, _call:function $window$Silica$_call$($element$$, $evnt$$, $act$$) {

@@ -34,7 +34,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.49.3',
+  version: '0.50.0',
 
   // Set the root context
   setContext (contextName) {
@@ -424,9 +424,20 @@ window['Silica'] = {
     return obj
   },
 
-  getValue (raw, propString, context = null, params = null) {
+  getValue (raw, propString, context = null, params = []) {
     var ctx
     ctx = context || (propString.charCodeAt(0) <= 90 ? window : Silica.getContext(raw))
+    let param
+    if (raw.nodeType !== 8) {
+      param = raw.dataset['parameter']
+    } else {
+      let temp = document.createElement('div')
+      temp.innerHTML = raw.data
+      param = Hax.getDatasetProperty(temp.firstElementChild || temp, 'parameter')
+    }
+    if (param) {
+      params.push(param)
+    }
     // TODO: This breaks when in the following case:
     // div.data-controller=childcontroller > div.data-class=rootController >
     // div.data-repeat=childContailer.model => the model is looked up on the
@@ -707,15 +718,7 @@ window['Silica'] = {
     }
   },
   _show (element, expr, negate) {
-    let param
-    if (element.nodeType !== 8) {
-      param = element.dataset['parameter']
-    } else {
-      let temp = document.createElement('div')
-      temp.innerHTML = element.data
-      param = Hax.getDatasetProperty(temp.firstElementChild || temp, 'parameter')
-    }
-    let isVisible = Silica.getValue(element, expr, null, [element, param])
+    let isVisible = Silica.getValue(element, expr, null, [element])
     if (negate) {
       isVisible = !isVisible
     }

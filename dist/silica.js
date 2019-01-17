@@ -1324,7 +1324,7 @@ module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
 module$exports$hax.init();
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.50.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.50.1", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {
@@ -1696,7 +1696,12 @@ window.Silica = {context:window, contextName:"", directives:{}, components:{}, f
 }, _handle_href:function $window$Silica$_handle_href$($evt$$) {
   var $path$$ = this.getAttribute("href");
   if (null == /[a-zA-Z]+:+/g.exec($path$$) && "#" !== $path$$ && "" !== $path$$) {
-    return $evt$$.preventDefault(), $evt$$.stopPropagation(), Silica.pub("SiO2-HREF", $evt$$), Silica.goTo($path$$), !1;
+    var $defaultPrevented$$ = !1;
+    this.dataset.nopreventdefault || ($defaultPrevented$$ = !0, $evt$$.preventDefault());
+    this.dataset.nostoppropagation || $evt$$.stopPropagation();
+    Silica.pub("SiO2-HREF", $evt$$);
+    Silica.goTo($path$$);
+    return !$defaultPrevented$$;
   }
 }, _capture_links:function $window$Silica$_capture_links$($element$jscomp$26_nodes$$) {
   $element$jscomp$26_nodes$$ = Silica.queryOfType($element$jscomp$26_nodes$$, "a", "[href]", "[data-href]");

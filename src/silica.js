@@ -34,7 +34,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.50.0',
+  version: '0.50.1',
 
   // Set the root context
   setContext (contextName) {
@@ -698,11 +698,17 @@ window['Silica'] = {
     if (protocolCheckRegex.exec(path) != null || path === '#' || path === '') {
       return
     }
-    evt.preventDefault()
-    evt.stopPropagation()
+    let defaultPrevented = false
+    if (!this.dataset['nopreventdefault']) {
+      defaultPrevented = true
+      evt.preventDefault()
+    }
+    if (!this.dataset['nostoppropagation']) {
+      evt.stopPropagation()
+    }
     Silica.pub('SiO2-HREF', evt)
     Silica.goTo(path)
-    return false
+    return !defaultPrevented
   },
   _capture_links (element) {
     // Capture lnks for pushState

@@ -34,7 +34,7 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.50.1',
+  version: '0.51.0',
 
   // Set the root context
   setContext (contextName) {
@@ -714,7 +714,6 @@ window['Silica'] = {
     // Capture lnks for pushState
     let nodes = Silica.queryOfType(element, 'a', '[href]', '[data-href]')
     let node
-    let externalRegexp = /:\/\//
     for (let i = nodes.length - 1; i >= 0; --i) {
       node = nodes[i]
       if (node.hostname === window.location.hostname && node.target !== '_blank') {

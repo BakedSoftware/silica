@@ -1,12 +1,19 @@
 goog.module('compilers.src')
 
+function defaultSrcForNode (node) {
+  switch (node.nodeName) {
+    case 'IMG': return 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
+    default: return ''
+  }
+}
+
 function Src () {
-  var nodes = Silica.queryOfType(this, 'img', '[data-src]')
+  var nodes = Silica.query(this, '[data-src]')
   var node
   //  let bounds = {w: window.innerWidth, h: window.innerHeight};
   for (let i = nodes.length - 1; i >= 0; --i) {
     node = nodes[i]
-    let target = Silica.getValue(node, node.dataset['src']) || 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
+    let target = Silica.getValue(node, node.dataset['src']) || defaultSrcForNode(node)
     if (node.src !== target) {
       node.src = target
     }

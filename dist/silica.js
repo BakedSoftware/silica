@@ -789,10 +789,18 @@ function module$exports$compilers$model($context_elm$$) {
     $node$$ = $nodes$$[$i$$], $node$$.onsubmit = $handler$$, $node$$._rt_live = !0;
   }
 }
-;function module$exports$compilers$src() {
-  for (var $nodes$$ = Silica.queryOfType(this, "img", "[data-src]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+;function module$contents$compilers$src_defaultSrcForNode($node$$) {
+  switch($node$$.nodeName) {
+    case "IMG":
+      return "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+    default:
+      return "";
+  }
+}
+function module$exports$compilers$src() {
+  for (var $nodes$$ = Silica.query(this, "[data-src]"), $node$$, $i$$ = $nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     $node$$ = $nodes$$[$i$$];
-    var $target$$ = Silica.getValue($node$$, $node$$.dataset.src) || "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+    var $target$$ = Silica.getValue($node$$, $node$$.dataset.src) || module$contents$compilers$src_defaultSrcForNode($node$$);
     $node$$.src !== $target$$ && ($node$$.src = $target$$);
   }
 }
@@ -1324,7 +1332,7 @@ module$exports$watchers.Include = module$exports$compilers$include;
 module$exports$watchers.Value = module$exports$compilers$value;
 var module$exports$silica = {};
 module$exports$hax.init();
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.51.0", setContext:function $window$Silica$setContext$($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, hasher:md5, router:null, _ifs:{}, _shws:{}, _klass:{}, _watch:{}, _repeat_templates:{}, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], interpolationPattern:/\{\{(.*?)\}\}/, usePushState:!0, version:"0.52.0", setContext:function $window$Silica$setContext$($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, setRouter:function $window$Silica$setRouter$($router$$) {

@@ -10,6 +10,8 @@ var Watchers = goog.require('watchers')
 // Import browser hax
 var Hax = goog.require('hax')
 
+const ValueObserver = goog.require('watchers.observer')
+
 // Install polyfills
 Hax.init()
 
@@ -34,7 +36,8 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  version: '0.52.0',
+  observer: ValueObserver.create(),
+  version: '0.53.0',
 
   // Set the root context
   setContext (contextName) {
@@ -222,12 +225,13 @@ window['Silica'] = {
     let watchers = Silica.watchers
     let func
     for (let k in watchers) {
-      if (onlySafe && k[0] === '_') {
+      if ((onlySafe && k[0] === '_') || (k === 'Href' || k === 'Model')) {
         continue
       }
       func = watchers[k]
       func.apply(element)
     }
+    Silica.observer.applyChanges()
   },
 
   flush (element = document.documentElement, onlySafe = false, changed = null, skipSchedule = false) {
@@ -787,6 +791,23 @@ window['Silica'] = {
       }
     }, scope)
   },
+  getFilteredValue (raw, propString, context = null, params = []) {
+    var filter, filterKey, filterOptions, value
+    filter = raw.attributes['data-filter']
+    filter = filter ? filter.value.split(/:(.+)/) : null
+    filterKey = (filter ? filter[0] : null)
+    if (filterKey && !Silica.filters[filterKey]) {
+      throw new Error("Unknown filter: '" + filterKey + "' for element: " + raw.outerHTML)
+    }
+    filterOptions = filter && filter.length > 1 ? eval(filter[1]) : null
+    filter = filterKey ? Silica.filters[filterKey] : null
+    value = Silica.getValue(raw, propString, context, params)
+    if (filter && value != null) {
+      return filter(value, filterOptions)
+    } else {
+      return value
+    }
+  },
   _model_get_val (raw) {
     var filter, filterKey, filterOptions, value
     filter = raw.attributes['data-filter']
@@ -994,6 +1015,7 @@ window['Silica']['flush'] = Silica.flush
 window['Silica']['findCommonAncestor'] = Silica.findCommonAncestor
 window['Silica']['getPropByString'] = Silica.getPropByString
 window['Silica']['getValue'] = Silica.getValue
+window['Silica']['getFilteredValue'] = Silica.getFilteredValue
 window['Silica']['goTo'] = Silica.goTo
 window['Silica']['query'] = Silica.query
 window['Silica']['queryOfType'] = Silica.queryOfType
@@ -1011,3 +1033,4 @@ window['Silica']['sub'] = PubSub.Sub
 window['Silica']['unsub'] = PubSub.Unsub
 window['Silica']['isInDOM'] = Silica.isInDOM
 window['Silica']['hasher'] = Silica.hasher
+window['Silica']['observer'] = Silica.observer

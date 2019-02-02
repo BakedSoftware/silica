@@ -2,41 +2,51 @@ goog.module('watchers.model')
 
 var inputTypes = ['text', 'file', 'number', 'email', 'password', 'tel', 'search', 'url', 'range', 'date', 'month', 'week', 'time', 'datetime', 'datetime-local', 'color', 'textarea', 'select', 'select-one']
 
-/** @this Element */
-function Model () {
-  var elements = Silica.query(this, '[data-model]')
-  var element, i, type, val
-  var activeElement = document.activeElement || Silica.__activeElement
-  for (i = elements.length - 1; i >= 0; --i) {
-    element = elements[i]
-    if (element === activeElement && element.type !== 'radio' && element.type !== 'checkbox') {
-      continue
+function setValue (activeElement, element, value) {
+  if (element === activeElement && element.type !== 'radio' && element.type !== 'checkbox') {
+    return
+  }
+  let type = element.type
+  if (inputTypes.indexOf(type) !== -1) {
+    element.value = value
+  } else if (type === 'radio') {
+    let val = element.value
+    if (val.search(/[0-9]/) !== -1) {
+      val = parseInt(val, 10)
     }
-    type = element.type
-    if (inputTypes.indexOf(type) !== -1) {
-      element.value = Silica._model_get_val(element)
-    } else if (type === 'radio') {
-      val = element.value
-      if (val.search(/[0-9]/) !== -1) {
-        val = parseInt(val, 10)
-      }
-      element.checked = Silica.getValue(element, element.dataset['model']) === val
-    } else if (type === 'checkbox') {
-      element.checked = Silica.getValue(element, element.dataset['model'])
-    } else if (element.nodeName === 'SPAN' || element.nodeName === 'PRE' || element.nodeName === 'DIV' || element.nodeName === 'P') {
-      val = Silica._model_get_val(element)
-      if (val) {
-        if (val.nodeName) {
-          element.innerHTML = ''
-          element.appendChild(val)
-        } else if (element.innerHTML !== val) {
-          element.innerHTML = val
-        }
-      } else if (element.innerHTML !== '') {
+    element.checked = value === val
+  } else if (type === 'checkbox') {
+    element.checked = Silica.getValue(element, element.dataset['model'])
+  } else if (element.nodeName === 'OPTION') {
+    element.value = value
+  } else {
+    if (value) {
+      if (value.nodeName) {
         element.innerHTML = ''
+        element.appendChild(value)
+      } else if (element.innerHTML !== value) {
+        element.innerHTML = value
       }
-    } else if (element.nodeName === 'OPTION') {
-      element.value = Silica._model_get_val(element)
+    } else if (element.innerHTML !== '') {
+      element.innerHTML = ''
+    }
+  }
+}
+
+/** @this Element */
+function Model (context, value) {
+  var activeElement = document.activeElement || Silica.__activeElement
+  if (value !== undefined) {
+    setValue(activeElement, this, value)
+  } else {
+    var elements = Silica.query(this, '[data-model]')
+    var element, i
+    for (i = elements.length - 1; i >= 0; --i) {
+      element = elements[i]
+      if (element === activeElement && element.type !== 'radio' && element.type !== 'checkbox') {
+        continue
+      }
+      setValue(activeElement, element, Silica._model_get_val(element))
     }
   }
 }

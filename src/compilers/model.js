@@ -1,30 +1,17 @@
 goog.module('compilers.model')
-
-var inputTypes = ['text', 'file', 'number', 'email', 'password', 'tel', 'search', 'url', 'range', 'date', 'month', 'week', 'time', 'datetime', 'datetime-local', 'color', 'textarea', 'select', 'select-one']
+const ModelUpdater = goog.require('watchers.model')
 
 /** @this Element */
 function Model (context = null) {
-  var elm, change, ctx, model, val
-  var elements = Silica.query(this, 'input[data-model]', 'select[data-model]', 'textarea[data-model]', 'option[data-model]')
+  var elements = Silica.query(this, '[data-model]')
+  for (let elm of elements) {
+    Silica.observer.register(elm, elm.dataset['model'], Silica.watchers['Model'])
+  }
+  ModelUpdater.call(this, context, undefined)
+  elements = Silica.query(this, 'input[data-model]', 'select[data-model]', 'textarea[data-model]', 'option[data-model]')
   for (let i = elements.length - 1; i >= 0; i--) {
-    elm = elements[i]
-    ctx = Silica.getContext(elm)
-    model = elm.dataset['model']
-    let type = elm.type
-    if (inputTypes.indexOf(type) !== -1) {
-      elm.value = Silica.getValue(elm, model, ctx)
-    } else if (type === 'radio') {
-      val = elm.value
-      if (val.match(/[0-9]/)) {
-        val = parseInt(val, 10)
-      }
-      elm.checked = Silica.getValue(elm, model, ctx) === val
-    } else if (type === 'checkbox') {
-      elm.checked = Silica.getValue(elm, model, ctx)
-    } else if (elm.nodeName === 'OPTION') {
-      elm.value = Silica.getValue(elm, model, ctx)
-    }
-    change = function () {
+    let elm = elements[i]
+    let change = function () {
       var obj, _ref, _ref1, _ref2
       var val = this.value
       var ctx = Silica.getContext(this)

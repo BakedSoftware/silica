@@ -1,15 +1,11 @@
 goog.module('watchers.model')
 
-var inputTypes = ['text', 'file', 'number', 'email', 'password', 'tel', 'search', 'url', 'range', 'date', 'month', 'week', 'time', 'datetime', 'datetime-local', 'color', 'textarea', 'select', 'select-one']
-
 function setValue (activeElement, element, value) {
   if (element === activeElement && element.type !== 'radio' && element.type !== 'checkbox') {
     return
   }
   let type = element.type
-  if (inputTypes.indexOf(type) !== -1) {
-    element.value = value
-  } else if (type === 'radio') {
+  if (type === 'radio') {
     let val = element.value
     if (val.search(/[0-9]/) !== -1) {
       val = parseInt(val, 10)
@@ -18,6 +14,8 @@ function setValue (activeElement, element, value) {
   } else if (type === 'checkbox') {
     element.checked = Silica.getValue(element, element.dataset['model'])
   } else if (element.nodeName === 'OPTION') {
+    element.value = value
+  } else if (element.nodeName === 'INPUT') {
     element.value = value
   } else {
     if (value) {

@@ -37,7 +37,7 @@ window['Silica'] = {
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
   observer: ValueObserver.create(),
-  version: '0.53.0',
+  version: '0.60.0-alpha',
 
   // Set the root context
   setContext (contextName) {

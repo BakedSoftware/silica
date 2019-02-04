@@ -12,6 +12,7 @@ function Repeat () {
     list = repeat[1]
     model = repeat[0]
     ctx = Silica.getContext(raw)
+    let possiblyNested = !raw.dataset['repeatNotNested']
 
     // Check if we are calling a function with a param
     if (typeof (_ref = list.match(/((?:\w|\.)+)(?:\(([\w\.]+)\))*/))[2] !== 'undefined') {
@@ -112,7 +113,11 @@ function Repeat () {
         ControllerCompiler.call(node, node._rt_ctx, true)
       }
       node._rt_ctx.index = _i
-      Silica.flush(node, false, {}, true)
+
+      // Silica.flush(node, false, {}, true)
+      if (possiblyNested) {
+        Repeat.call(node)
+      }
     }
 
     if (ctx['renderedRepeat']) {

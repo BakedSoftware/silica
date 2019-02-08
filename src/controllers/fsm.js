@@ -6,15 +6,10 @@ const Base = goog.require('controllers.Base')
  * @dict
  */
 class State {
-  onEnter (ctrl) {
-  }
-
-  onExit (ctrl) {
-  }
 }
 
-State.prototype['onEnter'] = State.prototype.onEnter
-State.prototype['onExit'] = State.prototype.onExit
+State.prototype['onEnter'] = function () {}
+State.prototype['onExit'] = function () {}
 
 // ##Silica.Controllers.FSM
 // This is a Finite state machine based controller
@@ -41,8 +36,11 @@ class Controller extends Base {
     if (this['initialState']) {
       this._currentStateName = this['initialState']()
       this._currentState = this._getStateWithName(this._currentStateName)
+      let state = this._currentState
       Silica.defer(() => {
-        this._currentState['onEnter'](this)
+        if (this._currentState === state) {
+          this._currentState['onEnter'](this)
+        }
       })
     }
   }

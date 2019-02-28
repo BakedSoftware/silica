@@ -17,6 +17,7 @@ program
   .option('-a --additional [path]', 'Directory of additional JS imports relative to the src directory')
   .option('-m --source-map [bool]', 'Create a source map (default = false)')
   .option('-o --optimization-level [int]', 'Optimization level (0 = debug+simple, 1=simple, 2=advanced)')
+  .option('-n --node <modules>', 'Comma separated list of node modules package.json paths to include')
   .parse(process.argv)
 
 program.optimizationLevel = parseInt(program.optimizationLevel || 0)
@@ -234,9 +235,17 @@ function envReplaceTransform (chunk) {
 }
 
 var flags = {
-  js: 'build_cache/**/*.js',
-  externs: 'src/externs.js'
+  js: ['_closure_base.js', 'build_cache/**/*.js'],
+  externs: 'src/externs.js',
+  process_common_js_modules: true,
+  module_resolution: 'NODE'
+}
 
+if (program.node) {
+  for (let path of program.node.split(',')) {
+    flags.js.push(path)
+    flags.js.push(path.split('package.json')[0] + '**/*.js')
+  }
 }
 
 const moduleRegex = /goog\.module\((?:'|")(.*?)(?:'|")\)/

@@ -5,7 +5,7 @@ const ModelUpdater = goog.require('watchers.model')
 function Model (context = null) {
   var elements = Silica.query(this, '[data-model]')
   for (let elm of elements) {
-    Silica.observer.register(elm, elm.dataset['model'], Silica.watchers['Model'])
+    Silica.observer.register(elm, elm.dataset['model'], ModelUpdater)
   }
   ModelUpdater.call(this, context, undefined)
   elements = Silica.query(this, 'input[data-model]', 'select[data-model]', 'textarea[data-model]', 'option[data-model]')

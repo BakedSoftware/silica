@@ -7,17 +7,22 @@ function defaultSrcForNode (node) {
   }
 }
 
-function Src () {
-  var nodes = Silica.query(this, '[data-src]')
-  var node
-  //  let bounds = {w: window.innerWidth, h: window.innerHeight};
-  for (let i = nodes.length - 1; i >= 0; --i) {
-    node = nodes[i]
-    let target = Silica.getValue(node, node.dataset['src']) || defaultSrcForNode(node)
-    if (node.src !== target) {
-      node.src = target
-    }
-    /*
+/** @this Element */
+function Src (ctx, value) {
+  if (value !== undefined) {
+    this.setAttribute('src', value || defaultSrcForNode(this))
+  } else {
+    var nodes = Silica.query(this, '[data-src]')
+    var node
+    //  let bounds = {w: window.innerWidth, h: window.innerHeight};
+    for (let i = nodes.length - 1; i >= 0; --i) {
+      node = nodes[i]
+      let property = node.dataset['src']
+      let target = Silica.observer.register(node, property, Src) || defaultSrcForNode(node)
+      if (node.src !== target) {
+        node.src = target
+      }
+      /*
     if (node.src !== target)
     {
 
@@ -28,6 +33,7 @@ function Src () {
       }
     }
     */
+    }
   }
 }
 

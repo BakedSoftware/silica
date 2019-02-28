@@ -1,11 +1,20 @@
 goog.module('compilers.generic')
 
+function createUpdater (attribute) {
+  return function (_, value) {
+    if (attribute !== 'innerHTML') {
+      this.setAttribute(attribute, value)
+    } else {
+      this.innerHTML = value
+    }
+  }
+}
+
 function Generic () {
   var nodeList = Silica.query(this, '[data-silica]')
   var node
   var entries
   var comps, attribute, valueKey
-  var params, paramsKeys
   for (let i = nodeList.length - 1; i >= 0; --i) {
     node = nodeList[i]
 
@@ -31,22 +40,13 @@ function Generic () {
 
       attribute = comps[0]
       valueKey = comps[1]
-      paramsKeys = valueKey.match('\\((.*)\\)')
-
-      if (paramsKeys !== null) {
-        paramsKeys.shift()
-        params = []
-        for (let j = 0, length = paramsKeys.length; j < length; j++) {
-          params.push(Silica.getValue(node, paramsKeys[j]))
-        }
-        valueKey = valueKey.substr(0, valueKey.indexOf('('))
-      }
-
+      let value = Silica.getValue(node, valueKey)
       if (attribute !== 'innerHTML') {
-        node.setAttribute(attribute, Silica.getValue(node, valueKey, null, params))
+        node.setAttribute(attribute, value)
       } else {
-        node.innerHTML = Silica.getValue(node, valueKey, null, params)
+        node.innerHTML = value
       }
+      Silica.observer.register(node, valueKey, createUpdater(attribute))
     }
   }
   Silica._capture_links(this)

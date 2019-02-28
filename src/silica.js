@@ -395,6 +395,11 @@ window['Silica'] = {
       obj.__property_map = {}
     }
 
+    let negate = propString[0] === '!'
+    if (negate) {
+      propString = propString.substr(1)
+    }
+
     let /** @type {?Array<string>} */ propertyPath
     if (obj.__property_map.hasOwnProperty(propString)) {
       propertyPath = obj.__property_map[propString]
@@ -408,7 +413,7 @@ window['Silica'] = {
         if (obj.$ctrl) {
           obj = obj.$ctrl
         } else {
-          return null
+          return negate ? true : null
         }
       }
     }
@@ -422,7 +427,7 @@ window['Silica'] = {
         obj = obj.apply(context, params)
       }
       if (obj === null || obj === void 0) {
-        return null
+        return negate ? true : null
       }
     }
     return obj
@@ -791,8 +796,24 @@ window['Silica'] = {
       }
     }, scope)
   },
-  getFilteredValue (raw, propString, context = null, params = []) {
+  getFilteredValue (raw, propString, elideFilterIf, paramsKeys = null) {
     var filter, filterKey, filterOptions, value
+    paramsKeys = paramsKeys || propString.match('\\((.*)\\)')
+
+    let params = []
+    if (paramsKeys !== null) {
+      paramsKeys.shift()
+      for (let j = 0, length = paramsKeys.length; j < length; j++) {
+        params.push(Silica.getValue(raw, paramsKeys[j]))
+      }
+      propString = propString.substr(0, propString.indexOf('('))
+    }
+
+    value = Silica.getValue(raw, propString, null, params)
+    if (elideFilterIf && value === elideFilterIf) {
+      return null
+    }
+
     filter = raw.attributes['data-filter']
     filter = filter ? filter.value.split(/:(.+)/) : null
     filterKey = (filter ? filter[0] : null)
@@ -801,11 +822,10 @@ window['Silica'] = {
     }
     filterOptions = filter && filter.length > 1 ? eval(filter[1]) : null
     filter = filterKey ? Silica.filters[filterKey] : null
-    value = Silica.getValue(raw, propString, context, params)
     if (filter && value != null) {
-      return filter(value, filterOptions)
+      return [filter(value, filterOptions), value, paramsKeys]
     } else {
-      return value
+      return [value, value, paramsKeys]
     }
   },
   _model_get_val (raw) {

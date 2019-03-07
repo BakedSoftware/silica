@@ -159,51 +159,7 @@ window['Silica'] = {
     Silica._defers.push(func)
   },
 
-  findCommonAncestor (a, b) {
-    if (Silica.isChildOf(a, b)) {
-      return b
-    } else if (Silica.isChildOf(b, a)) {
-      return a
-    }
-    let a_parents = []
-    a = a.parentElement
-    while (a) {
-      a_parents.push(a)
-      a = a.parentElement
-    }
-    let b_parents = []
-    b = b.parentElement
-    while (b) {
-      b_parents.push(b)
-      b = b.parentElement
-    }
-
-    for (a of a_parents) {
-      for (b of b_parents) {
-        if (a === b) {
-          return a
-        }
-      }
-    }
-
-    return document
-  },
-
   processQueue () {
-    // let outer_most_scope
-    // for (let i = 0, len = Silica._queue.length; i < len; i++) {
-    //   let item = Silica._queue[i]
-    //   if (!outer_most_scope) {
-    //     outer_most_scope = item[1]
-    //   } else {
-    //     outer_most_scope = Silica.findCommonAncestor(item[1], outer_most_scope)
-    //   }
-
-    //   if (outer_most_scope === document) {
-    //     break
-    //   }
-    // }
-
     for (let i = 0, len = Silica._queue.length; i < len; i++) {
       let item = Silica._queue[i]
       Silica.apply(function () {
@@ -1017,7 +973,6 @@ window['Silica']['compile'] = Silica.compile
 window['Silica']['debounce'] = Silica.debounce
 window['Silica']['defer'] = Silica.defer
 window['Silica']['flush'] = Silica.flush
-window['Silica']['findCommonAncestor'] = Silica.findCommonAncestor
 window['Silica']['getPropByString'] = Silica.getPropByString
 window['Silica']['getValue'] = Silica.getValue
 window['Silica']['getFilteredValue'] = Silica.getFilteredValue
@@ -1037,4 +992,3 @@ window['Silica']['pub'] = PubSub.Pub
 window['Silica']['sub'] = PubSub.Sub
 window['Silica']['unsub'] = PubSub.Unsub
 window['Silica']['isInDOM'] = Silica.isInDOM
-window['Silica']['observer'] = Silica.observer

@@ -443,14 +443,13 @@ function module$contents$compilers$src_defaultSrcForNode($node$$) {
       return "";
   }
 }
+function module$contents$compilers$src_SrcUpdater($_$$, $value$$) {
+  $value$$ !== this.src && this.setAttribute("src", $value$$ || module$contents$compilers$src_defaultSrcForNode(this));
+}
 function module$exports$compilers$src($ctx$jscomp$6_nodes$$, $node$jscomp$10_value$$) {
-  if (void 0 !== $node$jscomp$10_value$$ && $node$jscomp$10_value$$ !== this.src) {
-    this.setAttribute("src", $node$jscomp$10_value$$ || module$contents$compilers$src_defaultSrcForNode(this));
-  } else {
-    $ctx$jscomp$6_nodes$$ = Silica.query(this, "[data-src]");
-    for (let $i$$ = $ctx$jscomp$6_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-      $node$jscomp$10_value$$ = $ctx$jscomp$6_nodes$$[$i$$], Silica.observer.register($node$jscomp$10_value$$, $node$jscomp$10_value$$.dataset.src, module$exports$compilers$src) || module$contents$compilers$src_defaultSrcForNode($node$jscomp$10_value$$);
-    }
+  $ctx$jscomp$6_nodes$$ = Silica.query(this, "[data-src]");
+  for (let $i$$ = $ctx$jscomp$6_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$jscomp$10_value$$ = $ctx$jscomp$6_nodes$$[$i$$], Silica.observer.register($node$jscomp$10_value$$, $node$jscomp$10_value$$.dataset.src, module$contents$compilers$src_SrcUpdater);
   }
 }
 ;function module$contents$compilers$generic_AttributeFilter() {
@@ -795,17 +794,23 @@ module$exports$watchers._If = module$exports$watchers$if;
 module$exports$watchers.Repeat = module$exports$watchers$repeat;
 let module$contents$watchers$observer_IO = null;
 module$contents$watchers$observer_IO = "undefined" === typeof window.IntersectionObserver ? class {
+  constructor($callback$$) {
+    this.callback = $callback$$;
+  }
   observe($node$$) {
-    $node$$.__is_visible = !0;
+    this.callback({target:$node$$, isIntersecting:!0});
   }
 } : window.IntersectionObserver;
 class module$exports$watchers$observer {
   constructor() {
     this.mapping = new Map;
+    this.liveNodes = new Set;
+    this.hiddenNodes = new Set;
     this.visibilityObserver = new module$contents$watchers$observer_IO(($entries$$) => {
       $entries$$.forEach(($entry$$) => {
-        $entry$$.target.__is_visible = $entry$$.isIntersecting;
+        $entry$$.isIntersecting ? (this.liveNodes.add($entry$$.target), this.hiddenNodes.delete($entry$$.target)) : (this.liveNodes.delete($entry$$.target), $entry$$.target.classList.contains("hidden") && this.hiddenNodes.add($entry$$.target));
       });
+      this.applyChanges();
     });
   }
   clone($obj$$) {
@@ -833,12 +838,17 @@ class module$exports$watchers$observer {
     return $filtered$$;
   }
   applyChanges() {
-    this.mapping.forEach(($map$$, $node$$) => {
-      $node$$.__is_visible && $map$$.forEach(($packet$$, $property$$) => {
-        if (($property$$ = Silica.getFilteredValue($node$$, $property$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$$[1])) {
-          $packet$$.value = this.clone($property$$[1]);
+    this.hiddenNodes.forEach(($node$$) => {
+      this.mapping.get($node$$).forEach(($packet$$, $property$$) => {
+        $packet$$.actors.has(module$exports$compilers$show) && ($property$$ = Silica.getFilteredValue($node$$, $property$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$$[1]) && ($packet$$.value = this.clone($property$$[1]), module$exports$compilers$show.call($node$$, null, $property$$[0]), this.liveNodes.add($node$$));
+      });
+    });
+    this.liveNodes.forEach(($node$$) => {
+      this.mapping.get($node$$).forEach(($packet$$, $property$jscomp$15_result$$) => {
+        if (($property$jscomp$15_result$$ = Silica.getFilteredValue($node$$, $property$jscomp$15_result$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$jscomp$15_result$$[1])) {
+          $packet$$.value = this.clone($property$jscomp$15_result$$[1]);
           for (let $actor$$ of $packet$$.actors.values()) {
-            $actor$$.call($node$$, null, $property$$[0]);
+            $actor$$.call($node$$, null, $property$jscomp$15_result$$[0]);
           }
         }
       });

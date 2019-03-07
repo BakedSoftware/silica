@@ -1,11 +1,15 @@
 goog.module('watchers.observer')
+const Show = goog.require('compilers.show')
 
 let IO = null
 
 if (typeof window.IntersectionObserver === 'undefined') {
   IO = class {
+    constructor (callback) {
+      this.callback = callback
+    }
     observe (node) {
-      node.__is_visible = true
+      this.callback({ 'target': node, 'isIntersecting': true })
     }
   }
 } else {
@@ -15,10 +19,21 @@ if (typeof window.IntersectionObserver === 'undefined') {
 class ValueObserver {
   constructor () {
     this.mapping = new Map()
+    this.liveNodes = new Set()
+    this.hiddenNodes = new Set()
     this.visibilityObserver = new IO((entries) => {
       entries.forEach(entry => {
-        entry.target.__is_visible = entry.isIntersecting
+        if (entry.isIntersecting) {
+          this.liveNodes.add(entry.target)
+          this.hiddenNodes.delete(entry.target)
+        } else {
+          this.liveNodes.delete(entry.target)
+          if (entry.target.classList.contains('hidden')) {
+            this.hiddenNodes.add(entry.target)
+          }
+        }
       })
+      this.applyChanges()
     })
   }
 
@@ -84,18 +99,29 @@ class ValueObserver {
   }
 
   applyChanges () {
-    this.mapping.forEach((map, node) => {
-      if (node.__is_visible) {
-        map.forEach((packet, property) => {
+    this.hiddenNodes.forEach((node) => {
+      this.mapping.get(node).forEach((packet, property) => {
+        if (packet.actors.has(Show)) {
           let result = Silica.getFilteredValue(node, property, packet.value, packet.params)
           if (result && !Object.is(packet.value, result[1])) {
             packet.value = this.clone(result[1])
-            for (let actor of packet.actors.values()) {
-              actor.call(node, null, result[0])
-            }
+            Show.call(node, null, result[0])
+            this.liveNodes.add(node)
           }
-        })
-      }
+        }
+      })
+    })
+
+    this.liveNodes.forEach((node) => {
+      this.mapping.get(node).forEach((packet, property) => {
+        let result = Silica.getFilteredValue(node, property, packet.value, packet.params)
+        if (result && !Object.is(packet.value, result[1])) {
+          packet.value = this.clone(result[1])
+          for (let actor of packet.actors.values()) {
+            actor.call(node, null, result[0])
+          }
+        }
+      })
     })
   }
 }

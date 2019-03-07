@@ -919,29 +919,6 @@ version:"0.60.0-alpha", setContext($contextName$$) {
   };
 }, defer($func$$) {
   Silica._defers.push($func$$);
-}, findCommonAncestor($a$$, $b$$) {
-  if (Silica.isChildOf($a$$, $b$$)) {
-    return $b$$;
-  }
-  if (Silica.isChildOf($b$$, $a$$)) {
-    return $a$$;
-  }
-  let $a_parents$$ = [];
-  for ($a$$ = $a$$.parentElement; $a$$;) {
-    $a_parents$$.push($a$$), $a$$ = $a$$.parentElement;
-  }
-  let $b_parents$$ = [];
-  for ($b$$ = $b$$.parentElement; $b$$;) {
-    $b_parents$$.push($b$$), $b$$ = $b$$.parentElement;
-  }
-  for ($a$$ of $a_parents$$) {
-    for ($b$$ of $b_parents$$) {
-      if ($a$$ === $b$$) {
-        return $a$$;
-      }
-    }
-  }
-  return document;
 }, processQueue() {
   for (let $i$$ = 0, $len$$ = Silica._queue.length; $i$$ < $len$$; $i$$++) {
     let $item$$ = Silica._queue[$i$$];
@@ -1402,7 +1379,6 @@ window.Silica.compile = Silica.compile;
 window.Silica.debounce = Silica.debounce;
 window.Silica.defer = Silica.defer;
 window.Silica.flush = Silica.flush;
-window.Silica.findCommonAncestor = Silica.findCommonAncestor;
 window.Silica.getPropByString = Silica.getPropByString;
 window.Silica.getValue = Silica.getValue;
 window.Silica.getFilteredValue = Silica.getFilteredValue;
@@ -1422,6 +1398,5 @@ window.Silica.pub = module$exports$silica$pubsub.Pub;
 window.Silica.sub = module$exports$silica$pubsub.Sub;
 window.Silica.unsub = module$exports$silica$pubsub.Unsub;
 window.Silica.isInDOM = Silica.isInDOM;
-window.Silica.observer = Silica.observer;
 
 }.call(window);

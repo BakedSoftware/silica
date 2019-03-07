@@ -31,6 +31,7 @@
   },
   "author": "Kayle Gishen",
   "license": "GPL-3.0",
+  "jsdelivr": "/dist/silica.min.js",
   "bugs": {
     "url": "https://github.com/BakedSoftware/Silica/issues"
   },

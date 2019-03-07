@@ -28,11 +28,11 @@ function processInclude (element, html) {
 // loadPartial asynchronously retreives content and replaces the elements
 // content with the loaded content.
 function loadPartial (url, element) {
-  if (element.dataset['sio2IncludedUrl'] === url) {
+  if (element.dataset['siO2IncludedUrl'] === url) {
     return
   }
 
-  element.dataset['sio2IncludedUrl'] = url
+  element.dataset['siO2IncludedUrl'] = url
 
   clearContent(element)
 
@@ -46,7 +46,7 @@ function loadPartial (url, element) {
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4) {
       Silica._includeCache[url] = xhr.responseText
-      if (element.dataset['sio2IncludedUrl'] === url) {
+      if (element.dataset['siO2IncludedUrl'] === url) {
         processInclude(element, xhr.responseText)
       }
     }

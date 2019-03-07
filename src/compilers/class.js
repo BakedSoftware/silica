@@ -9,7 +9,7 @@ if (DOMTokenList && DOMTokenList.prototype.values) {
 }
 
 function updater (element, value) {
-  var hardClass = element.dataset._rt_hard_klass || ''
+  var hardClass = element.dataset['siO2HardClass'] || ''
   var klass = value
   if (!(klass instanceof Array)) {
     klass = klass === '' ? [] : [klass]
@@ -56,8 +56,8 @@ function Class (ctx, value) {
   var nodes = Silica.query(this, '[data-class]')
 
   if (this.nodeType !== 9 && this.dataset['class']) {
-    if (this.dataset._rt_hard_klass == null) {
-      this.dataset._rt_hard_klass = this.className.split('hidden').join(' ').trim()
+    if (this.dataset['siO2HardClass'] == null) {
+      this.dataset['siO2HardClass'] = this.className.split('hidden').join(' ').trim()
     }
     let property = this.dataset['class']
     Silica.observer.register(this, property, Class)
@@ -69,8 +69,8 @@ function Class (ctx, value) {
   var node
   for (let i = nodes.length - 1; i >= 0; --i) {
     node = nodes[i]
-    if (node.dataset._rt_hard_klass == null) {
-      node.dataset._rt_hard_klass = node.className.split('hidden').join(' ').trim()
+    if (node.dataset['siO2HardClass'] == null) {
+      node.dataset['siO2HardClass'] = node.className.split('hidden').join(' ').trim()
     }
     let property = node.dataset['class']
     Silica.observer.register(node, property, Class)

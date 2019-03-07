@@ -30,7 +30,7 @@ function Generic () {
   var node
   while ((node = nodes.nextNode())) {
     for (let key of Object.keys(node.dataset)) {
-      if (Silica.ignoreAttributes.has(key)) {
+      if (Silica.ignoredAttributes.has(key)) {
         continue
       }
       if (!key.startsWith('on') || (key.length > 2 && (key.charCodeAt(2) > 90 || key.charCodeAt(2) < 65))) {

@@ -40,7 +40,7 @@ function Repeat () {
     }
 
     // Get the template
-    template = Silica._repeat_templates[Hax.getDatasetProperty(raw, '_rt_repeat_template')]
+    template = Silica._repeat_templates[Hax.getDatasetProperty(raw, 'siO2TemplateId')]
     if (newList.constructor === Object) {
       let keys = Object.keys(newList)
       let obj = newList

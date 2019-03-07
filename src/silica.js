@@ -36,13 +36,21 @@ window['Silica'] = {
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
   observer: new ValueObserver(),
-  ignoreAttributes: new Set(['filter', 'class', 'show', 'if', 'model', 'include', 'controller', 'repeat', 'onScrollFinished', 'repeatNotNested', 'sio2IncludedUrl', 'src']),
+  ignoredAttributes: new Set(['filter', 'class', 'show', 'if', 'model', 'include',
+    'controller', 'repeat', 'onScrollFinished', 'repeatNotNested',
+    'siO2IncludedUrl', 'src', 'siO2HardClass', 'noStopPropagation', 'noPreventDefault',
+    'siO2TemplateId'
+  ]),
   version: '0.60.0-alpha',
 
   // Set the root context
   setContext (contextName) {
     this.contextName = contextName
     this.context = window[contextName]
+  },
+
+  ignore (keys) {
+    Silica.ignoredAttributes = new Set([...Silica.ignoredAttributes].concat(keys))
   },
 
   setRouter (router) {
@@ -117,7 +125,7 @@ window['Silica'] = {
     var context
     for (let i = nodes.length - 1; i >= 0; --i) {
       node = nodes[i]
-      if (!Hax.hasDatasetProperty(node, '_rt_repeat_template')) {
+      if (!Hax.hasDatasetProperty(node, 'siO2TemplateId')) {
         let nextTemplateId = Silica._template_id++
         if (node.children.length === 1) {
           Silica._repeat_templates[nextTemplateId] = node.removeChild(node.firstElementChild)
@@ -127,7 +135,7 @@ window['Silica'] = {
           wrap.innerHTML = node.innerHTML
           Silica._repeat_templates[nextTemplateId] = wrap
         }
-        node.dataset['_rt_repeat_template'] = nextTemplateId
+        node.dataset['siO2TemplateId'] = nextTemplateId
         context = {}
         context.$ctrl = Silica.getContext(node)
         Silica._repeat_templates[nextTemplateId] = Silica.compile(Silica._repeat_templates[nextTemplateId], false, context, true, false)
@@ -663,11 +671,11 @@ window['Silica'] = {
       return
     }
     let defaultPrevented = false
-    if (!this.dataset['nopreventdefault']) {
+    if (!this.dataset['noPreventDefault']) {
       defaultPrevented = true
       evt.preventDefault()
     }
-    if (!this.dataset['nostoppropagation']) {
+    if (!this.dataset['noStopPropagation']) {
       evt.stopPropagation()
     }
     PubSub.Pub('SiO2-HREF', evt)
@@ -700,10 +708,10 @@ window['Silica'] = {
     if (element !== evnt.target && act === 'click' && (evnt.target.nodeName === 'SELECT' || evnt.target.nodeName === 'INPUT')) {
       return
     }
-    if (!element.dataset['nopreventdefault']) {
+    if (!element.dataset['noPreventDefault']) {
       evnt.preventDefault()
     }
-    if (!element.dataset['nostoppropagation']) {
+    if (!element.dataset['noStopPropagation']) {
       evnt.stopPropagation()
     }
     var scope = document, trap_to, trapped_scope
@@ -992,3 +1000,4 @@ window['Silica']['pub'] = PubSub.Pub
 window['Silica']['sub'] = PubSub.Sub
 window['Silica']['unsub'] = PubSub.Unsub
 window['Silica']['isInDOM'] = Silica.isInDOM
+window['Silica']['ignore'] = Silica.ignore

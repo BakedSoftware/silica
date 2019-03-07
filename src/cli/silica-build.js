@@ -113,6 +113,7 @@ function transmogrifyMustache (text) {
     // Evaluate and replace the expression
     text = text.replace('{{' + expr + '}}', html)
   }
+  return text
 }
 
 function preprocessView (readPath, writePath) {
@@ -144,7 +145,7 @@ function preprocessView (readPath, writePath) {
     content = content.replace(toReplace, replacement)
   }
 
-  transmogrifyMustache(content)
+  content = transmogrifyMustache(content)
 
   var dir = path.dirname(writePath)
 

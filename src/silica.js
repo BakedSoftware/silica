@@ -33,7 +33,6 @@ window['Silica'] = {
   _includeCache: {},
   _clickOutElements: new Set(),
   _queue: [],
-  interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
   observer: new ValueObserver(),
   ignoredAttributes: new Set(['filter', 'class', 'show', 'if', 'model', 'include',
@@ -81,27 +80,27 @@ window['Silica'] = {
     }
   },
 
-  // Interpolate and link all Silica directives within an element
+  // Link all Silica directives within an element
   compile (element, flush = true, context = null, onlySafe = false, storeWatchers = true) {
     if (Silica._appRoot === null) {
       Silica._appRoot = element
     }
-    var func, k, _ref
-    if (element.nodeType == 8) // Check if it is a comment
-    {
+
+    // Check if it is a comment
+    if (element.nodeType === 8) {
       return
     }
-    if (element == document) {
+
+    if (element === document) {
       element = document.documentElement
       context = context || {}
     } else {
       context = context || Silica.getContext(element)
     }
     Silica.cacheTemplates(element)
-    Silica.interpolate(element, context, flush)
     for (let key in Silica.compilers) {
       if (!(onlySafe & key[0] === '_')) {
-        if (key == 'Controller') {
+        if (key === 'Controller') {
           Silica.compilers[key].apply(element, [context, false, storeWatchers])
         } else {
           Silica.compilers[key].apply(element, [context])
@@ -475,112 +474,6 @@ window['Silica'] = {
     let hook = ctx[prop + '_changed']
     if (hook) {
       hook.call(ctx, old_value, value)
-    }
-  },
-  evaluateExpression (expr, elm, ctx = {}) {
-    var filter, filterKey, filterOptions, value
-    if (!expr) {
-      return
-    }
-    filter = null
-    if (expr.indexOf('|') !== -1) {
-      expr = expr.split('|')
-      filter = expr[1].trim()
-      expr = expr[0].trim()
-    }
-    if (!ctx.$ctrl && elm !== document.documentElement && ctx !== Silica.context) {
-      let parentCtx = Silica.getContext(elm)
-      if (parentCtx === ctx || !parentCtx.el) {
-        ctx.$ctrl = Silica.context
-      } else if (parentCtx.el && Silica.isChildOf(ctx.el, parentCtx.el)) {
-        ctx.$ctrl = parentCtx
-      }
-    }
-
-    // Expr refers to a global property so it must be in window context
-    if (expr.charCodeAt(0) <= 90) {
-      ctx = window
-    }
-
-    value = Silica.getPropByString(ctx, expr)
-
-    if (filter) {
-      filter = filter.split(/:(.+)/)
-      filterKey = filter ? filter[0] : null
-      filterOptions = filter && filter.length > 1 ? eval(filter[1]) : null
-      filter = filterKey ? Silica.filters[filterKey] : null
-      value = filter ? filter(value, filterOptions, ctx) : value
-    }
-    return value
-  },
-
-  // Convert  mustache expressions into model bindings
-  interpolate (element, context = null, flush = true) {
-    var elements = []
-    var children = element.childNodes
-    var text, match, expr, comps, property, fmt, filter, evald
-
-    /** @type {NodeFilter} */
-    var nodeFilter = /** @type {NodeFilter} */ (function (node) {
-      // Logic to determine whether to accept, reject or skip node
-      // In this case, only accept nodes that have content
-      // matching the interpolation pattern
-      if (Silica.interpolationPattern.test(node.data)) {
-        return NodeFilter.FILTER_ACCEPT
-      }
-    })
-    var nodeIterator = document.createNodeIterator(
-      // Node to use as root
-      element,
-
-      // Only consider nodes that are text nodes (nodeType 3)
-      NodeFilter.SHOW_TEXT,
-
-      // Object containing the function to use for the acceptNode method
-      // of the NodeFilter
-      nodeFilter,
-      false
-    )
-
-    var node
-    // Walk through each node that contains the interpolation pattern
-    while ((node = nodeIterator.nextNode())) {
-      // Get the raw text
-      text = node.data
-      // While the raw text contains the interpolation pattern
-      // loop and replace the pattern with the compiled elemenent
-      while ((match = text.match(Silica.interpolationPattern)) !== null) {
-        // The expression to evaluate
-        expr = match[1]
-        // Split on the pipe operator
-        comps = expr.split('|')
-        // The property to bind to
-        property = comps[0].trim()
-        // Check for a filter (pipe)
-        if (comps.length === 1) {
-          fmt = "<span data-model='" + property + "'>{{val}}</span>"
-        } else {
-          filter = comps[1].trim()
-          fmt = "<span data-model='" + property + "' data-filter='" + filter + "'>{{val}}</span>"
-        }
-        // Evaluate and replace the expression
-        evald = fmt.replace('{{val}}', Silica.evaluateExpression(expr, node, context))
-        text = text.replace('{{' + expr + '}}', evald)
-      }
-      // Create a new element containing the interpolated text
-      var span = document.createElement('span')
-      span.innerHTML = text
-
-      // Replace the original node with the created ones
-      // This must be done in a loop to preserve original whitespace
-      var parentNode = node.parentNode
-      while (span.childNodes.length > 0) {
-        parentNode.insertBefore(span.firstChild, node)
-      }
-      parentNode.removeChild(node)
-
-      // Compile the interpolated result
-      Silica.compile(span, flush, context)
     }
   },
 

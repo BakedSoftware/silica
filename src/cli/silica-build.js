@@ -26,6 +26,7 @@ var afterScript = program.done
 var styleIncludes = program.styles
 var cachePath = 'build_cache'
 var envRegExp = /\$ENV\$\{(\w+?)(?::=(.+?))?\}/
+var mustacheRegExp = /\{\{(.*?)\}\}/
 
 console.log('Starting Build')
 
@@ -92,6 +93,28 @@ console.log('Removing tests...')
 removeTests(cachePath)
 console.log('Done Removing tests')
 
+function transmogrifyMustache (text) {
+  let match
+  while ((match = text.match(mustacheRegExp)) !== null) {
+    // The expression to evaluate
+    let expr = match[1]
+    // Split on the pipe operator
+    let comps = expr.split('|')
+    // The property to bind to
+    let property = comps[0].trim()
+    // Check for a filter (pipe)
+    let html
+    if (comps.length === 1) {
+      html = "<span data-model='" + property + "'></span>"
+    } else {
+      let filter = comps[1].trim()
+      html = "<span data-model='" + property + "' data-filter='" + filter + "'></span>"
+    }
+    // Evaluate and replace the expression
+    text = text.replace('{{' + expr + '}}', html)
+  }
+}
+
 function preprocessView (readPath, writePath) {
   var content = fs.readFileSync(readPath, 'utf8')
   var includeRegExp = /<(\w+\b(?:.|\n)+?)data-include="'(.+?)'"(.*?)>/
@@ -120,6 +143,8 @@ function preprocessView (readPath, writePath) {
 
     content = content.replace(toReplace, replacement)
   }
+
+  transmogrifyMustache(content)
 
   var dir = path.dirname(writePath)
 
@@ -235,7 +260,7 @@ function envReplaceTransform (chunk) {
 }
 
 var flags = {
-  js: ['_closure_base.js', 'build_cache/**/*.js'],
+  js: ['build_cache/**/*.js'],
   externs: 'src/externs.js',
   process_common_js_modules: true,
   module_resolution: 'NODE'

@@ -24,7 +24,6 @@ function directives () {
       newChild._rt_ctrl.$ctrl = Silica.getContext(node.parentElement)
       newChild.dataset['sio2Directive'] = true
       Silica.cacheTemplates(newChild)
-      Silica.interpolate(newChild, newChild._rt_ctrl, false)
       node.parentNode.replaceChild(newChild, node)
 
       // Remove old watchers if rebuilding a controller for a node

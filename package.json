@@ -1,9 +1,13 @@
 {
   "name": "silica",
-  "version": "0.60.0-alpha",
+  "version": "0.60.0-beta",
   "description": "Silica is a fast lightweight javascript framework for building applications. Silica's usage is designed to be as transparent as possible",
   "bin": {
-    "silica": "src/cli/silica-cli.js"
+    "silica": "src/cli/silica-cli.js",
+    "silica-create": "src/cli/silica-create.js",
+    "silica-build": "src/cli/silica-build.js",
+    "silica-watch": "src/cli/silica-watch.js",
+    "silica-test": "src/cli/silica-test.js"
   },
   "dependencies": {
     "commander": "^2.15.1",

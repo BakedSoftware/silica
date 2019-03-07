@@ -376,7 +376,7 @@ function module$contents$compilers$model_setValue($activeElement_type$$, $elemen
                 $option_val$$.selected = $option_val$$.value == $value$$;
               }
             } else {
-              $value$$ ? $value$$.nodeName ? ($element$$.innerHTML = "", $element$$.appendChild($value$$)) : $element$$.innerHTML !== $value$$ && ($element$$.innerHTML = $value$$) : "" !== $element$$.innerHTML && ($element$$.innerHTML = "");
+              null !== $value$$ ? $value$$.nodeName ? ($element$$.innerHTML = "", $element$$.appendChild($value$$)) : $element$$.innerHTML !== $value$$ && ($element$$.innerHTML = $value$$) : "" !== $element$$.innerHTML && ($element$$.innerHTML = "");
             }
           }
         }

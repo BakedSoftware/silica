@@ -22,7 +22,7 @@ function setValue (activeElement, element, value) {
       option.selected = option.value == value
     }
   } else {
-    if (value) {
+    if (value !== null) {
       if (value.nodeName) {
         element.innerHTML = ''
         element.appendChild(value)

@@ -33,6 +33,10 @@
         <input type="submit" value="Submit" data-disabled="!canSubmit">
       </form>
 
+      <h4>{{counter}}</h4>
+      <button data-on-click="increment">++</button>
+      <button data-on-click="decrement">--</button>
+
       <ul data-repeat="user in users">
         <li>
           <h2>{{user.name}}</h2>
@@ -96,6 +100,7 @@
                 this.states = { "FL": "Florida", "CA": "California"};
                 this.largeList = [];
                 this.now = new Date()
+                this.counter = 0
                 for (let i = 0; i < 10; i++) {
                   this.largeList.push(new ListItem(this))
                 }
@@ -208,6 +213,14 @@
 
               stopTimer () {
                 this.runUpdates = false
+              }
+
+              increment () {
+                this.counter++
+              }
+
+              decrement () {
+                this.counter--
               }
             },
 

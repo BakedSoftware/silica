@@ -1,14 +1,56 @@
 goog.module('compilers.model')
-const ModelUpdater = goog.require('watchers.model')
+
+function setValue (activeElement, element, value) {
+  if (element === activeElement && element.type !== 'radio' && element.type !== 'checkbox') {
+    return
+  }
+  let type = element.type
+  if (type === 'radio') {
+    let val = element.value
+    if (val.search(/[0-9]/) !== -1) {
+      val = parseInt(val, 10)
+    }
+    element.checked = value === val
+  } else if (type === 'checkbox') {
+    element.checked = Silica.getValue(element, element.dataset['model'])
+  } else if (element.nodeName === 'OPTION') {
+    element.value = value
+  } else if (element.nodeName === 'INPUT') {
+    element.value = value
+  } else if (element.nodeName === 'SELECT') {
+    for (let option of element.querySelectorAll('option')) {
+      option.selected = option.value == value
+    }
+  } else {
+    if (value) {
+      if (value.nodeName) {
+        element.innerHTML = ''
+        element.appendChild(value)
+      } else if (element.innerHTML !== value) {
+        element.innerHTML = value
+      }
+    } else if (element.innerHTML !== '') {
+      element.innerHTML = ''
+    }
+  }
+}
+
+/** @this Element */
+function ModelUpdater (context, value) {
+  var activeElement = document.activeElement || Silica.__activeElement
+  if (this === activeElement && this.type !== 'radio' && this.type !== 'checkbox') {
+    return
+  }
+  setValue(activeElement, this, value)
+}
 
 /** @this Element */
 function Model (context = null) {
   var elements = Silica.query(this, '[data-model]')
   for (let elm of elements) {
-    Silica.observer.register(elm, elm.dataset['model'], ModelUpdater)
+    let property = elm.dataset['model']
+    Silica.observer.register(elm, property, ModelUpdater)
   }
-  ModelUpdater.call(this, context, undefined)
-  elements = Silica.query(this, 'input[data-model]', 'select[data-model]', 'textarea[data-model]', 'option[data-model]')
   for (let i = elements.length - 1; i >= 0; i--) {
     let elm = elements[i]
     let change = function () {
@@ -62,4 +104,5 @@ function Model (context = null) {
   }
 }
 
-exports = Model
+exports.Compiler = Model
+exports.Updater = ModelUpdater

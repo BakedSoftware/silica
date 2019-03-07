@@ -8,6 +8,7 @@ function Show (ctx, value) {
     } else {
       this.classList.add('hidden')
     }
+    return
   }
   var nodes = Silica.query(this, '[data-show]')
   for (var i = nodes.length - 1; i >= 0; --i) {
@@ -17,12 +18,6 @@ function Show (ctx, value) {
       Silica.observer.deregister(node, property, Show)
     }
     Silica.observer.register(node, property, Show)
-    let isVisible = Silica.getValue(node, property)
-    if (isVisible) {
-      node.classList.remove('hidden')
-    } else {
-      node.classList.add('hidden')
-    }
   }
 }
 

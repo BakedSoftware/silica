@@ -7,14 +7,24 @@
   </head>
   <body>
     <style>
-      .hidden { display: none }
+    [data-show] {
+      transition: opacity 1s;
+      opacity: 1;
+    }
+
+    .hidden {
+      opacity: 0 !important;
+      position: absolute !important;
+      z-index: -1;
+      pointer-events: none;
+    }
     </style>
     <div data-style="appStyle">
       <h1>{{greeting}}</h1>
       <input type="text" data-model="name" placeholder="Enter Your Name" />
       <a data-href="linkToEmail">Send Email</a>
 
-      <form action="" data-submit="alertUser">
+      <form action="" data-on-submit="alertUser">
         <input type="text" data-model="name">
         <input type="email" data-model="email">
         <select data-model="selectedFont" data-repeat="font in fonts">
@@ -33,8 +43,8 @@
                 <td>{{klass.name}}</td>
                 <td>
                   <ol data-repeat="grade in klass.grades">
-                    <li data-silica='["id=Ex.indexTest(index)"]'
-                        data-click="printGrade(grade, klass, user)">
+                    <li data-id="Ex.indexTest(index)"
+                        data-on-click="printGrade(grade, klass, user)">
                       <a data-href="grade">
                         {{grade}}
                       </a>
@@ -54,13 +64,13 @@
 
       <h3>Embedded Page: {{embeddedPage}}</h3>
       <div data-include="embeddedPage"></div>
-      <button data-show="!runUpdates" data-click="startTimer">Start Timer</button>
-      <button data-show="runUpdates" data-click="stopTimer">Stop Timer</button>
+      <button data-show="!runUpdates" data-on-click="startTimer">Start Timer</button>
+      <button data-show="runUpdates" data-on-click="stopTimer">Stop Timer</button>
       <ul data-repeat="item in largeList" data-repeat-not-nested="true" >
         <li>{{item.value|duration}}</li>
       </ul>
     </div>
-      <script src="../dist/silica.js" type="text/javascript" charset="utf-8"></script>
+      <script src="../dist/silica.min.js" type="text/javascript" charset="utf-8"></script>
       <script type="text/javascript" charset="utf-8">
         (function(){
           'use strict';
@@ -86,7 +96,7 @@
                 this.states = { "FL": "Florida", "CA": "California"};
                 this.largeList = [];
                 this.now = new Date()
-                for (let i = 0; i < 1000; i++) {
+                for (let i = 0; i < 10; i++) {
                   this.largeList.push(new ListItem(this))
                 }
                 this.users = [
@@ -183,9 +193,10 @@
               continuouslyUpdate () {
                 if (this.runUpdates) {
                   requestAnimationFrame(() => {
-                    this.now = new Date()
-                    Silica.observer.applyChanges()
-                    this.continuouslyUpdate()
+                    Silica.apply(() => {
+                      this.now = new Date()
+                      this.continuouslyUpdate()
+                    })
                   })
                 }
               }
@@ -236,7 +247,7 @@
           })
           Silica.usePushState = false;
           Silica.addDirective("my-element", {
-            template: "<div data-click='onClick'>this is my custom element</div>",
+            template: "<div data-on-click='onClick'>this is my custom element</div>",
             controller: ct });
           Silica.setContext("Ex");
           Silica.setRouter(new Ex.Router);

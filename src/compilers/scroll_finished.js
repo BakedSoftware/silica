@@ -2,7 +2,7 @@ goog.module('compilers.scroll_finished')
 
 /** @this Element */
 function ScrollFinished () {
-  var nodes = Silica.query(this, '[data-scroll-finished]')
+  var nodes = Silica.query(this, '[data-on-scroll-finished]')
   var node
   for (let i = nodes.length - 1; i >= 0; --i) {
     node = nodes[i]

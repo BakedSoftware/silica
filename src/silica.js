@@ -25,7 +25,6 @@ window['Silica'] = {
   'router': null,
   _ifs: {}, // Stores the registered ifs
   _shws: {}, // Stores the registered shows
-  _klass: {}, // Stores the registered css class
   _watch: {}, // Stores the registered watchers
   _repeat_templates: {}, // Stores a map between repeats and their templates
   _isReady: false, // Keeps track if app is ready
@@ -36,7 +35,8 @@ window['Silica'] = {
   _queue: [],
   interpolationPattern: /\{\{(.*?)\}\}/,
   usePushState: true,
-  observer: ValueObserver.create(),
+  observer: new ValueObserver(),
+  ignoreAttributes: new Set(['filter', 'class', 'show', 'if', 'model', 'include', 'controller', 'repeat', 'onScrollFinished', 'repeatNotNested', 'sio2IncludedUrl', 'src']),
   version: '0.60.0-alpha',
 
   // Set the root context
@@ -225,7 +225,7 @@ window['Silica'] = {
     let watchers = Silica.watchers
     let func
     for (let k in watchers) {
-      if ((onlySafe && k[0] === '_') || (k === 'Href' || k === 'Model')) {
+      if ((onlySafe && k[0] === '_')) {
         continue
       }
       func = watchers[k]
@@ -430,12 +430,13 @@ window['Silica'] = {
         return negate ? true : null
       }
     }
-    return obj
+    return negate ? !obj : obj
   },
 
   getValue (raw, propString, context = null, params = []) {
     var ctx
-    ctx = context || (propString.charCodeAt(0) <= 90 ? window : Silica.getContext(raw))
+    let idx = propString[0] === '!' ? 1 : 0
+    ctx = context || (propString.charCodeAt(idx) <= 90 ? window : Silica.getContext(raw))
     let param
     if (raw.nodeType !== 8) {
       param = raw.dataset['parameter']
@@ -715,7 +716,7 @@ window['Silica'] = {
     if (!this.dataset['nostoppropagation']) {
       evt.stopPropagation()
     }
-    Silica.pub('SiO2-HREF', evt)
+    PubSub.Pub('SiO2-HREF', evt)
     Silica.goTo(path)
     return !defaultPrevented
   },
@@ -740,6 +741,9 @@ window['Silica'] = {
   },
   _call (element, evnt, act) {
     if (!Silica.isInDOM(element)) {
+      return
+    }
+    if (element !== evnt.target && act === 'click' && (evnt.target.nodeName === 'SELECT' || evnt.target.nodeName === 'INPUT')) {
       return
     }
     if (!element.dataset['nopreventdefault']) {
@@ -826,23 +830,6 @@ window['Silica'] = {
       return [filter(value, filterOptions), value, paramsKeys]
     } else {
       return [value, value, paramsKeys]
-    }
-  },
-  _model_get_val (raw) {
-    var filter, filterKey, filterOptions, value
-    filter = raw.attributes['data-filter']
-    filter = filter ? filter.value.split(/:(.+)/) : null
-    filterKey = (filter ? filter[0] : null)
-    if (filterKey && !Silica.filters[filterKey]) {
-      throw new Error("Unknown filter: '" + filterKey + "' for element: " + raw.outerHTML)
-    }
-    filterOptions = filter && filter.length > 1 ? eval(filter[1]) : null
-    filter = filterKey ? Silica.filters[filterKey] : null
-    value = Silica.getValue(raw, raw.dataset['model'])
-    if (filter && value != null) {
-      return filter(value, filterOptions)
-    } else {
-      return value
     }
   },
   findComments (raw) {

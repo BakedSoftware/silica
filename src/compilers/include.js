@@ -20,7 +20,7 @@ function processInclude (element, html) {
   while (fragment.children.length) {
     element.appendChild(fragment.children[0])
   }
-  Silica.compile(element)
+  Silica.compile(element, false)
   Silica.apply(function () {
     loadCallback(element)
   }, Silica.getContext(element).el)
@@ -56,21 +56,26 @@ function loadPartial (url, element) {
   xhr.send(null)
 }
 
-function Include () {
+/** @this Element */
+function IncludeUpdater (_, url) {
+  // Don't try include empty url
+  if (!url || url === '') {
+    this.removeAttribute('data-sio2-included-url')
+    clearContent(this)
+    return
+  }
+
+  loadPartial(url, this)
+}
+
+/** @this Element */
+function Include (ctx, value) {
   var nodes = Silica.query(this, '[data-include]')
-  var node, url
+  var node
   for (let i = nodes.length - 1; i >= 0; --i) {
     node = nodes[i]
-    url = Silica.getValue(node, node.dataset['include'])
-
-    // Don't try include empty url
-    if (!url || url === '') {
-      node.removeAttribute('data-sio2-included-url')
-      clearContent(node)
-      continue
-    }
-
-    loadPartial(url, node)
+    let property = node.dataset['include']
+    Silica.observer.register(node, property, IncludeUpdater)
   }
 }
 

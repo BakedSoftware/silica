@@ -64,7 +64,7 @@ function Class (ctx, value) {
     this.onremove = function () {
       Silica.observer.deregister(this, property, Class)
     }
-    updater(this, Silica.getValue(this, property))
+    updater(this, Silica.getFilteredValue(this, property))
   }
 
   var node
@@ -78,7 +78,6 @@ function Class (ctx, value) {
     node.onremove = function () {
       Silica.observer.deregister(this, property, Class)
     }
-    updater(node, Silica.getValue(node, property))
   }
 }
 

@@ -19,7 +19,7 @@ childProcess.execSync('cat libs/md5.min.js >> dist/silica.min.js')
 var flags = {
   js: 'build_cache/**/*.js',
   language_in: 'ECMASCRIPT6',
-  language_out: 'ECMASCRIPT5',
+  language_out: 'ECMASCRIPT6',
   compilation_level: 'ADVANCED',
   externs: 'src/externs.js',
   generate_exports: 'true'

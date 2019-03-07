@@ -55,7 +55,6 @@ class ValueObserver {
     }
   }
 
-  // TODO: Act on the initial value
   register (node, property, actor) {
     let [filtered, raw, paramKeys] = Silica.getFilteredValue(node, property)
     let value = this.clone(raw)
@@ -78,6 +77,7 @@ class ValueObserver {
     } else {
       packet.actors.add(actor)
     }
+    actor.call(node, null, filtered)
     // TODO: Add listener for DOM removal and deregister
 
     return filtered
@@ -100,7 +100,4 @@ class ValueObserver {
   }
 }
 
-exports.ValueObserver = ValueObserver
-exports.create = function () {
-  return new ValueObserver()
-}
+exports = ValueObserver

@@ -2,6 +2,7 @@ goog.module('watchers.repeat')
 // Import browser hax
 const Hax = goog.require('hax')
 const ControllerCompiler = goog.require('compilers.controller')
+const Model = goog.require('compilers.model')
 
 function Repeat () {
   var changed, child, context, ctx, list, model, newList, newListHash, obj, oldList, repeat, template, _i, _len, _ref, raw
@@ -118,6 +119,10 @@ function Repeat () {
       if (possiblyNested) {
         Repeat.call(node)
       }
+    }
+
+    if (raw.nodeName === 'SELECT' && raw.dataset['model']) {
+      Model.Updater.call(raw, ctx, Silica.getValue(raw, raw.dataset['model']))
     }
 
     if (ctx['renderedRepeat']) {

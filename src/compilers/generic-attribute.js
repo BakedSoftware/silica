@@ -1,16 +1,46 @@
+/* global NodeFilter, Silica */
+
 goog.module('compilers.generic')
+
+/**
+ * @constructor
+ * @implements NodeFilter
+ */
+function AttributeFilter () {}
+AttributeFilter.prototype.acceptNode = function filter (node) {
+  let keys = Object.keys(node.dataset)
+  return keys.some(function (key) {
+    return !key.startsWith('on')
+  }) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+}
 
 function createUpdater (attribute) {
   return function (_, value) {
-    if (attribute !== 'innerHTML') {
-      this.setAttribute(attribute, value)
+    if (attribute === 'innerHTML' || attribute === 'disabled') {
+      this[attribute] = value
     } else {
-      this.innerHTML = value
+      this.setAttribute(attribute, value)
     }
   }
 }
 
+/** @this Element */
 function Generic () {
+  var nodes = document.createNodeIterator(this, NodeFilter.SHOW_ELEMENT, new AttributeFilter())
+  var node
+  while ((node = nodes.nextNode())) {
+    for (let key of Object.keys(node.dataset)) {
+      if (Silica.ignoreAttributes.has(key)) {
+        continue
+      }
+      if (!key.startsWith('on') || (key.length > 2 && (key.charCodeAt(2) > 90 || key.charCodeAt(2) < 65))) {
+        Silica.observer.register(node, node.dataset[key], createUpdater(key))
+      }
+    }
+  }
+}
+
+function GenericDeprecated () {
   var nodeList = Silica.query(this, '[data-silica]')
   var node
   var entries
@@ -41,10 +71,10 @@ function Generic () {
       attribute = comps[0]
       valueKey = comps[1]
       let value = Silica.getValue(node, valueKey)
-      if (attribute !== 'innerHTML') {
-        node.setAttribute(attribute, value)
+      if (attribute === 'innerHTML' || attribute === 'disabled') {
+        node[attribute] = value
       } else {
-        node.innerHTML = value
+        node.setAttribute(attribute, value)
       }
       Silica.observer.register(node, valueKey, createUpdater(attribute))
     }

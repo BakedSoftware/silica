@@ -9,7 +9,7 @@ function defaultSrcForNode (node) {
 
 /** @this Element */
 function Src (ctx, value) {
-  if (value !== undefined) {
+  if (value !== undefined && value !== this.src) {
     this.setAttribute('src', value || defaultSrcForNode(this))
   } else {
     var nodes = Silica.query(this, '[data-src]')
@@ -18,10 +18,7 @@ function Src (ctx, value) {
     for (let i = nodes.length - 1; i >= 0; --i) {
       node = nodes[i]
       let property = node.dataset['src']
-      let target = Silica.observer.register(node, property, Src) || defaultSrcForNode(node)
-      if (node.src !== target) {
-        node.src = target
-      }
+      Silica.observer.register(node, property, Src) || defaultSrcForNode(node)
       /*
     if (node.src !== target)
     {

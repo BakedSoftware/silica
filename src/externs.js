@@ -1,2 +1,2 @@
-function md5(text){};
+//function md5(text){};
 var Silica;

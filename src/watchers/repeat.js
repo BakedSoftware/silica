@@ -25,27 +25,7 @@ function Repeat () {
       newList = Silica.getValue(raw, list)
     }
 
-    newListHash = Silica.hasher(JSON.stringify(newList, function (key, value) {
-      // Keys starting with an underscore (char code 95) will be ignored
-      if (key.constructor === String && (key === '__elm' || key === '$ctrl' || key.charCodeAt(0) === 95)) {
-        return undefined
-      }
-      return value
-    }))
-
     let existing = raw.childNodes
-    oldList = raw._rt_repeat_list
-    changed = oldList && newList ? oldList !== newListHash : true
-
-    if (!changed) {
-      continue
-    }
-
-    if (newList) {
-      raw._rt_repeat_list = newListHash
-    } else {
-      raw._rt_repeat_list = null
-    }
 
     if (!newList) {
       while (raw.childNodes.length > 0) {

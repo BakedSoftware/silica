@@ -21,12 +21,12 @@ window['Silica'] = {
   directives: {},
   components: {},
   filters: {},
-  hasher: md5,
   'router': null,
   _ifs: {}, // Stores the registered ifs
   _shws: {}, // Stores the registered shows
   _watch: {}, // Stores the registered watchers
   _repeat_templates: {}, // Stores a map between repeats and their templates
+  _template_id: 1,
   _isReady: false, // Keeps track if app is ready
   _appRoot: null,
   _defers: [],
@@ -111,28 +111,26 @@ window['Silica'] = {
     }
     return element
   },
-
   cacheTemplates (element) {
     var nodes = element.querySelectorAll('[data-repeat]')
     var node
-    var hash
     var context
     for (let i = nodes.length - 1; i >= 0; --i) {
       node = nodes[i]
       if (!Hax.hasDatasetProperty(node, '_rt_repeat_template')) {
-        hash = Silica.hasher(node.innerHTML)
+        let nextTemplateId = Silica._template_id++
         if (node.children.length === 1) {
-          Silica._repeat_templates[hash] = node.removeChild(node.firstElementChild)
+          Silica._repeat_templates[nextTemplateId] = node.removeChild(node.firstElementChild)
         } else {
           console.warn('Repeat has multiple children, wrapping with div', node)
           let wrap = document.createElement('div')
           wrap.innerHTML = node.innerHTML
-          Silica._repeat_templates[hash] = wrap
+          Silica._repeat_templates[nextTemplateId] = wrap
         }
-        node.dataset['_rt_repeat_template'] = hash
+        node.dataset['_rt_repeat_template'] = nextTemplateId
         context = {}
         context.$ctrl = Silica.getContext(node)
-        Silica._repeat_templates[hash] = Silica.compile(Silica._repeat_templates[hash], false, context, true, false)
+        Silica._repeat_templates[nextTemplateId] = Silica.compile(Silica._repeat_templates[nextTemplateId], false, context, true, false)
         node.innerHTML = ''
       }
     }
@@ -1039,5 +1037,4 @@ window['Silica']['pub'] = PubSub.Pub
 window['Silica']['sub'] = PubSub.Sub
 window['Silica']['unsub'] = PubSub.Unsub
 window['Silica']['isInDOM'] = Silica.isInDOM
-window['Silica']['hasher'] = Silica.hasher
 window['Silica']['observer'] = Silica.observer

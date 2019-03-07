@@ -29,7 +29,7 @@ closureCompiler.run(function (exitCode, stdOut, stdErr) {
   if (stdErr.length) {
     console.error(stdErr)
   }
-  fs.appendFileSync('dist/silica.min.js', '!function(){\n"use strict";\n' + stdOut + '}.call(window);')
+  fs.appendFileSync('dist/silica.min.js', '!function(){\n' + stdOut + '}.call(window);')
   let compress = spawnSync('gzip', ['-k', 'dist/silica.min.js'], {
     stdio: [0, 1, 2],
     cwd: process.cwd()
@@ -39,6 +39,16 @@ closureCompiler.run(function (exitCode, stdOut, stdErr) {
     console.error(compress.error)
   } else {
     console.log('Compression finished')
+  }
+  compress = spawnSync('brotli', ['-Z', 'dist/silica.min.js'], {
+    stdio: [0, 1, 2],
+    cwd: process.cwd()
+  })
+  if (compress.error) {
+    console.log('An error occurred during brotli compression')
+    console.error(compress.error)
+  } else {
+    console.log('Brotli Compression finished')
   }
 })
 
@@ -53,7 +63,7 @@ closureCompiler.run(function (exitCode, stdOut, stdErr) {
   if (stdErr.length) {
     console.error(stdErr)
   }
-  fs.appendFileSync('dist/silica.js', '!function(){\n"use strict";\n' + stdOut + '}.call(window);')
+  fs.appendFileSync('dist/silica.js', '!function(){\n' + stdOut + '}.call(window);')
   console.log('Compressing results')
   let compress = spawnSync('gzip', ['-k', 'dist/silica.js'], {
     stdio: [0, 1, 2],
@@ -64,5 +74,15 @@ closureCompiler.run(function (exitCode, stdOut, stdErr) {
     console.error(compress.error)
   } else {
     console.log('Compression finished')
+  }
+  compress = spawnSync('brotli', ['-Z', 'dist/silica.js'], {
+    stdio: [0, 1, 2],
+    cwd: process.cwd()
+  })
+  if (compress.error) {
+    console.log('An error occurred during brotli compression')
+    console.error(compress.error)
+  } else {
+    console.log('Brotli Compression finished')
   }
 })

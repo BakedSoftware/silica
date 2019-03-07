@@ -1,5 +1,4 @@
 !function(){
-"use strict";
 'use strict';
 var $jscomp = $jscomp || {};
 $jscomp.scope = {};
@@ -149,7 +148,6 @@ function module$exports$compilers$class($ctx_nodes$$, $node$jscomp$2_value$$) {
       this.onremove = function $this$onremove$() {
         Silica.observer.deregister(this, $property$$, module$exports$compilers$class);
       };
-      module$contents$compilers$class_updater(this, Silica.getFilteredValue(this, $property$$));
     }
     for (let $i$$ = $ctx_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
       $node$jscomp$2_value$$ = $ctx_nodes$$[$i$$];

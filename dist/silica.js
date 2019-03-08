@@ -839,7 +839,7 @@ class module$exports$watchers$observer {
   applyChanges() {
     this.hiddenNodes.forEach(($node$$) => {
       this.mapping.get($node$$).forEach(($packet$$, $property$$) => {
-        $packet$$.actors.has(module$exports$compilers$show) && ($property$$ = Silica.getFilteredValue($node$$, $property$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$$[1]) && ($packet$$.value = this.clone($property$$[1]), module$exports$compilers$show.call($node$$, null, $property$$[0]), this.liveNodes.add($node$$));
+        $packet$$.actors.has(module$exports$compilers$show) && ($property$$ = Silica.getFilteredValue($node$$, $property$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$$[1]) && (module$exports$compilers$show.call($node$$, null, $property$$[0]), this.liveNodes.add($node$$));
       });
     });
     this.liveNodes.forEach(($node$$) => {
@@ -857,7 +857,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 module$exports$hax.init();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller repeat onScrollFinished repeatNotNested siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId".split(" ")), 
-version:"0.60.0-beta2", setContext($contextName$$) {
+version:"0.60.0-beta3", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

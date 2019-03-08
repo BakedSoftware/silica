@@ -104,7 +104,6 @@ class ValueObserver {
         if (packet.actors.has(Show)) {
           let result = Silica.getFilteredValue(node, property, packet.value, packet.params)
           if (result && !Object.is(packet.value, result[1])) {
-            packet.value = this.clone(result[1])
             Show.call(node, null, result[0])
             this.liveNodes.add(node)
           }

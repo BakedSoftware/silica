@@ -451,7 +451,8 @@ function module$exports$compilers$src($ctx$jscomp$6_nodes$$, $node$jscomp$10_val
     $node$jscomp$10_value$$ = $ctx$jscomp$6_nodes$$[$i$$], Silica.observer.register($node$jscomp$10_value$$, $node$jscomp$10_value$$.dataset.src, module$contents$compilers$src_SrcUpdater);
   }
 }
-;function module$contents$compilers$generic_AttributeFilter() {
+;let module$contents$compilers$generic_attributeMappings = {innerhtml:"innerHTML", disabled:"disabled"};
+function module$contents$compilers$generic_AttributeFilter() {
 }
 module$contents$compilers$generic_AttributeFilter.prototype.acceptNode = function filter($node$$) {
   return Object.keys($node$$.dataset).some(function($key$$) {
@@ -460,7 +461,7 @@ module$contents$compilers$generic_AttributeFilter.prototype.acceptNode = functio
 };
 function module$contents$compilers$generic_createUpdater($attribute$$) {
   return function($_$$, $value$$) {
-    "innerHTML" === $attribute$$ || "disabled" === $attribute$$ ? this[$attribute$$] = $value$$ : this.setAttribute($attribute$$, $value$$);
+    ($_$$ = module$contents$compilers$generic_attributeMappings[$attribute$$]) ? this[$_$$] = $value$$ : this.setAttribute($attribute$$, $value$$);
   };
 }
 function module$exports$compilers$generic() {
@@ -469,30 +470,6 @@ function module$exports$compilers$generic() {
       Silica.ignoredAttributes.has($key$$) || (!$key$$.startsWith("on") || 2 < $key$$.length && (90 < $key$$.charCodeAt(2) || 65 > $key$$.charCodeAt(2))) && Silica.observer.register($node$$, $node$$.dataset[$key$$], module$contents$compilers$generic_createUpdater($key$$));
     }
   }
-}
-function module$contents$compilers$generic_GenericDeprecated() {
-  var $nodeList$$ = Silica.query(this, "[data-silica]");
-  for (let $i$$ = $nodeList$$.length - 1; 0 <= $i$$; --$i$$) {
-    var $node$$ = $nodeList$$[$i$$];
-    if ($node$$._silica_generic) {
-      var $entries$$ = $node$$._silica_generic;
-    } else {
-      $entries$$ = $node$$.dataset.silica, $entries$$ = "[" === $entries$$.charAt(0) ? JSON.parse($entries$$) : [$entries$$], $node$$._silica_generic = $entries$$;
-    }
-    for (let $j$$ = $entries$$.length - 1; 0 <= $j$$; --$j$$) {
-      var $comps_valueKey$$ = $entries$$[$j$$].split("=");
-      if (2 !== $comps_valueKey$$.length) {
-        console.error("Invalid generic binding", $node$$.dataset.silica, "for node", $node$$);
-        return;
-      }
-      var $attribute$$ = $comps_valueKey$$[0];
-      $comps_valueKey$$ = $comps_valueKey$$[1];
-      let $value$$ = Silica.getValue($node$$, $comps_valueKey$$);
-      "innerHTML" === $attribute$$ || "disabled" === $attribute$$ ? $node$$[$attribute$$] = $value$$ : $node$$.setAttribute($attribute$$, $value$$);
-      Silica.observer.register($node$$, $comps_valueKey$$, module$contents$compilers$generic_createUpdater($attribute$$));
-    }
-  }
-  Silica._capture_links(this);
 }
 ;function module$exports$compilers$scroll_finished() {
   var $nodes$$ = Silica.query(this, "[data-on-scroll-finished]");
@@ -701,9 +678,9 @@ function module$exports$watchers$if() {
           if (8 !== $element$$.nodeType) {
             $comment$jscomp$1_compiled_isVisible$jscomp$1_subNodes$jscomp$1_temp$$ = Silica.queryWithComments($element$$, "[data-if]");
             let $subNode$$;
-            for (var $j$jscomp$5_j$$ = $comment$jscomp$1_compiled_isVisible$jscomp$1_subNodes$jscomp$1_temp$$.length - 1; 0 <= $j$jscomp$5_j$$; --$j$jscomp$5_j$$) {
+            for (var $j$jscomp$4_j$$ = $comment$jscomp$1_compiled_isVisible$jscomp$1_subNodes$jscomp$1_temp$$.length - 1; 0 <= $j$jscomp$4_j$$; --$j$jscomp$4_j$$) {
               let $prop$$, $_ref1$$;
-              $subNode$$ = $comment$jscomp$1_compiled_isVisible$jscomp$1_subNodes$jscomp$1_temp$$[$j$jscomp$5_j$$];
+              $subNode$$ = $comment$jscomp$1_compiled_isVisible$jscomp$1_subNodes$jscomp$1_temp$$[$j$jscomp$4_j$$];
               8 !== $subNode$$.nodeType || $subNode$$.dataset ? $prop$$ = $subNode$$.dataset["if"] : ($wrapper$$.innerHTML = $subNode$$.data, $prop$$ = $wrapper$$.firstChild.dataset["if"]);
               var $list$jscomp$2_list$$ = Silica._shws[$prop$$];
               Silica._shws[$prop$$] = null != ($_ref1$$ = null != $list$jscomp$2_list$$ ? $list$jscomp$2_list$$.filter(function($obj$$) {
@@ -711,9 +688,9 @@ function module$exports$watchers$if() {
               }) : void 0) ? $_ref1$$ : [];
             }
             $comment$jscomp$1_compiled_isVisible$jscomp$1_subNodes$jscomp$1_temp$$ = Silica.query($element$$, "[data-controller]");
-            for ($j$jscomp$5_j$$ = $comment$jscomp$1_compiled_isVisible$jscomp$1_subNodes$jscomp$1_temp$$.length - 1; 0 <= $j$jscomp$5_j$$; --$j$jscomp$5_j$$) {
+            for ($j$jscomp$4_j$$ = $comment$jscomp$1_compiled_isVisible$jscomp$1_subNodes$jscomp$1_temp$$.length - 1; 0 <= $j$jscomp$4_j$$; --$j$jscomp$4_j$$) {
               let $ctrl$$;
-              $subNode$$ = $comment$jscomp$1_compiled_isVisible$jscomp$1_subNodes$jscomp$1_temp$$[$j$jscomp$5_j$$];
+              $subNode$$ = $comment$jscomp$1_compiled_isVisible$jscomp$1_subNodes$jscomp$1_temp$$[$j$jscomp$4_j$$];
               $ctrl$$ = $subNode$$._rt_ctrl;
               for ($k$$ in null != $ctrl$$ ? $ctrl$$.constructor.watchers : void 0) {
                 $list$jscomp$2_list$$ = Silica._watch[$k$$], Silica._watch[$k$$] = null != $list$jscomp$2_list$$ ? $list$jscomp$2_list$$.filter(function($obj$$) {
@@ -857,7 +834,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 module$exports$hax.init();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller repeat onScrollFinished repeatNotNested siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId".split(" ")), 
-version:"0.60.0-beta3", setContext($contextName$$) {
+version:"0.60.0-beta4", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {
@@ -954,8 +931,8 @@ version:"0.60.0-beta3", setContext($contextName$$) {
   $element$$ === document && ($element$$ = document.documentElement);
   Silica.isInFlush = !$skipSchedule$$;
   if (null === $changed$$ && Silica._isReady) {
-    for ($i$jscomp$22_key$$ in Silica._watch) {
-      $changed$$ = Silica._watch[$i$jscomp$22_key$$];
+    for ($i$jscomp$21_key$$ in Silica._watch) {
+      $changed$$ = Silica._watch[$i$jscomp$21_key$$];
       for (var $funcs$jscomp$1_i$$ = $changed$$.length - 1; 0 <= $funcs$jscomp$1_i$$; --$funcs$jscomp$1_i$$) {
         var $func$jscomp$8_k$$ = $changed$$[$funcs$jscomp$1_i$$];
         $func$jscomp$8_k$$[1].apply($func$jscomp$8_k$$[0], [$func$jscomp$8_k$$[2], $func$jscomp$8_k$$[3]]);
@@ -966,12 +943,12 @@ version:"0.60.0-beta3", setContext($contextName$$) {
     for ($func$jscomp$8_k$$ in $changed$$) {
       $funcs$jscomp$1_i$$ = $changed$$[$func$jscomp$8_k$$];
       if (!0 !== $funcs$jscomp$1_i$$) {
-        var $i$jscomp$22_key$$ = $funcs$jscomp$1_i$$.length - 1;
+        var $i$jscomp$21_key$$ = $funcs$jscomp$1_i$$.length - 1;
       } else {
-        $funcs$jscomp$1_i$$ = Silica._watch[$func$jscomp$8_k$$], $i$jscomp$22_key$$ = $funcs$jscomp$1_i$$.length - 1;
+        $funcs$jscomp$1_i$$ = Silica._watch[$func$jscomp$8_k$$], $i$jscomp$21_key$$ = $funcs$jscomp$1_i$$.length - 1;
       }
-      for (; 0 <= $i$jscomp$22_key$$; --$i$jscomp$22_key$$) {
-        $func$$ = $funcs$jscomp$1_i$$[$i$jscomp$22_key$$], $func$$[1].apply($func$$[0], [$func$$[2], $func$$[3]]);
+      for (; 0 <= $i$jscomp$21_key$$; --$i$jscomp$21_key$$) {
+        $func$$ = $funcs$jscomp$1_i$$[$i$jscomp$21_key$$], $func$$[1].apply($func$$[0], [$func$$[2], $func$$[3]]);
       }
     }
   }
@@ -1256,13 +1233,13 @@ version:"0.60.0-beta3", setContext($contextName$$) {
   return !!$child$$;
 }, query($raw$$, ...$attributes$$) {
   $raw$$ == document && ($raw$$ = document.documentElement);
-  var $attribute$jscomp$2_nodes$$ = $raw$$.querySelectorAll($attributes$$.join(",")), $filtered$$ = [];
-  for (var $i$jscomp$29_i$$ = $attribute$jscomp$2_nodes$$.length - 1; 0 <= $i$jscomp$29_i$$; --$i$jscomp$29_i$$) {
-    let $node$$ = $attribute$jscomp$2_nodes$$.item($i$jscomp$29_i$$);
+  var $attribute$jscomp$1_nodes$$ = $raw$$.querySelectorAll($attributes$$.join(",")), $filtered$$ = [];
+  for (var $i$jscomp$28_i$$ = $attribute$jscomp$1_nodes$$.length - 1; 0 <= $i$jscomp$28_i$$; --$i$jscomp$28_i$$) {
+    let $node$$ = $attribute$jscomp$1_nodes$$.item($i$jscomp$28_i$$);
     Silica.isInRepeat($raw$$, $node$$) || $filtered$$.push($node$$);
   }
-  for ($i$jscomp$29_i$$ = $attributes$$.length - 1; 0 <= $i$jscomp$29_i$$; --$i$jscomp$29_i$$) {
-    if ($attribute$jscomp$2_nodes$$ = $attributes$$[$i$jscomp$29_i$$], $raw$$.hasAttribute($attribute$jscomp$2_nodes$$.substring(1, $attribute$jscomp$2_nodes$$.length - 1))) {
+  for ($i$jscomp$28_i$$ = $attributes$$.length - 1; 0 <= $i$jscomp$28_i$$; --$i$jscomp$28_i$$) {
+    if ($attribute$jscomp$1_nodes$$ = $attributes$$[$i$jscomp$28_i$$], $raw$$.hasAttribute($attribute$jscomp$1_nodes$$.substring(1, $attribute$jscomp$1_nodes$$.length - 1))) {
       $filtered$$.push($raw$$);
       break;
     }
@@ -1294,12 +1271,12 @@ version:"0.60.0-beta3", setContext($contextName$$) {
     }
   }
   return $filtered$jscomp$3_root$$;
-}, queryOfType($raw$$, $attribute$jscomp$3_type$$, ...$attributes$$) {
+}, queryOfType($raw$$, $attribute$jscomp$2_type$$, ...$attributes$$) {
   $raw$$ == document && ($raw$$ = document.documentElement);
-  var $i$jscomp$34_nodes$$ = $raw$$.getElementsByTagName($attribute$jscomp$3_type$$), $filtered$$ = [];
+  var $i$jscomp$33_nodes$$ = $raw$$.getElementsByTagName($attribute$jscomp$2_type$$), $filtered$$ = [];
   if (0 < $attributes$$.length) {
-    for (let $i$$ = $i$jscomp$34_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-      let $node$$ = $i$jscomp$34_nodes$$.item($i$$);
+    for (let $i$$ = $i$jscomp$33_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+      let $node$$ = $i$jscomp$33_nodes$$.item($i$$);
       for (let $j$$ = $attributes$$.length - 1; 0 <= $j$$; --$j$$) {
         if ($node$$.hasAttribute($attributes$$[$j$$].replace(/\[|\]/g, ""))) {
           $filtered$$.push($node$$);
@@ -1307,16 +1284,16 @@ version:"0.60.0-beta3", setContext($contextName$$) {
         }
       }
     }
-    if ($raw$$.nodeName === $attribute$jscomp$3_type$$.toUpperCase()) {
-      for ($i$jscomp$34_nodes$$ = $attributes$$.length - 1; 0 <= $i$jscomp$34_nodes$$; --$i$jscomp$34_nodes$$) {
-        if ($attribute$jscomp$3_type$$ = $attributes$$[$i$jscomp$34_nodes$$], $raw$$.hasAttribute($attribute$jscomp$3_type$$.substring(1, $attribute$jscomp$3_type$$.length - 1))) {
+    if ($raw$$.nodeName === $attribute$jscomp$2_type$$.toUpperCase()) {
+      for ($i$jscomp$33_nodes$$ = $attributes$$.length - 1; 0 <= $i$jscomp$33_nodes$$; --$i$jscomp$33_nodes$$) {
+        if ($attribute$jscomp$2_type$$ = $attributes$$[$i$jscomp$33_nodes$$], $raw$$.hasAttribute($attribute$jscomp$2_type$$.substring(1, $attribute$jscomp$2_type$$.length - 1))) {
           $filtered$$.push($raw$$);
           break;
         }
       }
     }
   } else {
-    $filtered$$ = $i$jscomp$34_nodes$$, $raw$$.tagName === $attribute$jscomp$3_type$$ && $filtered$$.push($raw$$);
+    $filtered$$ = $i$jscomp$33_nodes$$, $raw$$.tagName === $attribute$jscomp$2_type$$ && $filtered$$.push($raw$$);
   }
   return $filtered$$;
 }, removeFromDOM($e$$) {

@@ -163,12 +163,12 @@ function module$exports$compilers$class($ctx_nodes$$, $node$jscomp$2_value$$) {
 ;function module$contents$compilers$clickoutside_handleClick($evt$$) {
   for (let $node$$ of Silica._clickOutElements) {
     if (0 < $node$$.offsetWidth || 0 < $node$$.offsetHeight) {
-      $evt$$.target === $node$$ || Silica.isDescendent($node$$, $evt$$.target) || Silica._call($node$$, $evt$$, "clickOutside");
+      $evt$$.target === $node$$ || Silica.isDescendent($node$$, $evt$$.target) || Silica._call($node$$, $evt$$, "onClickOutside");
     }
   }
 }
 function module$exports$compilers$clickoutside() {
-  for (var $nodes$$ = Silica.query(this, "[data-click-outside]"), $i$$ = $nodes$$.length - 1; 0 <= $i$$; $i$$--) {
+  for (var $nodes$$ = Silica.query(this, "[data-on-click-outside]"), $i$$ = $nodes$$.length - 1; 0 <= $i$$; $i$$--) {
     Silica._clickOutElements.add($nodes$$[$i$$]);
   }
   0 < Silica._clickOutElements.size ? window.addEventListener("click", module$contents$compilers$clickoutside_handleClick) : window.removeEventListener("click", module$contents$compilers$clickoutside_handleClick);
@@ -833,8 +833,8 @@ class module$exports$watchers$observer {
 }
 ;var module$exports$silica = {};
 module$exports$hax.init();
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller repeat onScrollFinished repeatNotNested siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId".split(" ")), 
-version:"0.60.0-beta4", setContext($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId".split(" ")), 
+version:"0.60.0-beta5", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

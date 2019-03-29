@@ -4,14 +4,14 @@ function handleClick (evt) {
   for (let node of Silica._clickOutElements) {
     if (node.offsetWidth > 0 || node.offsetHeight > 0) {
       if (evt.target !== node && !Silica.isDescendent(node, evt.target)) {
-        Silica._call(node, evt, 'clickOutside')
+        Silica._call(node, evt, 'onClickOutside')
       }
     }
   }
 }
 
 function ClickOutside () {
-  var nodes = Silica.query(this, '[data-click-outside]')
+  var nodes = Silica.query(this, '[data-on-click-outside]')
   for (var i = nodes.length - 1; i >= 0; i--) {
     Silica._clickOutElements.add(nodes[i])
   }

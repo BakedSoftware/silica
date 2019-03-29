@@ -36,11 +36,12 @@ window['Silica'] = {
   usePushState: true,
   observer: new ValueObserver(),
   ignoredAttributes: new Set(['filter', 'class', 'show', 'if', 'model', 'include',
-    'controller', 'repeat', 'onScrollFinished', 'repeatNotNested',
+    'controller', 'parameter', 'repeat', 'trap', 'repeatNotNested',
+    'onClickOutside', 'onScrollFinished',
     'siO2IncludedUrl', 'src', 'siO2HardClass', 'noStopPropagation', 'noPreventDefault',
     'siO2TemplateId'
   ]),
-  version: '0.60.0-beta4',
+  version: '0.60.0-beta5',
 
   // Set the root context
   setContext (contextName) {

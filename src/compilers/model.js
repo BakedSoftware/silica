@@ -15,7 +15,7 @@ function setValue (activeElement, element, value) {
     element.checked = Silica.getValue(element, element.dataset['model'])
   } else if (element.nodeName === 'OPTION') {
     element.value = value
-  } else if (element.nodeName === 'INPUT') {
+  } else if (element.nodeName === 'INPUT' || element.nodeName === 'TEXTAREA') {
     element.value = value
   } else if (element.nodeName === 'SELECT') {
     for (let option of element.querySelectorAll('option')) {

@@ -451,7 +451,7 @@ function module$exports$compilers$src($ctx$jscomp$6_nodes$$, $node$jscomp$10_val
     $node$jscomp$10_value$$ = $ctx$jscomp$6_nodes$$[$i$$], Silica.observer.register($node$jscomp$10_value$$, $node$jscomp$10_value$$.dataset.src, module$contents$compilers$src_SrcUpdater);
   }
 }
-;let module$contents$compilers$generic_attributeMappings = {innerhtml:"innerHTML", disabled:"disabled"};
+;let module$contents$compilers$generic_attributeMappings = {innerhtml:"innerHTML", innerHtml:"innerHTML", innerText:"innerText", disabled:"disabled"};
 function module$contents$compilers$generic_AttributeFilter() {
 }
 module$contents$compilers$generic_AttributeFilter.prototype.acceptNode = function filter($node$$) {
@@ -802,8 +802,18 @@ class module$exports$watchers$observer {
     }
     return $clone$$;
   }
-  deregister($map_node$$, $packet_property$$, $actor$$) {
-    ($map_node$$ = this.mapping.get($map_node$$)) && ($packet_property$$ = $map_node$$.get($packet_property$$)) && $packet_property$$.actors.delete($actor$$);
+  removeSubTree($tree$$) {
+    this.hiddenNodes.forEach(($node$$) => {
+      Silica.isChildOf($node$$, $tree$$) && this.deregister($node$$);
+    });
+    this.liveNodes.forEach(($node$$) => {
+      Silica.isChildOf($node$$, $tree$$) && this.deregister($node$$);
+    });
+    this.deregister($tree$$);
+  }
+  deregister($node$$, $property$$ = null, $actor$$ = null) {
+    let $map$$ = this.mapping.get($node$$);
+    $map$$ && ($property$$ || $actor$$ || (this.liveNodes.delete($node$$), this.hiddenNodes.delete($node$$), this.mapping.delete($node$$)), ($node$$ = $map$$.get($property$$)) && $node$$.actors.delete($actor$$));
   }
   register($node$$, $property$$, $actor$$) {
     let [$filtered$$, $raw$$, $paramKeys$$] = Silica.getFilteredValue($node$$, $property$$), $value$$ = this.clone($raw$$), $map$$ = this.mapping.get($node$$);
@@ -833,8 +843,8 @@ class module$exports$watchers$observer {
 }
 ;var module$exports$silica = {};
 module$exports$hax.init();
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId".split(" ")), 
-version:"0.60.0-beta7", setContext($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive".split(" ")), 
+version:"0.60.0-beta8", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {
@@ -905,13 +915,12 @@ version:"0.60.0-beta7", setContext($contextName$$) {
 }, defer($func$$) {
   Silica._defers.push($func$$);
 }, processQueue() {
-  for (let $i$$ = 0, $len$$ = Silica._queue.length; $i$$ < $len$$; $i$$++) {
-    let $item$$ = Silica._queue[$i$$];
-    Silica.apply(function() {
+  Silica.apply(function() {
+    for (let $item$$ of Silica._queue) {
       $item$$[0]();
-    }, $item$$[1]);
-  }
-  Silica._queue = [];
+    }
+    Silica._queue = [];
+  });
 }, enqueue($func$$, $scope$$) {
   Silica._queue.push([$func$$, $scope$$]);
   Silica.processQueue();
@@ -931,8 +940,8 @@ version:"0.60.0-beta7", setContext($contextName$$) {
   $element$$ === document && ($element$$ = document.documentElement);
   Silica.isInFlush = !$skipSchedule$$;
   if (null === $changed$$ && Silica._isReady) {
-    for ($i$jscomp$21_key$$ in Silica._watch) {
-      $changed$$ = Silica._watch[$i$jscomp$21_key$$];
+    for ($i$jscomp$20_key$$ in Silica._watch) {
+      $changed$$ = Silica._watch[$i$jscomp$20_key$$];
       for (var $funcs$jscomp$1_i$$ = $changed$$.length - 1; 0 <= $funcs$jscomp$1_i$$; --$funcs$jscomp$1_i$$) {
         var $func$jscomp$8_k$$ = $changed$$[$funcs$jscomp$1_i$$];
         $func$jscomp$8_k$$[1].apply($func$jscomp$8_k$$[0], [$func$jscomp$8_k$$[2], $func$jscomp$8_k$$[3]]);
@@ -943,12 +952,12 @@ version:"0.60.0-beta7", setContext($contextName$$) {
     for ($func$jscomp$8_k$$ in $changed$$) {
       $funcs$jscomp$1_i$$ = $changed$$[$func$jscomp$8_k$$];
       if (!0 !== $funcs$jscomp$1_i$$) {
-        var $i$jscomp$21_key$$ = $funcs$jscomp$1_i$$.length - 1;
+        var $i$jscomp$20_key$$ = $funcs$jscomp$1_i$$.length - 1;
       } else {
-        $funcs$jscomp$1_i$$ = Silica._watch[$func$jscomp$8_k$$], $i$jscomp$21_key$$ = $funcs$jscomp$1_i$$.length - 1;
+        $funcs$jscomp$1_i$$ = Silica._watch[$func$jscomp$8_k$$], $i$jscomp$20_key$$ = $funcs$jscomp$1_i$$.length - 1;
       }
-      for (; 0 <= $i$jscomp$21_key$$; --$i$jscomp$21_key$$) {
-        $func$$ = $funcs$jscomp$1_i$$[$i$jscomp$21_key$$], $func$$[1].apply($func$$[0], [$func$$[2], $func$$[3]]);
+      for (; 0 <= $i$jscomp$20_key$$; --$i$jscomp$20_key$$) {
+        $func$$ = $funcs$jscomp$1_i$$[$i$jscomp$20_key$$], $func$$[1].apply($func$$[0], [$func$$[2], $func$$[3]]);
       }
     }
   }
@@ -1234,12 +1243,12 @@ version:"0.60.0-beta7", setContext($contextName$$) {
 }, query($raw$$, ...$attributes$$) {
   $raw$$ == document && ($raw$$ = document.documentElement);
   var $attribute$jscomp$1_nodes$$ = $raw$$.querySelectorAll($attributes$$.join(",")), $filtered$$ = [];
-  for (var $i$jscomp$28_i$$ = $attribute$jscomp$1_nodes$$.length - 1; 0 <= $i$jscomp$28_i$$; --$i$jscomp$28_i$$) {
-    let $node$$ = $attribute$jscomp$1_nodes$$.item($i$jscomp$28_i$$);
+  for (var $i$jscomp$27_i$$ = $attribute$jscomp$1_nodes$$.length - 1; 0 <= $i$jscomp$27_i$$; --$i$jscomp$27_i$$) {
+    let $node$$ = $attribute$jscomp$1_nodes$$.item($i$jscomp$27_i$$);
     Silica.isInRepeat($raw$$, $node$$) || $filtered$$.push($node$$);
   }
-  for ($i$jscomp$28_i$$ = $attributes$$.length - 1; 0 <= $i$jscomp$28_i$$; --$i$jscomp$28_i$$) {
-    if ($attribute$jscomp$1_nodes$$ = $attributes$$[$i$jscomp$28_i$$], $raw$$.hasAttribute($attribute$jscomp$1_nodes$$.substring(1, $attribute$jscomp$1_nodes$$.length - 1))) {
+  for ($i$jscomp$27_i$$ = $attributes$$.length - 1; 0 <= $i$jscomp$27_i$$; --$i$jscomp$27_i$$) {
+    if ($attribute$jscomp$1_nodes$$ = $attributes$$[$i$jscomp$27_i$$], $raw$$.hasAttribute($attribute$jscomp$1_nodes$$.substring(1, $attribute$jscomp$1_nodes$$.length - 1))) {
       $filtered$$.push($raw$$);
       break;
     }
@@ -1273,10 +1282,10 @@ version:"0.60.0-beta7", setContext($contextName$$) {
   return $filtered$jscomp$3_root$$;
 }, queryOfType($raw$$, $attribute$jscomp$2_type$$, ...$attributes$$) {
   $raw$$ == document && ($raw$$ = document.documentElement);
-  var $i$jscomp$33_nodes$$ = $raw$$.getElementsByTagName($attribute$jscomp$2_type$$), $filtered$$ = [];
+  var $i$jscomp$32_nodes$$ = $raw$$.getElementsByTagName($attribute$jscomp$2_type$$), $filtered$$ = [];
   if (0 < $attributes$$.length) {
-    for (let $i$$ = $i$jscomp$33_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-      let $node$$ = $i$jscomp$33_nodes$$.item($i$$);
+    for (let $i$$ = $i$jscomp$32_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+      let $node$$ = $i$jscomp$32_nodes$$.item($i$$);
       for (let $j$$ = $attributes$$.length - 1; 0 <= $j$$; --$j$$) {
         if ($node$$.hasAttribute($attributes$$[$j$$].replace(/\[|\]/g, ""))) {
           $filtered$$.push($node$$);
@@ -1285,15 +1294,15 @@ version:"0.60.0-beta7", setContext($contextName$$) {
       }
     }
     if ($raw$$.nodeName === $attribute$jscomp$2_type$$.toUpperCase()) {
-      for ($i$jscomp$33_nodes$$ = $attributes$$.length - 1; 0 <= $i$jscomp$33_nodes$$; --$i$jscomp$33_nodes$$) {
-        if ($attribute$jscomp$2_type$$ = $attributes$$[$i$jscomp$33_nodes$$], $raw$$.hasAttribute($attribute$jscomp$2_type$$.substring(1, $attribute$jscomp$2_type$$.length - 1))) {
+      for ($i$jscomp$32_nodes$$ = $attributes$$.length - 1; 0 <= $i$jscomp$32_nodes$$; --$i$jscomp$32_nodes$$) {
+        if ($attribute$jscomp$2_type$$ = $attributes$$[$i$jscomp$32_nodes$$], $raw$$.hasAttribute($attribute$jscomp$2_type$$.substring(1, $attribute$jscomp$2_type$$.length - 1))) {
           $filtered$$.push($raw$$);
           break;
         }
       }
     }
   } else {
-    $filtered$$ = $i$jscomp$33_nodes$$, $raw$$.tagName === $attribute$jscomp$2_type$$ && $filtered$$.push($raw$$);
+    $filtered$$ = $i$jscomp$32_nodes$$, $raw$$.tagName === $attribute$jscomp$2_type$$ && $filtered$$.push($raw$$);
   }
   return $filtered$$;
 }, removeFromDOM($e$$) {
@@ -1320,8 +1329,11 @@ version:"0.60.0-beta7", setContext($contextName$$) {
   }
   3 !== $e$$.nodeType && 8 !== $e$$.nodeType && ($removeWatchers$$($e$$.querySelectorAll("[data-controller]")), $removeWatchers$$($e$$.querySelectorAll("[data-sio2-directive]")), $removeWatchers$$([$e$$]));
   $e$$._deleted = !0;
+  Silica.observer.removeSubTree($e$$);
   $e$$.remove();
 }, compilers:module$exports$compilers, watchers:module$exports$watchers};
+let module$contents$silica_pq = Silica.processQueue;
+Silica.processQueue = Silica.debounce(module$contents$silica_pq, 16);
 window.Silica.Controllers = module$exports$controllers;
 window.Silica.addDirective = Silica.addDirective;
 window.Silica.addFilter = Silica.addFilter;
@@ -1343,8 +1355,8 @@ window.Silica.setContext = Silica.setContext;
 window.Silica.setPropByString = Silica.setPropByString;
 window.Silica.setRouter = Silica.setRouter;
 window.Silica.usePushState = Silica.usePushState;
-window.Silica.processQueue = Silica.debounce(Silica.processQueue, 0);
 window.Silica.enqueue = Silica.enqueue;
+window.Silica.processQueue = Silica.processQueue;
 window.Silica.pub = module$exports$silica$pubsub.Pub;
 window.Silica.sub = module$exports$silica$pubsub.Sub;
 window.Silica.unsub = module$exports$silica$pubsub.Unsub;

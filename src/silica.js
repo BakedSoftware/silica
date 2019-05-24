@@ -39,9 +39,9 @@ window['Silica'] = {
     'controller', 'parameter', 'repeat', 'trap', 'repeatNotNested',
     'onClickOutside', 'onScrollFinished',
     'siO2IncludedUrl', 'src', 'siO2HardClass', 'noStopPropagation', 'noPreventDefault',
-    'siO2TemplateId'
+    'siO2TemplateId', 'siO2Directive'
   ]),
-  version: '0.60.0-beta7',
+  version: '0.60.0-beta8',
 
   // Set the root context
   setContext (contextName) {
@@ -168,14 +168,15 @@ window['Silica'] = {
   },
 
   processQueue () {
-    for (let i = 0, len = Silica._queue.length; i < len; i++) {
-      let item = Silica._queue[i]
-      Silica.apply(function () {
+    Silica.apply(function () {
+      for (let item of Silica._queue) {
         item[0]()
-      }, item[1])
-    }
-
-    Silica._queue = []
+      }
+      // TODO figure out what to do with specified scope: item[1]
+      // Silica.apply(function () {
+      // }, item[1])
+      Silica._queue = []
+    })
   },
 
   enqueue (func, scope) {
@@ -859,12 +860,16 @@ window['Silica'] = {
     }
 
     e._deleted = true
+    Silica.observer.removeSubTree(e)
     e.remove()
   },
 
   compilers: Compilers,
   watchers: Watchers
 }
+
+let pq = Silica.processQueue
+Silica.processQueue = Silica.debounce(pq, 16)
 
 // Tell closure compiler which symbols are exported
 window['Silica']['Controllers'] = Controllers
@@ -888,8 +893,8 @@ window['Silica']['setContext'] = Silica.setContext
 window['Silica']['setPropByString'] = Silica.setPropByString
 window['Silica']['setRouter'] = Silica.setRouter
 window['Silica']['usePushState'] = Silica.usePushState
-window['Silica']['processQueue'] = Silica.debounce(Silica.processQueue, 0)
 window['Silica']['enqueue'] = Silica.enqueue
+window['Silica']['processQueue'] = Silica.processQueue
 window['Silica']['pub'] = PubSub.Pub
 window['Silica']['sub'] = PubSub.Sub
 window['Silica']['unsub'] = PubSub.Unsub

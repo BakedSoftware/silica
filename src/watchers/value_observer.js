@@ -57,11 +57,31 @@ class ValueObserver {
     return clone
   }
 
-  deregister (node, property, actor) {
+  removeSubTree (tree) {
+    this.hiddenNodes.forEach((node) => {
+      if (Silica.isChildOf(node, tree)) {
+        this.deregister(node)
+      }
+    })
+    this.liveNodes.forEach((node) => {
+      if (Silica.isChildOf(node, tree)) {
+        this.deregister(node)
+      }
+    })
+    this.deregister(tree)
+  }
+
+  deregister (node, property = null, actor = null) {
     let map = this.mapping.get(node)
 
     if (!map) {
       return
+    }
+
+    if (!property && !actor) {
+      this.liveNodes.delete(node)
+      this.hiddenNodes.delete(node)
+      this.mapping.delete(node)
     }
 
     let packet = map.get(property)

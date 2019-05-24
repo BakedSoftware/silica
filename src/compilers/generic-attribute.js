@@ -4,6 +4,8 @@ goog.module('compilers.generic')
 
 let attributeMappings = {
   'innerhtml': 'innerHTML',
+  'innerHtml': 'innerHTML',
+  'innerText': 'innerText',
   'disabled': 'disabled'
 }
 

@@ -93,9 +93,9 @@ function Model (context = null) {
         })
       }
     }
-    elm.onchange = change
-    elm.onkeyup = change
-    elm.onsearch = change
+    elm.onchange = Silica.debounce(change, 16)
+    elm.onkeyup = Silica.debounce(change, 16)
+    elm.onsearch = Silica.debounce(change, 16)
     if (elm.hasAttribute('x-webkit-speech')) {
       elm.onwebkitspeechchange = change
     }

@@ -1,7 +1,5 @@
 goog.module('hax')
 
-const Safari = goog.require('hax.safari')
-
 const reduce = Function.bind.call(Function.call, Array.prototype.reduce)
 const isEnumerable = Function.bind.call(Function.call, Object.prototype.propertyIsEnumerable)
 const concat = Function.bind.call(Function.call, Array.prototype.concat)
@@ -70,6 +68,3 @@ exports.init = function () {
     })
   }
 }
-
-exports.getDatasetProperty = Safari.getDatasetProperty
-exports.hasDatasetProperty = Safari.hasDatasetProperty

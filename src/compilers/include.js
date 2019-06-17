@@ -60,7 +60,7 @@ function loadPartial (url, element) {
 function IncludeUpdater (_, url) {
   // Don't try include empty url
   if (!url || url === '') {
-    this.removeAttribute('data-sio2-included-url')
+    this.dataset['siO2IncludedUrl'] = ''
     clearContent(this)
     return
   }

@@ -125,7 +125,7 @@ window['Silica'] = {
     var context
     for (let i = nodes.length - 1; i >= 0; --i) {
       node = nodes[i]
-      if (!Hax.hasDatasetProperty(node, 'siO2TemplateId')) {
+      if (!node.dataset['siO2TemplateId']) {
         let nextTemplateId = Silica._template_id++
         if (node.children.length === 1) {
           Silica._repeat_templates[nextTemplateId] = node.removeChild(node.firstElementChild)
@@ -192,9 +192,9 @@ window['Silica'] = {
         continue
       }
       func = watchers[k]
-      func.apply(element)
+      func.apply(element || document)
     }
-    Silica.observer.applyChanges()
+    Silica.observer.applyChanges(element)
   },
 
   flush (element = document.documentElement, onlySafe = false, changed = null, skipSchedule = false) {
@@ -406,7 +406,7 @@ window['Silica'] = {
     } else {
       let temp = document.createElement('div')
       temp.innerHTML = raw.data
-      param = Hax.getDatasetProperty(temp.firstElementChild || temp, 'parameter')
+      param = (temp.firstElementChild || temp).dataset['parameter']
     }
     if (param) {
       params.push(param)
@@ -499,8 +499,8 @@ window['Silica'] = {
         return raw._rt_ctx
       } else if (raw._rt_ctrl) {
         return raw._rt_ctrl
-      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && Hax.hasDatasetProperty(raw, 'controller')) {
-        constructorName = Hax.getDatasetProperty(raw, 'controller')
+      } else if (raw.nodeType !== 9 && raw.nodeType !== 3 && raw.nodeType !== 8 && raw.dataset['controller']) {
+        constructorName = raw.dataset['controller']
         if (typeof (_ref = constructorName.match(/((?:\w|\.)+)(?:\(([\w\.]+)\))*/))[2] !== 'undefined') {
           needsModel = true
           model = Silica.getValue(raw.parentNode, _ref[2])
@@ -609,7 +609,7 @@ window['Silica'] = {
     if (!element.dataset['noStopPropagation']) {
       evnt.stopPropagation()
     }
-    var scope = document, trap_to, trapped_scope
+    var scope = null, trap_to, trapped_scope
     if ((trap_to = element.dataset['trap']) != null) {
       if (trap_to.toLowerCase() === 'true') {
         scope = element
@@ -623,7 +623,8 @@ window['Silica'] = {
         }
       }
     }
-    Silica.enqueue(function () {
+    //Silica.enqueue(function () {
+    Silica.apply(function () {
       var action, ctx, objects, parameter, actionName, models = []
       ctx = Silica.getContext(element)
       action = element.dataset[act]

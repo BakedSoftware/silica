@@ -68,15 +68,15 @@ class Controller extends Base {
       return
     }
 
-    Silica.defer(() => {
+    //Silica.defer(() => {
       this._previousStateName = this._currentStateName
       this._currentState['onExit'](this)
       this._currentState = target
       this._currentStateName = stateName
-      Silica.defer(() => {
+     // Silica.defer(() => {
         this._currentState['onEnter'](this, ...args)
-      })
-    })
+      //})
+    //})
   }
 
   /**

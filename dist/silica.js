@@ -302,7 +302,7 @@ function module$contents$compilers$include_loadPartial($url$$, $element$$) {
   }
 }
 function module$contents$compilers$include_IncludeUpdater($_$$, $url$$) {
-  $url$$ && "" !== $url$$ ? module$contents$compilers$include_loadPartial($url$$, this) : (this.removeAttribute("data-sio2-included-url"), module$contents$compilers$include_clearContent(this));
+  $url$$ && "" !== $url$$ ? module$contents$compilers$include_loadPartial($url$$, this) : (this.dataset.siO2IncludedUrl = "", module$contents$compilers$include_clearContent(this));
 }
 function module$exports$compilers$include($ctx$jscomp$3_nodes$$, $node$jscomp$7_value$$) {
   $ctx$jscomp$3_nodes$$ = Silica.query(this, "[data-include]");
@@ -422,9 +422,9 @@ module$exports$compilers$model.Compiler = function $module$exports$compilers$mod
         }
       }
     };
-    $elm$$.onchange = $change$$;
-    $elm$$.onkeyup = $change$$;
-    $elm$$.onsearch = $change$$;
+    $elm$$.onchange = Silica.debounce($change$$, 16);
+    $elm$$.onkeyup = Silica.debounce($change$$, 16);
+    $elm$$.onsearch = Silica.debounce($change$$, 16);
     $elm$$.hasAttribute("x-webkit-speech") && ($elm$$.onwebkitspeechchange = $change$$);
     $elm$$.addEventListener("focus", function() {
       Silica.__activeElement = this;
@@ -556,15 +556,7 @@ class module$contents$controllers$FSM_Controller extends module$exports$controll
   }
   transition($stateName$$, ...$args$$) {
     let $target$$ = this._getStateWithName($stateName$$);
-    $target$$ !== this._currentState && Silica.defer(() => {
-      this._previousStateName = this._currentStateName;
-      this._currentState.onExit(this);
-      this._currentState = $target$$;
-      this._currentStateName = $stateName$$;
-      Silica.defer(() => {
-        this._currentState.onEnter(this, ...$args$$);
-      });
-    });
+    $target$$ !== this._currentState && (this._previousStateName = this._currentStateName, this._currentState.onExit(this), this._currentState = $target$$, this._currentStateName = $stateName$$, this._currentState.onEnter(this, ...$args$$));
   }
   handle($func$$, ...$args$$) {
     if (this._currentState && ($func$$ = this._currentState[$func$$])) {
@@ -580,20 +572,6 @@ Object.defineProperties(module$contents$controllers$FSM_Controller.prototype, {c
 module$exports$controllers$FSM.Controller = module$contents$controllers$FSM_Controller;
 module$exports$controllers$FSM.State = module$contents$controllers$FSM_State;
 var module$exports$controllers = {Base:module$exports$controllers$Base, FSM:module$exports$controllers$FSM};
-var module$exports$hax$safari = {getDatasetProperty:function($element$$, $propName$$) {
-  if ($element$$.dataset && "undefined" !== typeof $element$$.dataset && $element$$.dataset[$propName$$]) {
-    return $element$$.dataset[$propName$$];
-  }
-  if ("undefined" !== typeof Reflect) {
-    var $dataset_value$$ = Reflect.get($element$$, "dataset");
-    if ($dataset_value$$ && ($dataset_value$$ = Reflect.get(Object($dataset_value$$), $propName$$))) {
-      return $dataset_value$$;
-    }
-  }
-  return $element$$.getAttribute("data-" + $propName$$);
-}, hasDatasetProperty:function($element$$, $propName$$) {
-  return !!(0,module$exports$hax$safari.getDatasetProperty)($element$$, $propName$$);
-}};
 var module$exports$hax = {};
 const module$contents$hax_reduce = Function.bind.call(Function.call, Array.prototype.reduce), module$contents$hax_isEnumerable = Function.bind.call(Function.call, Object.prototype.propertyIsEnumerable), module$contents$hax_concat = Function.bind.call(Function.call, Array.prototype.concat), module$contents$hax_keys = Reflect.ownKeys;
 module$exports$hax.init = function $module$exports$hax$init$() {
@@ -622,8 +600,6 @@ module$exports$hax.init = function $module$exports$hax$init$() {
     return !1;
   }});
 };
-module$exports$hax.getDatasetProperty = module$exports$hax$safari.getDatasetProperty;
-module$exports$hax.hasDatasetProperty = module$exports$hax$safari.hasDatasetProperty;
 var module$exports$silica$pubsub = {}, module$contents$silica$pubsub_subscriptions = new Map, module$contents$silica$pubsub_subscriptionID = 1, module$contents$silica$pubsub_subscriptionSeparator = "[--+--]";
 function module$contents$silica$pubsub_nextSubscriptionID() {
   return module$contents$silica$pubsub_subscriptionID++;
@@ -637,13 +613,13 @@ module$exports$silica$pubsub.Sub = function $module$exports$silica$pubsub$Sub$($
 };
 module$exports$silica$pubsub.Pub = function $module$exports$silica$pubsub$Pub$($channel$$, ...$args$$) {
   let $subs$$ = module$contents$silica$pubsub_subscriptions.get($channel$$);
-  $subs$$ && setTimeout(function() {
+  $subs$$ && window.requestAnimationFrame(function() {
     for (let [, $value$$] of $subs$$) {
-      Silica.enqueue(function() {
+      Silica.apply(function() {
         $value$$[0](...$args$$);
       }, $value$$[1]);
     }
-  }, 0);
+  });
 };
 module$exports$silica$pubsub.Unsub = function $module$exports$silica$pubsub$Unsub$($subs$$) {
   let [$channel$$, $id$$] = $subs$$.split(module$contents$silica$pubsub_subscriptionSeparator);
@@ -720,7 +696,7 @@ function module$exports$watchers$if() {
     $_ref$$ = $raw$$.childNodes;
     if ($list$jscomp$4_newList_param$$) {
       $list$jscomp$4_newList_param$$.constructor === Number && ($list$jscomp$4_newList_param$$ = Array($list$jscomp$4_newList_param$$));
-      var $obj$jscomp$32_template$$ = Silica._repeat_templates[module$exports$hax$safari.getDatasetProperty($raw$$, "siO2TemplateId")];
+      var $obj$jscomp$32_template$$ = Silica._repeat_templates[$raw$$.dataset.siO2TemplateId];
       if ($list$jscomp$4_newList_param$$.constructor === Object) {
         var $context$jscomp$3_keys$$ = Object.keys($list$jscomp$4_newList_param$$);
         var $_i_child_obj$$ = $list$jscomp$4_newList_param$$;
@@ -823,14 +799,14 @@ class module$exports$watchers$observer {
     $actor$$.call($node$$, null, $filtered$$);
     return $filtered$$;
   }
-  applyChanges() {
+  applyChanges($scope$$ = null) {
     this.hiddenNodes.forEach(($node$$) => {
-      this.mapping.get($node$$).forEach(($packet$$, $property$$) => {
+      $scope$$ && $node$$ !== $scope$$ && !Silica.isChildOf($node$$, $scope$$) || this.mapping.get($node$$).forEach(($packet$$, $property$$) => {
         $packet$$.actors.has(module$exports$compilers$show) && ($property$$ = Silica.getFilteredValue($node$$, $property$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$$[1]) && (module$exports$compilers$show.call($node$$, null, $property$$[0]), this.liveNodes.add($node$$));
       });
     });
     this.liveNodes.forEach(($node$$) => {
-      this.mapping.get($node$$).forEach(($packet$$, $property$jscomp$15_result$$) => {
+      $scope$$ && $node$$ !== $scope$$ && !Silica.isChildOf($node$$, $scope$$) || this.mapping.get($node$$).forEach(($packet$$, $property$jscomp$15_result$$) => {
         if (($property$jscomp$15_result$$ = Silica.getFilteredValue($node$$, $property$jscomp$15_result$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$jscomp$15_result$$[1])) {
           $packet$$.value = this.clone($property$jscomp$15_result$$[1]);
           for (let $actor$$ of $packet$$.actors.values()) {
@@ -880,11 +856,11 @@ version:"0.60.0-beta8", setContext($contextName$$) {
     $element$$ === Silica._appRoot && (Silica._isReady = !0);
     return $element$$;
   }
-}, cacheTemplates($element$jscomp$20_nodes$$) {
-  $element$jscomp$20_nodes$$ = $element$jscomp$20_nodes$$.querySelectorAll("[data-repeat]");
-  for (let $i$$ = $element$jscomp$20_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    var $node$$ = $element$jscomp$20_nodes$$[$i$$];
-    if (!module$exports$hax$safari.hasDatasetProperty($node$$, "siO2TemplateId")) {
+}, cacheTemplates($element$jscomp$18_nodes$$) {
+  $element$jscomp$18_nodes$$ = $element$jscomp$18_nodes$$.querySelectorAll("[data-repeat]");
+  for (let $i$$ = $element$jscomp$18_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    var $node$$ = $element$jscomp$18_nodes$$[$i$$];
+    if (!$node$$.dataset.siO2TemplateId) {
       let $nextTemplateId$$ = Silica._template_id++;
       if (1 === $node$$.children.length) {
         Silica._repeat_templates[$nextTemplateId$$] = $node$$.removeChild($node$$.firstElementChild);
@@ -927,9 +903,9 @@ version:"0.60.0-beta8", setContext($contextName$$) {
 }, updateDOM($element$$, $onlySafe$$) {
   let $watchers$$ = Silica.watchers, $func$$;
   for (let $k$$ in $watchers$$) {
-    $onlySafe$$ && "_" === $k$$[0] || ($func$$ = $watchers$$[$k$$], $func$$.apply($element$$));
+    $onlySafe$$ && "_" === $k$$[0] || ($func$$ = $watchers$$[$k$$], $func$$.apply($element$$ || document));
   }
-  Silica.observer.applyChanges();
+  Silica.observer.applyChanges($element$$);
 }, flush($element$$ = document.documentElement, $onlySafe$$ = !1, $changed$$ = null, $skipSchedule$$ = !1) {
   if (Silica.isInFlush && !$skipSchedule$$) {
     if (Silica._scheduledFlush) {
@@ -1055,7 +1031,7 @@ version:"0.60.0-beta8", setContext($contextName$$) {
 }, getValue($param$jscomp$4_raw$$, $propString$$, $context$jscomp$8_ctx$$ = null, $params$$ = []) {
   var $idx$jscomp$2_temp$$ = "!" === $propString$$[0] ? 1 : 0;
   $context$jscomp$8_ctx$$ = $context$jscomp$8_ctx$$ || (90 >= $propString$$.charCodeAt($idx$jscomp$2_temp$$) ? window : Silica.getContext($param$jscomp$4_raw$$));
-  8 !== $param$jscomp$4_raw$$.nodeType ? $param$jscomp$4_raw$$ = $param$jscomp$4_raw$$.dataset.parameter : ($idx$jscomp$2_temp$$ = document.createElement("div"), $idx$jscomp$2_temp$$.innerHTML = $param$jscomp$4_raw$$.data, $param$jscomp$4_raw$$ = module$exports$hax$safari.getDatasetProperty($idx$jscomp$2_temp$$.firstElementChild || $idx$jscomp$2_temp$$, "parameter"));
+  8 !== $param$jscomp$4_raw$$.nodeType ? $param$jscomp$4_raw$$ = $param$jscomp$4_raw$$.dataset.parameter : ($idx$jscomp$2_temp$$ = document.createElement("div"), $idx$jscomp$2_temp$$.innerHTML = $param$jscomp$4_raw$$.data, $param$jscomp$4_raw$$ = ($idx$jscomp$2_temp$$.firstElementChild || $idx$jscomp$2_temp$$).dataset.parameter);
   $param$jscomp$4_raw$$ && $params$$.push($param$jscomp$4_raw$$);
   return Silica.getPropByString($context$jscomp$8_ctx$$, $propString$$, $params$$);
 }, isChildOf($child$$, $parent$$) {
@@ -1102,8 +1078,8 @@ version:"0.60.0-beta8", setContext($contextName$$) {
     if ($raw$jscomp$5_v$$._rt_ctrl) {
       return $raw$jscomp$5_v$$._rt_ctrl;
     }
-    if (9 !== $raw$jscomp$5_v$$.nodeType && 3 !== $raw$jscomp$5_v$$.nodeType && 8 !== $raw$jscomp$5_v$$.nodeType && module$exports$hax$safari.hasDatasetProperty($raw$jscomp$5_v$$, "controller")) {
-      $constructorName$jscomp$1_ctrl$$ = module$exports$hax$safari.getDatasetProperty($raw$jscomp$5_v$$, "controller");
+    if (9 !== $raw$jscomp$5_v$$.nodeType && 3 !== $raw$jscomp$5_v$$.nodeType && 8 !== $raw$jscomp$5_v$$.nodeType && $raw$jscomp$5_v$$.dataset.controller) {
+      $constructorName$jscomp$1_ctrl$$ = $raw$jscomp$5_v$$.dataset.controller;
       "undefined" !== typeof($_ref$jscomp$7_constructor$$ = $constructorName$jscomp$1_ctrl$$.match(/((?:\w|\.)+)(?:\(([\w\.]+)\))*/))[2] && ($needsModel_pairIdx$$ = !0, $model$jscomp$3_stored$jscomp$1_watchers$$ = Silica.getValue($raw$jscomp$5_v$$.parentNode, $_ref$jscomp$7_constructor$$[2]));
       $constructorName$jscomp$1_ctrl$$ = $_ref$jscomp$7_constructor$$[1];
       $_ref$jscomp$7_constructor$$ = eval($constructorName$jscomp$1_ctrl$$);
@@ -1153,21 +1129,21 @@ version:"0.60.0-beta8", setContext($contextName$$) {
     Silica.goTo($path$$);
     return !$defaultPrevented$$;
   }
-}, _capture_links($element$jscomp$25_nodes$$) {
-  $element$jscomp$25_nodes$$ = Silica.queryOfType($element$jscomp$25_nodes$$, "a", "[href]", "[data-href]");
+}, _capture_links($element$jscomp$23_nodes$$) {
+  $element$jscomp$23_nodes$$ = Silica.queryOfType($element$jscomp$23_nodes$$, "a", "[href]", "[data-href]");
   let $node$$;
-  for (let $i$$ = $element$jscomp$25_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$$ = $element$jscomp$25_nodes$$[$i$$], $node$$.hostname === window.location.hostname && "_blank" !== $node$$.target && ($node$$.removeEventListener("click", Silica._handle_href, !0), $node$$.addEventListener("click", Silica._handle_href, !0));
+  for (let $i$$ = $element$jscomp$23_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$$ = $element$jscomp$23_nodes$$[$i$$], $node$$.hostname === window.location.hostname && "_blank" !== $node$$.target && ($node$$.removeEventListener("click", Silica._handle_href, !0), $node$$.addEventListener("click", Silica._handle_href, !0));
   }
-}, _show($element$jscomp$26_isVisible$$, $expr$$, $negate$$) {
-  $element$jscomp$26_isVisible$$ = Silica.getValue($element$jscomp$26_isVisible$$, $expr$$, null, [$element$jscomp$26_isVisible$$]);
-  $negate$$ && ($element$jscomp$26_isVisible$$ = !$element$jscomp$26_isVisible$$);
-  return $element$jscomp$26_isVisible$$;
+}, _show($element$jscomp$24_isVisible$$, $expr$$, $negate$$) {
+  $element$jscomp$24_isVisible$$ = Silica.getValue($element$jscomp$24_isVisible$$, $expr$$, null, [$element$jscomp$24_isVisible$$]);
+  $negate$$ && ($element$jscomp$24_isVisible$$ = !$element$jscomp$24_isVisible$$);
+  return $element$jscomp$24_isVisible$$;
 }, _call($element$$, $evnt$$, $act$$) {
   if (Silica.isInDOM($element$$) && ($element$$ === $evnt$$.target || "click" !== $act$$ || "SELECT" !== $evnt$$.target.nodeName && "INPUT" !== $evnt$$.target.nodeName)) {
     $element$$.dataset.noPreventDefault || $evnt$$.preventDefault();
     $element$$.dataset.noStopPropagation || $evnt$$.stopPropagation();
-    var $scope$$ = document, $trap_to$$, $trapped_scope$$;
+    var $scope$$ = null, $trap_to$$, $trapped_scope$$;
     if (null != ($trap_to$$ = $element$$.dataset.trap)) {
       if ("true" === $trap_to$$.toLowerCase()) {
         $scope$$ = $element$$;
@@ -1180,7 +1156,7 @@ version:"0.60.0-beta8", setContext($contextName$$) {
         }
       }
     }
-    Silica.enqueue(function() {
+    Silica.apply(function() {
       var $parameter$$, $models$$ = [];
       var $ctx$$ = Silica.getContext($element$$);
       var $action_i$$ = $element$$.dataset[$act$$];

@@ -1,6 +1,5 @@
 goog.module('watchers.repeat')
 // Import browser hax
-const Hax = goog.require('hax')
 const ControllerCompiler = goog.require('compilers.controller')
 const Model = goog.require('compilers.model')
 
@@ -40,7 +39,7 @@ function Repeat () {
     }
 
     // Get the template
-    template = Silica._repeat_templates[Hax.getDatasetProperty(raw, 'siO2TemplateId')]
+    template = Silica._repeat_templates[raw.dataset['siO2TemplateId']]
     if (newList.constructor === Object) {
       let keys = Object.keys(newList)
       let obj = newList

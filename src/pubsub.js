@@ -22,13 +22,13 @@ function sub (channel, handler, context = document) {
 function pub (channel, ...args) {
   let subs = subscriptions.get(channel)
   if (subs) {
-    setTimeout(function () {
+    window.requestAnimationFrame(function () {
       for (let [_, value] of subs) {
-        Silica.enqueue(function () {
+        Silica.apply(function () {
           value[0](...args)
         }, value[1])
       }
-    }, 0)
+    })
   }
 }
 

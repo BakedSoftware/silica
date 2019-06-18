@@ -62,10 +62,12 @@ function Repeat () {
 
     while (countDiff < 0) {
       context = {}
-      context[model] = newList[newList.length + countDiff]
+      let index = newList.length + countDiff
+      context[model] = newList[index]
       context.$ctrl = ctx
       child = template.cloneNode(true)
       child._rt_ctx = context
+      child._rt_ctx['index'] = index
       for (let key in Silica.compilers) {
         Silica.compilers[key].call(child)
       }
@@ -92,7 +94,7 @@ function Repeat () {
       if (modelChanged) {
         ControllerCompiler.call(node, node._rt_ctx, true)
       }
-      node._rt_ctx.index = _i
+      node._rt_ctx['index'] = _i
 
       // Silica.flush(node, false, {}, true)
       if (possiblyNested) {

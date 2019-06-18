@@ -711,10 +711,12 @@ function module$exports$watchers$if() {
       }
       for ($fragment$jscomp$1_node$$ = document.createDocumentFragment(); 0 > $_len$$;) {
         $context$jscomp$3_keys$$ = {};
-        $context$jscomp$3_keys$$[$model$$] = $list$jscomp$4_newList_param$$[$list$jscomp$4_newList_param$$.length + $_len$$];
+        var $index$$ = $list$jscomp$4_newList_param$$.length + $_len$$;
+        $context$jscomp$3_keys$$[$model$$] = $list$jscomp$4_newList_param$$[$index$$];
         $context$jscomp$3_keys$$.$ctrl = $ctx$$;
         $_i_child_obj$$ = $obj$jscomp$32_template$$.cloneNode(!0);
         $_i_child_obj$$._rt_ctx = $context$jscomp$3_keys$$;
+        $_i_child_obj$$._rt_ctx.index = $index$$;
         for (let $key$$ in Silica.compilers) {
           Silica.compilers[$key$$].call($_i_child_obj$$);
         }
@@ -724,13 +726,8 @@ function module$exports$watchers$if() {
       $fragment$jscomp$1_node$$.hasChildNodes() && $raw$$.appendChild($fragment$jscomp$1_node$$);
       $_i_child_obj$$ = 0;
       for ($_len$$ = $list$jscomp$4_newList_param$$.length; $_i_child_obj$$ < $_len$$; $_i_child_obj$$++) {
-        $obj$jscomp$32_template$$ = $list$jscomp$4_newList_param$$[$_i_child_obj$$];
-        $fragment$jscomp$1_node$$ = $_ref$$[$_i_child_obj$$];
-        let $modelChanged$$ = $model$$ !== $obj$jscomp$32_template$$;
-        $fragment$jscomp$1_node$$._rt_ctx ? $fragment$jscomp$1_node$$._rt_ctx[$model$$] = $obj$jscomp$32_template$$ : ($context$jscomp$3_keys$$ = {}, $context$jscomp$3_keys$$[$model$$] = $obj$jscomp$32_template$$, $context$jscomp$3_keys$$.$ctrl = $ctx$$, $fragment$jscomp$1_node$$._rt_ctx = $context$jscomp$3_keys$$);
-        $modelChanged$$ && module$exports$compilers$controller.call($fragment$jscomp$1_node$$, $fragment$jscomp$1_node$$._rt_ctx, !0);
-        $fragment$jscomp$1_node$$._rt_ctx.index = $_i_child_obj$$;
-        $possiblyNested$$ && module$exports$watchers$repeat.call($fragment$jscomp$1_node$$);
+        $obj$jscomp$32_template$$ = $list$jscomp$4_newList_param$$[$_i_child_obj$$], $fragment$jscomp$1_node$$ = $_ref$$[$_i_child_obj$$], $index$$ = $model$$ !== $obj$jscomp$32_template$$, $fragment$jscomp$1_node$$._rt_ctx ? $fragment$jscomp$1_node$$._rt_ctx[$model$$] = $obj$jscomp$32_template$$ : ($context$jscomp$3_keys$$ = {}, $context$jscomp$3_keys$$[$model$$] = $obj$jscomp$32_template$$, $context$jscomp$3_keys$$.$ctrl = $ctx$$, $fragment$jscomp$1_node$$._rt_ctx = $context$jscomp$3_keys$$), $index$$ && 
+        module$exports$compilers$controller.call($fragment$jscomp$1_node$$, $fragment$jscomp$1_node$$._rt_ctx, !0), $fragment$jscomp$1_node$$._rt_ctx.index = $_i_child_obj$$, $possiblyNested$$ && module$exports$watchers$repeat.call($fragment$jscomp$1_node$$);
       }
       "SELECT" === $raw$$.nodeName && $raw$$.dataset.model && module$exports$compilers$model.Updater.call($raw$$, $ctx$$, Silica.getValue($raw$$, $raw$$.dataset.model));
       $ctx$$.renderedRepeat ? $ctx$$.renderedRepeat($raw$$) : $ctx$$.$ctrl && $ctx$$.$ctrl.renderedRepeat && $ctx$$.$ctrl.renderedRepeat($raw$$);
@@ -820,7 +817,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 module$exports$hax.init();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive".split(" ")), 
-version:"0.60.0-beta9", setContext($contextName$$) {
+version:"0.60.0-beta10", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

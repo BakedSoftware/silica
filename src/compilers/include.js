@@ -1,5 +1,9 @@
 goog.module('compilers.include')
 
+const Controller = goog.require('compilers.controller')
+
+let stackDepth = 0
+
 function loadCallback (element) {
   var ctx = Silica.getContext(element)
   if (ctx['onLoad'] && typeof ctx['onLoad'] === 'function') {
@@ -20,7 +24,15 @@ function processInclude (element, html) {
   while (fragment.children.length) {
     element.appendChild(fragment.children[0])
   }
-  Silica.compile(element, false)
+
+  stackDepth++
+  Include.apply(element)
+  stackDepth--
+
+  if (stackDepth === 0) {
+    Silica.compile(element, false)
+  }
+
   Silica.apply(function () {
     loadCallback(element)
   }, Silica.getContext(element).el)

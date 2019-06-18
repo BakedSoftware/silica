@@ -41,7 +41,7 @@ window['Silica'] = {
     'siO2IncludedUrl', 'src', 'siO2HardClass', 'noStopPropagation', 'noPreventDefault',
     'siO2TemplateId', 'siO2Directive'
   ]),
-  version: '0.60.0-beta10',
+  version: '0.60.0-beta11',
 
   // Set the root context
   setContext (contextName) {

@@ -262,59 +262,11 @@ function module$exports$compilers$clickoutside() {
     }
   }
 }
-;function module$contents$compilers$include_loadCallback($element$$) {
-  var $ctx$$ = Silica.getContext($element$$);
-  if ($ctx$$.onLoad && "function" === typeof $ctx$$.onLoad) {
-    $ctx$$.onLoad($element$$);
-  }
-}
-function module$contents$compilers$include_clearContent($element$$) {
-  for (; $element$$.hasChildNodes();) {
-    Silica.removeFromDOM($element$$.lastChild);
-  }
-}
-function module$contents$compilers$include_processInclude($element$$, $html$$) {
-  let $fragment$$ = document.createElement("div");
-  $fragment$$.innerHTML = $html$$;
-  for (module$contents$compilers$include_clearContent($element$$); $fragment$$.children.length;) {
-    $element$$.appendChild($fragment$$.children[0]);
-  }
-  Silica.compile($element$$, !1);
-  Silica.apply(function() {
-    module$contents$compilers$include_loadCallback($element$$);
-  }, Silica.getContext($element$$).el);
-}
-function module$contents$compilers$include_loadPartial($url$$, $element$$) {
-  if ($element$$.dataset.siO2IncludedUrl !== $url$$) {
-    $element$$.dataset.siO2IncludedUrl = $url$$;
-    module$contents$compilers$include_clearContent($element$$);
-    var $cached$$ = Silica._includeCache[$url$$];
-    if ($cached$$) {
-      module$contents$compilers$include_processInclude($element$$, $cached$$);
-    } else {
-      var $xhr$$ = new XMLHttpRequest;
-      $xhr$$.onreadystatechange = function $$xhr$$$onreadystatechange$() {
-        4 === $xhr$$.readyState && (Silica._includeCache[$url$$] = $xhr$$.responseText, $element$$.dataset.siO2IncludedUrl === $url$$ && module$contents$compilers$include_processInclude($element$$, $xhr$$.responseText));
-      };
-      $xhr$$.open("GET", $url$$, !0);
-      $xhr$$.send(null);
-    }
-  }
-}
-function module$contents$compilers$include_IncludeUpdater($_$$, $url$$) {
-  $url$$ && "" !== $url$$ ? module$contents$compilers$include_loadPartial($url$$, this) : (this.dataset.siO2IncludedUrl = "", module$contents$compilers$include_clearContent(this));
-}
-function module$exports$compilers$include($ctx$jscomp$3_nodes$$, $node$jscomp$7_value$$) {
-  $ctx$jscomp$3_nodes$$ = Silica.query(this, "[data-include]");
-  for (let $i$$ = $ctx$jscomp$3_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$jscomp$7_value$$ = $ctx$jscomp$3_nodes$$[$i$$], Silica.observer.register($node$jscomp$7_value$$, $node$jscomp$7_value$$.dataset.include, module$contents$compilers$include_IncludeUpdater);
-  }
-}
-;function module$exports$compilers$controller($ctx$jscomp$4_nodes$$, $force$$ = !1, $storeWatchers$$ = !0) {
+;function module$exports$compilers$controller($ctx$jscomp$2_nodes$$, $force$$ = !1, $storeWatchers$$ = !0) {
   var $k$$;
-  $ctx$jscomp$4_nodes$$ = Silica.query(this, "[data-controller]");
-  for (let $i$$ = $ctx$jscomp$4_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    var $node$$ = $ctx$jscomp$4_nodes$$[$i$$];
+  $ctx$jscomp$2_nodes$$ = Silica.query(this, "[data-controller]");
+  for (let $i$$ = $ctx$jscomp$2_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    var $node$$ = $ctx$jscomp$2_nodes$$[$i$$];
     if ($force$$ || void 0 === $node$$._rt_ctrl) {
       var $lastCtrl_v$$ = $node$$._rt_ctrl;
       delete $node$$._rt_ctrl;
@@ -351,6 +303,58 @@ function module$exports$compilers$include($ctx$jscomp$3_nodes$$, $node$jscomp$7_
         $_ref$jscomp$1_constructorName_ctrl$$.onLoad();
       }
     }
+  }
+}
+;let module$contents$compilers$include_stackDepth = 0;
+function module$contents$compilers$include_loadCallback($element$$) {
+  var $ctx$$ = Silica.getContext($element$$);
+  if ($ctx$$.onLoad && "function" === typeof $ctx$$.onLoad) {
+    $ctx$$.onLoad($element$$);
+  }
+}
+function module$contents$compilers$include_clearContent($element$$) {
+  for (; $element$$.hasChildNodes();) {
+    Silica.removeFromDOM($element$$.lastChild);
+  }
+}
+function module$contents$compilers$include_processInclude($element$$, $html$$) {
+  let $fragment$$ = document.createElement("div");
+  $fragment$$.innerHTML = $html$$;
+  for (module$contents$compilers$include_clearContent($element$$); $fragment$$.children.length;) {
+    $element$$.appendChild($fragment$$.children[0]);
+  }
+  module$contents$compilers$include_stackDepth++;
+  module$exports$compilers$include.apply($element$$);
+  module$contents$compilers$include_stackDepth--;
+  0 === module$contents$compilers$include_stackDepth && Silica.compile($element$$, !1);
+  Silica.apply(function() {
+    module$contents$compilers$include_loadCallback($element$$);
+  }, Silica.getContext($element$$).el);
+}
+function module$contents$compilers$include_loadPartial($url$$, $element$$) {
+  if ($element$$.dataset.siO2IncludedUrl !== $url$$) {
+    $element$$.dataset.siO2IncludedUrl = $url$$;
+    module$contents$compilers$include_clearContent($element$$);
+    var $cached$$ = Silica._includeCache[$url$$];
+    if ($cached$$) {
+      module$contents$compilers$include_processInclude($element$$, $cached$$);
+    } else {
+      var $xhr$$ = new XMLHttpRequest;
+      $xhr$$.onreadystatechange = function $$xhr$$$onreadystatechange$() {
+        4 === $xhr$$.readyState && (Silica._includeCache[$url$$] = $xhr$$.responseText, $element$$.dataset.siO2IncludedUrl === $url$$ && module$contents$compilers$include_processInclude($element$$, $xhr$$.responseText));
+      };
+      $xhr$$.open("GET", $url$$, !0);
+      $xhr$$.send(null);
+    }
+  }
+}
+function module$contents$compilers$include_IncludeUpdater($_$$, $url$$) {
+  $url$$ && "" !== $url$$ ? module$contents$compilers$include_loadPartial($url$$, this) : (this.dataset.siO2IncludedUrl = "", module$contents$compilers$include_clearContent(this));
+}
+function module$exports$compilers$include($ctx$jscomp$4_nodes$$, $node$jscomp$8_value$$) {
+  $ctx$jscomp$4_nodes$$ = Silica.query(this, "[data-include]");
+  for (let $i$$ = $ctx$jscomp$4_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
+    $node$jscomp$8_value$$ = $ctx$jscomp$4_nodes$$[$i$$], Silica.observer.register($node$jscomp$8_value$$, $node$jscomp$8_value$$.dataset.include, module$contents$compilers$include_IncludeUpdater);
   }
 }
 ;var module$exports$compilers$model = {};
@@ -817,7 +821,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 module$exports$hax.init();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive".split(" ")), 
-version:"0.60.0-beta10", setContext($contextName$$) {
+version:"0.60.0-beta11", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

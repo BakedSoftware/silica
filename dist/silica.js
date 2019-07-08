@@ -821,7 +821,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 module$exports$hax.init();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive".split(" ")), 
-version:"0.60.0-beta11", setContext($contextName$$) {
+version:"0.60.0-beta12", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {
@@ -1181,24 +1181,25 @@ version:"0.60.0-beta11", setContext($contextName$$) {
     }, $scope$$);
   }
 }, getFilteredValue($filterOptions_raw$$, $propString$jscomp$3_value$$, $elideFilterIf_filter$$, $paramsKeys$$ = null) {
-  $paramsKeys$$ = $paramsKeys$$ || $propString$jscomp$3_value$$.match("\\((.*)\\)");
-  var $filterKey_params$$ = [];
+  var $filterKey_needsShift$$;
+  [$paramsKeys$$, $filterKey_needsShift$$] = $paramsKeys$$ ? [$paramsKeys$$, !1] : [$propString$jscomp$3_value$$.match("\\((.*)\\)"), !0];
+  let $params$$ = [];
   if (null !== $paramsKeys$$) {
-    $paramsKeys$$.shift();
+    $filterKey_needsShift$$ && $paramsKeys$$.shift();
     for (let $j$$ = 0, $length$$ = $paramsKeys$$.length; $j$$ < $length$$; $j$$++) {
-      $filterKey_params$$.push(Silica.getValue($filterOptions_raw$$, $paramsKeys$$[$j$$]));
+      $params$$.push(Silica.getValue($filterOptions_raw$$, $paramsKeys$$[$j$$]));
     }
     $propString$jscomp$3_value$$ = $propString$jscomp$3_value$$.substr(0, $propString$jscomp$3_value$$.indexOf("("));
   }
-  $propString$jscomp$3_value$$ = Silica.getValue($filterOptions_raw$$, $propString$jscomp$3_value$$, null, $filterKey_params$$);
+  $propString$jscomp$3_value$$ = Silica.getValue($filterOptions_raw$$, $propString$jscomp$3_value$$, null, $params$$);
   if ($elideFilterIf_filter$$ && $propString$jscomp$3_value$$ === $elideFilterIf_filter$$) {
     return null;
   }
-  if (($filterKey_params$$ = ($elideFilterIf_filter$$ = ($elideFilterIf_filter$$ = $filterOptions_raw$$.attributes["data-filter"]) ? $elideFilterIf_filter$$.value.split(/:(.+)/) : null) ? $elideFilterIf_filter$$[0] : null) && !Silica.filters[$filterKey_params$$]) {
-    throw Error("Unknown filter: '" + $filterKey_params$$ + "' for element: " + $filterOptions_raw$$.outerHTML);
+  if (($filterKey_needsShift$$ = ($elideFilterIf_filter$$ = ($elideFilterIf_filter$$ = $filterOptions_raw$$.attributes["data-filter"]) ? $elideFilterIf_filter$$.value.split(/:(.+)/) : null) ? $elideFilterIf_filter$$[0] : null) && !Silica.filters[$filterKey_needsShift$$]) {
+    throw Error("Unknown filter: '" + $filterKey_needsShift$$ + "' for element: " + $filterOptions_raw$$.outerHTML);
   }
   $filterOptions_raw$$ = $elideFilterIf_filter$$ && 1 < $elideFilterIf_filter$$.length ? eval($elideFilterIf_filter$$[1]) : null;
-  return ($elideFilterIf_filter$$ = $filterKey_params$$ ? Silica.filters[$filterKey_params$$] : null) && null != $propString$jscomp$3_value$$ ? [$elideFilterIf_filter$$($propString$jscomp$3_value$$, $filterOptions_raw$$), $propString$jscomp$3_value$$, $paramsKeys$$] : [$propString$jscomp$3_value$$, $propString$jscomp$3_value$$, $paramsKeys$$];
+  return ($elideFilterIf_filter$$ = $filterKey_needsShift$$ ? Silica.filters[$filterKey_needsShift$$] : null) && null != $propString$jscomp$3_value$$ ? [$elideFilterIf_filter$$($propString$jscomp$3_value$$, $filterOptions_raw$$), $propString$jscomp$3_value$$, $paramsKeys$$] : [$propString$jscomp$3_value$$, $propString$jscomp$3_value$$, $paramsKeys$$];
 }, findComments($raw$$) {
   for (var $arr$$ = [], $i$$ = $raw$$.childNodes.length - 1; 0 <= $i$$; --$i$$) {
     var $node$$ = $raw$$.childNodes[$i$$];

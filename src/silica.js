@@ -41,7 +41,7 @@ window['Silica'] = {
     'siO2IncludedUrl', 'src', 'siO2HardClass', 'noStopPropagation', 'noPreventDefault',
     'siO2TemplateId', 'siO2Directive'
   ]),
-  version: '0.60.0-beta11',
+  version: '0.60.0-beta12',
 
   // Set the root context
   setContext (contextName) {
@@ -659,12 +659,14 @@ window['Silica'] = {
     }, scope)
   },
   getFilteredValue (raw, propString, elideFilterIf, paramsKeys = null) {
-    var filter, filterKey, filterOptions, value
-    paramsKeys = paramsKeys || propString.match('\\((.*)\\)')
+    var filter, filterKey, filterOptions, value, needsShift
+    [paramsKeys, needsShift] = paramsKeys ? [paramsKeys, false] : [propString.match('\\((.*)\\)'), true]
 
     let params = []
     if (paramsKeys !== null) {
-      paramsKeys.shift()
+      if (needsShift) {
+        paramsKeys.shift()
+      }
       for (let j = 0, length = paramsKeys.length; j < length; j++) {
         params.push(Silica.getValue(raw, paramsKeys[j]))
       }

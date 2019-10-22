@@ -41,7 +41,7 @@ window['Silica'] = {
     'siO2IncludedUrl', 'src', 'siO2HardClass', 'noStopPropagation', 'noPreventDefault',
     'siO2TemplateId', 'siO2Directive'
   ]),
-  version: '0.60.0-beta12',
+  version: '0.60.0-beta13',
 
   // Set the root context
   setContext (contextName) {
@@ -842,8 +842,8 @@ window['Silica'] = {
               delete Silica._watch[k]
             }
           }
-          if (typeof ctrl.onDestroy === 'function') {
-            ctrl.onDestroy()
+          if (typeof ctrl['onDestroy'] === 'function') {
+            ctrl['onDestroy']()
           }
         }
       }
@@ -851,8 +851,8 @@ window['Silica'] = {
 
     for (var i = e.childNodes.length - 1; i >= 0; --i) {
       var child = e.childNodes[i]
-      if (typeof child.onremove === 'function') {
-        child.onremove()
+      if (typeof child['onremove'] === 'function') {
+        child['onremove']()
       }
     }
 

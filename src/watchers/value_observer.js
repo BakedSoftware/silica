@@ -11,6 +11,9 @@ if (typeof window.IntersectionObserver === 'undefined') {
     observe (node) {
       this.callback({ 'target': node, 'isIntersecting': true })
     }
+    unobserve (node) {
+      // NO-OP
+    }
   }
 } else {
   IO = window.IntersectionObserver
@@ -72,6 +75,7 @@ class ValueObserver {
   }
 
   deregister (node, property = null, actor = null) {
+    this.visibilityObserver.unobserve(node)
     let map = this.mapping.get(node)
 
     if (!map) {

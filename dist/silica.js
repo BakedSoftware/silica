@@ -753,6 +753,8 @@ module$contents$watchers$observer_IO = "undefined" === typeof window.Intersectio
   observe($node$$) {
     this.callback({target:$node$$, isIntersecting:!0});
   }
+  unobserve($node$$) {
+  }
 } : window.IntersectionObserver;
 class module$exports$watchers$observer {
   constructor() {
@@ -789,6 +791,7 @@ class module$exports$watchers$observer {
     this.deregister($tree$$);
   }
   deregister($node$$, $property$$ = null, $actor$$ = null) {
+    this.visibilityObserver.unobserve($node$$);
     let $map$$ = this.mapping.get($node$$);
     $map$$ && ($property$$ || $actor$$ || (this.liveNodes.delete($node$$), this.hiddenNodes.delete($node$$), this.mapping.delete($node$$)), ($node$$ = $map$$.get($property$$)) && $node$$.actors.delete($actor$$));
   }
@@ -821,7 +824,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 module$exports$hax.init();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive".split(" ")), 
-version:"0.60.0-beta13", setContext($contextName$$) {
+version:"0.60.0-rc1", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

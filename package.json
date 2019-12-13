@@ -22,7 +22,7 @@
     "nib": "^1.1.2",
     "node-sprite-generator": "^0.10.2",
     "node-static": "^0.7.10",
-    "npm": "^5.8.0",
+    "npm": "^6.13.4",
     "stylus": "^0.54.0",
     "watch": "^1.0.2"
   },

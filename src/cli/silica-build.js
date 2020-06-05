@@ -279,7 +279,7 @@ const moduleRegex = /goog\.module\((?:'|")(.*?)(?:'|")\)/
   let src = fs.readFileSync(path.join(cachePath, 'src', 'app.js')).toString()
   let match = src.match(moduleRegex)
   if (match.length > 1) {
-    flags['dependency_mode'] = 'strict'
+    flags['dependency_mode'] = 'PRUNE'
     flags['entry_point'] = `goog:${match[1]}`
   }
 }
@@ -287,7 +287,7 @@ const moduleRegex = /goog\.module\((?:'|")(.*?)(?:'|")\)/
 // Build debug version
 flags['assume_function_wrapper'] = true
 flags['language_out'] = 'ECMASCRIPT_2017'
-flags['language_in'] = 'ECMASCRIPT_2017'
+flags['language_in'] = 'ES_NEXT'
 flags['compilation_level'] = program.optimizationLevel === 2 ? 'ADVANCED' : 'SIMPLE'
 if (program.optimizationLevel === 0) {
   flags['debug'] = true

@@ -41,6 +41,10 @@
   },
   "homepage": "https://github.com/BakedSoftware/Silica#readme",
   "standard": {
-    "globals": ["Silica", "goog", "XMLHttpRequest"]
+    "globals": [
+      "Silica",
+      "goog",
+      "XMLHttpRequest"
+    ]
   }
 }

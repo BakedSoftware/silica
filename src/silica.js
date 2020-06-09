@@ -642,9 +642,8 @@ window["Silica"] = {
       evt.stopPropagation();
     }
     // Readonly current target is only available when the event is handled thus
-    // pass along in another obj for client usage
-    evnt._current_target = evnt.currentTarget
-    PubSub.Pub("SiO2-HREF", evt);
+    // pass along for client usage
+    PubSub.Pub("SiO2-HREF", evt, evt.currentTarget);
     Silica.goTo(path);
     return !defaultPrevented;
   },

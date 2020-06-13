@@ -641,7 +641,9 @@ window["Silica"] = {
     if (!this.dataset["noStopPropagation"]) {
       evt.stopPropagation();
     }
-    PubSub.Pub("SiO2-HREF", evt);
+    // Readonly current target is only available when the event is handled thus
+    // pass along for client usage
+    PubSub.Pub("SiO2-HREF", evt, evt.currentTarget);
     Silica.goTo(path);
     return !defaultPrevented;
   },

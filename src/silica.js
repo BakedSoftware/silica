@@ -633,17 +633,25 @@ window["Silica"] = {
     if (protocolCheckRegex.exec(path) != null || path === "#" || path === "") {
       return;
     }
+
     let defaultPrevented = false;
-    if (!this.dataset["noPreventDefault"]) {
-      defaultPrevented = true;
+    let noPreventDefault = this.dataset["noPreventDefault"] !== "true" ||
+      Silica.getValue(evt.currentTarget, this.dataset["noPreventDefault"]);
+    if (!noPreventDefault) {
       evt.preventDefault();
+      defaultPrevented = true;
     }
-    if (!this.dataset["noStopPropagation"]) {
+
+    let noStopProp = this.dataset["noStopPropagation"] !== "true" ||
+      Silica.getValue(evt.currentTarget, this.dataset["noStopPropagation"]);
+    if (!noStopProp) {
       evt.stopPropagation();
     }
+
     // Readonly current target is only available when the event is handled thus
     // pass along for client usage
     PubSub.Pub("SiO2-HREF", evt, evt.currentTarget);
+
     Silica.goTo(path);
     return !defaultPrevented;
   },

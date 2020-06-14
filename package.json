@@ -1,6 +1,6 @@
 {
   "name": "silica",
-  "version": "0.60.0-rc3",
+  "version": "0.60.0-rc4",
   "description": "Silica is a fast lightweight javascript framework for building applications. Silica's usage is designed to be as transparent as possible",
   "bin": {
     "silica": "src/cli/silica-cli.js",
@@ -41,6 +41,10 @@
   },
   "homepage": "https://github.com/BakedSoftware/Silica#readme",
   "standard": {
-    "globals": ["Silica", "goog", "XMLHttpRequest"]
+    "globals": [
+      "Silica",
+      "goog",
+      "XMLHttpRequest"
+    ]
   }
 }

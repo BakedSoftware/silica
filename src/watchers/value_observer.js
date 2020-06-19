@@ -9,7 +9,7 @@ if (typeof window.IntersectionObserver === "undefined") {
       this.callback = callback;
     }
     observe(node) {
-      this.callback({ target: node, isIntersecting: true });
+      this.callback([{ target: node, isIntersecting: true }]);
     }
     unobserve(node) {
       // NO-OP

@@ -799,7 +799,7 @@ module$contents$watchers$observer_IO = "undefined" === typeof window.Intersectio
     this.callback = $callback$$;
   }
   observe($node$$) {
-    this.callback({target:$node$$, isIntersecting:!0});
+    this.callback([{target:$node$$, isIntersecting:!0}]);
   }
   unobserve($node$$) {
   }
@@ -872,7 +872,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 (0,module$exports$hax.init)();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive".split(" ")), 
-version:"0.60.0-rc4", setContext($contextName$$) {
+version:"0.60.0-rc5", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

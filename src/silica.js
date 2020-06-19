@@ -57,7 +57,7 @@ window["Silica"] = {
     "siO2TemplateId",
     "siO2Directive"
   ]),
-  version: "0.60.0-rc4",
+  version: "0.60.0-rc5",
 
   // Set the root context
   setContext(contextName) {

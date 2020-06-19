@@ -3,7 +3,7 @@
 var program = require("commander");
 
 program
-  .version("0.60.0-rc4")
+  .version("0.60.0-rc5")
   .command(
     "create [name]",
     "Create a new silica project in the current directory"

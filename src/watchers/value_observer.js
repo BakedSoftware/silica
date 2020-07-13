@@ -128,7 +128,7 @@ class ValueObserver {
   applyChanges(scope = null) {
     this.hiddenNodes.forEach(node => {
       if (!scope || node === scope || Silica.isChildOf(node, scope)) {
-        this.mapping.get(node).forEach((packet, property) => {
+        (this.mapping.get(node) || []).forEach((packet, property) => {
           if (packet.actors.has(Show)) {
             let result = Silica.getFilteredValue(
               node,
@@ -147,7 +147,7 @@ class ValueObserver {
 
     this.liveNodes.forEach(node => {
       if (!scope || node === scope || Silica.isChildOf(node, scope)) {
-        this.mapping.get(node).forEach((packet, property) => {
+        (this.mapping.get(node) || []).forEach((packet, property) => {
           let result = Silica.getFilteredValue(
             node,
             property,

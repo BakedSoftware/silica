@@ -853,26 +853,32 @@ class module$exports$watchers$observer {
   }
   applyChanges($scope$$ = null) {
     this.hiddenNodes.forEach($node$$ => {
-      $scope$$ && $node$$ !== $scope$$ && !Silica.isChildOf($node$$, $scope$$) || this.mapping.get($node$$).forEach(($packet$$, $property$jscomp$14_result$$) => {
-        $packet$$.actors.has(module$contents$compilers$show_Show) && ($property$jscomp$14_result$$ = Silica.getFilteredValue($node$$, $property$jscomp$14_result$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$jscomp$14_result$$[1]) && (module$contents$compilers$show_Show.call($node$$, null, $property$jscomp$14_result$$[0]), this.liveNodes.add($node$$));
-      });
+      if (!$scope$$ || $node$$ === $scope$$ || Silica.isChildOf($node$$, $scope$$)) {
+        let $mapping$$ = this.mapping.get($node$$);
+        $mapping$$ && $mapping$$.forEach(($packet$$, $property$jscomp$14_result$$) => {
+          $packet$$.actors.has(module$contents$compilers$show_Show) && ($property$jscomp$14_result$$ = Silica.getFilteredValue($node$$, $property$jscomp$14_result$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$jscomp$14_result$$[1]) && (module$contents$compilers$show_Show.call($node$$, null, $property$jscomp$14_result$$[0]), this.liveNodes.add($node$$));
+        });
+      }
     });
     this.liveNodes.forEach($node$$ => {
-      $scope$$ && $node$$ !== $scope$$ && !Silica.isChildOf($node$$, $scope$$) || this.mapping.get($node$$).forEach(($packet$$, $property$jscomp$15_result$$) => {
-        if (($property$jscomp$15_result$$ = Silica.getFilteredValue($node$$, $property$jscomp$15_result$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$jscomp$15_result$$[1])) {
-          $packet$$.value = this.clone($property$jscomp$15_result$$[1]);
-          for (let $actor$$ of $packet$$.actors.values()) {
-            $actor$$.call($node$$, null, $property$jscomp$15_result$$[0]);
+      if (!$scope$$ || $node$$ === $scope$$ || Silica.isChildOf($node$$, $scope$$)) {
+        let $mapping$$ = this.mapping.get($node$$);
+        $mapping$$ && $mapping$$.forEach(($packet$$, $property$jscomp$15_result$$) => {
+          if (($property$jscomp$15_result$$ = Silica.getFilteredValue($node$$, $property$jscomp$15_result$$, $packet$$.value, $packet$$.params)) && !Object.is($packet$$.value, $property$jscomp$15_result$$[1])) {
+            $packet$$.value = this.clone($property$jscomp$15_result$$[1]);
+            for (let $actor$$ of $packet$$.actors.values()) {
+              $actor$$.call($node$$, null, $property$jscomp$15_result$$[0]);
+            }
           }
-        }
-      });
+        });
+      }
     });
   }
 }
 ;var module$exports$silica = {};
 (0,module$exports$hax.init)();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive".split(" ")), 
-version:"0.60.0-rc6", setContext($contextName$$) {
+version:"0.60.0-rc7", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

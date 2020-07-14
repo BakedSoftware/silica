@@ -128,8 +128,31 @@ class ValueObserver {
   applyChanges(scope = null) {
     this.hiddenNodes.forEach(node => {
       if (!scope || node === scope || Silica.isChildOf(node, scope)) {
-        this.mapping.get(node).forEach((packet, property) => {
-          if (packet.actors.has(Show)) {
+        let mapping = this.mapping.get(node);
+        if (mapping) {
+          mapping.forEach((packet, property) => {
+            if (packet.actors.has(Show)) {
+              let result = Silica.getFilteredValue(
+                node,
+                property,
+                packet.value,
+                packet.params
+              );
+              if (result && !Object.is(packet.value, result[1])) {
+                Show.call(node, null, result[0]);
+                this.liveNodes.add(node);
+              }
+            }
+          });
+        }
+      }
+    });
+
+    this.liveNodes.forEach(node => {
+      if (!scope || node === scope || Silica.isChildOf(node, scope)) {
+        let mapping = this.mapping.get(node);
+        if (mapping) {
+          mapping.forEach((packet, property) => {
             let result = Silica.getFilteredValue(
               node,
               property,
@@ -137,30 +160,13 @@ class ValueObserver {
               packet.params
             );
             if (result && !Object.is(packet.value, result[1])) {
-              Show.call(node, null, result[0]);
-              this.liveNodes.add(node);
+              packet.value = this.clone(result[1]);
+              for (let actor of packet.actors.values()) {
+                actor.call(node, null, result[0]);
+              }
             }
-          }
-        });
-      }
-    });
-
-    this.liveNodes.forEach(node => {
-      if (!scope || node === scope || Silica.isChildOf(node, scope)) {
-        this.mapping.get(node).forEach((packet, property) => {
-          let result = Silica.getFilteredValue(
-            node,
-            property,
-            packet.value,
-            packet.params
-          );
-          if (result && !Object.is(packet.value, result[1])) {
-            packet.value = this.clone(result[1]);
-            for (let actor of packet.actors.values()) {
-              actor.call(node, null, result[0]);
-            }
-          }
-        });
+          });
+        }
       }
     });
   }

@@ -18,7 +18,7 @@ var flags = {
   js: 'build_cache/**/*.js',
   language_in: 'ECMASCRIPT6',
   language_out: 'ECMASCRIPT6',
-  compilation_level: 'ADVANCED',
+  compilation_level: 'SIMPLE',
   externs: 'src/externs.js',
   generate_exports: 'true'
 }

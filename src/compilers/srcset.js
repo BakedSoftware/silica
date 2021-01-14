@@ -10,7 +10,7 @@ function defaultSrcSetForNode (node) {
 /** @this Element */
 function SrcSetUpdater (_, value) {
   if (value !== this.src) {
-    this.setAttribute('srcset', value || defaultSrcForNode(this))
+    this.setAttribute('srcset', value || defaultSrcSetForNode(this))
   }
 }
 

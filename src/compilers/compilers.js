@@ -9,6 +9,7 @@ const Controller = goog.require('compilers.controller')
 const Model = goog.require('compilers.model')
 const ClickOutside = goog.require('compilers.clickoutside')
 const Src = goog.require('compilers.src')
+const SrcSet = goog.require('compilers.srcset')
 const Generic = goog.require('compilers.generic')
 const ScrollFinished = goog.require('compilers.scroll_finished')
 
@@ -24,6 +25,7 @@ exports = {
   Controller: Controller,
   ClickOutside: ClickOutside,
   Src: Src,
+  SrcSet: SrcSet,
   ScrollFinished: ScrollFinished,
   Generic: Generic,
   Model: Model.Compiler,

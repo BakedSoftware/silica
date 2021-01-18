@@ -507,7 +507,7 @@ function module$contents$compilers$srcset_defaultSrcSetForNode($node$$) {
   }
 }
 function module$contents$compilers$srcset_SrcSetUpdater($_$$, $value$$) {
-  $value$$ !== this.src && this.setAttribute("srcset", $value$$ || module$contents$compilers$srcset_defaultSrcSetForNode(this));
+  $value$$ !== this.srcset && this.setAttribute("srcset", $value$$ || "");
 }
 function module$contents$compilers$srcset_SrcSet($ctx$jscomp$7_nodes$$, $node$jscomp$15_value$$) {
   $ctx$jscomp$7_nodes$$ = Silica.query(this, "[data-srcset]");
@@ -900,7 +900,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 (0,module$exports$hax.init)();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src srcset siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive".split(" ")), 
-version:"0.60.1", setContext($contextName$$) {
+version:"0.60.2", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

@@ -507,7 +507,7 @@ function module$contents$compilers$srcset_defaultSrcSetForNode($node$$) {
   }
 }
 function module$contents$compilers$srcset_SrcSetUpdater($_$$, $value$$) {
-  $value$$ !== this.src && this.setAttribute("srcset", $value$$ || module$contents$compilers$srcset_defaultSrcSetForNode(this));
+  $value$$ !== this.srcset && this.setAttribute("srcset", $value$$ || "");
 }
 function module$contents$compilers$srcset_SrcSet($ctx$jscomp$7_nodes$$, $node$jscomp$15_value$$) {
   $ctx$jscomp$7_nodes$$ = Silica.query(this, "[data-srcset]");

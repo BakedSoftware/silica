@@ -120,7 +120,7 @@ function transmogrifyMustache (text) {
 
 function preprocessView (readPath, writePath) {
   var content = fs.readFileSync(readPath, 'utf8')
-  var includeRegExp = /<(\w+\b(?:.|\n)+?)data-include="'(.+?)'"(.*?)>/
+  var includeRegExp = /<(\w+\b(?:.|\n)+?)data-include="'(.+?)'"((?:.|\n)*?)>/m
   var match
 
   while ((match = includeRegExp.exec(content)) !== null) {

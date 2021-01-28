@@ -1,5 +1,8 @@
 {
-  "extends": "standard",
+  "extends": "prettier",
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
   "globals": {
     "goog": true,
     "Silica": true,

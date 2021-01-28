@@ -18,9 +18,11 @@ program
   .option('-m --source-map [bool]', 'Create a source map (default = false)')
   .option('-o --optimization-level [int]', 'Optimization level (0 = debug+simple, 1=simple, 2=advanced)')
   .option('-n --node <modules>', 'Comma separated list of node modules package.json paths to include')
+  .option('-c --compression-level [int]', 'Compression level (0 = none, 1 = gzip, 2 = brotli (default))')
   .parse(process.argv)
 
 program.optimizationLevel = parseInt(program.optimizationLevel || 0)
+program.compressionLevel = parseInt(program.compressionLevel || 2)
 
 var afterScript = program.done
 var styleIncludes = program.styles
@@ -179,52 +181,56 @@ var asyncLock = 0
 function afterScriptCaller () {
   asyncLock++
   if (asyncLock === 2) {
-    console.log('GZipping results')
-    let compress = spawnSync('gzip', ['-k', '-f', '-r', 'build'], {
-      stdio: [0, 1, 2],
-      cwd: process.cwd()
-    })
-    if (compress.error) {
-      console.log('An error occurred during compression')
-      console.error(compress.error)
-    } else {
-      console.log('Compression finished')
+    if (program.compressionLevel > 0) {
+      console.log('GZipping results')
+      let compress = spawnSync('gzip', ['-k', '-f', '-r', 'build'], {
+        stdio: [0, 1, 2],
+        cwd: process.cwd()
+      })
+      if (compress.error) {
+        console.log('An error occurred during compression')
+        console.error(compress.error)
+      } else {
+        console.log('Compression finished')
+      }
     }
-    console.log('Brotli Compressing JS')
-    let files = glob.sync('build/**/*.js', {cwd: process.cwd()})
-    compress = spawnSync('brotli', ['-f'].concat(files), {
-      stdio: [0, 1, 2],
-      cwd: process.cwd()
-    })
-    if (compress.error) {
-      console.log('An error occurred during compression')
-      console.error(compress.error)
-    } else {
-      console.log('JS compression finished')
-    }
-    console.log('Brotli Compressing CSS')
-    files = glob.sync('build/**/*.css', {cwd: process.cwd()})
-    compress = spawnSync('brotli', ['-f'].concat(files), {
-      stdio: [0, 1, 2],
-      cwd: process.cwd()
-    })
-    if (compress.error) {
-      console.log('An error occurred during compression')
-      console.error(compress.error)
-    } else {
-      console.log('CSS compression finished')
-    }
-    console.log('Brotli Compressing HTML')
-    files = glob.sync('build/**/*.html', {cwd: process.cwd()})
-    compress = spawnSync('brotli', ['-f'].concat(files), {
-      stdio: [0, 1, 2],
-      cwd: process.cwd()
-    })
-    if (compress.error) {
-      console.log('An error occurred during compression')
-      console.error(compress.error)
-    } else {
-      console.log('HTML compression finished')
+    if (program.compressionLevel > 1) {
+      console.log('Brotli Compressing JS')
+      let files = glob.sync('build/**/*.js', {cwd: process.cwd()})
+      compress = spawnSync('brotli', ['-f'].concat(files), {
+        stdio: [0, 1, 2],
+        cwd: process.cwd()
+      })
+      if (compress.error) {
+        console.log('An error occurred during compression')
+        console.error(compress.error)
+      } else {
+        console.log('JS compression finished')
+      }
+      console.log('Brotli Compressing CSS')
+      files = glob.sync('build/**/*.css', {cwd: process.cwd()})
+      compress = spawnSync('brotli', ['-f'].concat(files), {
+        stdio: [0, 1, 2],
+        cwd: process.cwd()
+      })
+      if (compress.error) {
+        console.log('An error occurred during compression')
+        console.error(compress.error)
+      } else {
+        console.log('CSS compression finished')
+      }
+      console.log('Brotli Compressing HTML')
+      files = glob.sync('build/**/*.html', {cwd: process.cwd()})
+      compress = spawnSync('brotli', ['-f'].concat(files), {
+        stdio: [0, 1, 2],
+        cwd: process.cwd()
+      })
+      if (compress.error) {
+        console.log('An error occurred during compression')
+        console.error(compress.error)
+      } else {
+        console.log('HTML compression finished')
+      }
     }
     if (!afterScript) {
       return

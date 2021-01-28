@@ -22,6 +22,7 @@ program
   .option('-m --source-map [bool]', 'Create a source map (default = false)')
   .option('-o --optimization-level [int]', 'Optimization level (0 = debug+simple, 1=simple, 2=advanced)')
   .option('-n --node <modules>', 'Comma separated list of node modules package.json paths to include')
+  .option('-c --compression-level [int]', 'Compression level (0 = none, 1 = gzip, 2 = brotli (default))')
   .parse(process.argv)
 
 var afterScript = program.done
@@ -71,6 +72,9 @@ var rebuild = function () {
   if (program.node) {
     cmd += ' -n ' + program.node
   }
+
+  cmd += ' -c ' + (program.compressionLevel  || 0 )
+
   exec(cmd, childCallback)
 }
 
@@ -80,15 +84,37 @@ watch.createMonitor('./src', { 'ignoreDotFiles': true }, function (monitor) {
   monitor.on('removed', rebuild)
 })
 
+var colors = require('colors');
+
+var log = function(request, response, statusCode) {
+  var d = new Date();
+  var seconds = d.getSeconds() < 10? '0'+d.getSeconds() : d.getSeconds(),
+    datestr = d.getHours() + ':' + d.getMinutes() + ':' + seconds,
+    line = datestr + ' [' + response.statusCode + ']: ' + request.url,
+    colorized = (response.statusCode >= 500) ? line.red.bold :
+      (response.statusCode >= 400) ? line.red :
+      line;
+  console.log(colorized);
+};
+
 function handler (request, response) {
   request.addListener('end', function () {
-    fileServer.serve(request, response, function (e, res) {
-      if (e && (e.status === 404)) {
-        // If the file wasn't found
-        fileServer.serveFile('/index.html', 404, {}, request, response)
+    var callback = function(e, rsp) {
+      if (e && e.status === 404) {
+        response.writeHead(e.status, e.headers);
+        response.end("Not Found");
+        log(request, response);
+      } else {
+        log(request, response);
       }
-    })
-  }).resume()
+    };
+
+    if (request.url.indexOf(".") == -1) {
+      fileServer.serveFile('/index.html', 200, {}, request, response);
+    } else {
+      fileServer.serve(request, response, callback);
+    }
+  }).resume();
 }
 
 require('http').createServer(handler).listen(program.port || 8080)

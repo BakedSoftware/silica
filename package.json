@@ -1,6 +1,6 @@
 {
   "name": "silica",
-  "version": "0.60.4",
+  "version": "0.61.0",
   "description": "Silica is a fast lightweight javascript framework for building applications. Silica's usage is designed to be as transparent as possible",
   "bin": {
     "silica": "src/cli/silica-cli.js",
@@ -12,18 +12,18 @@
   "dependencies": {
     "colors": ">=0.6.0",
     "commander": "^2.15.1",
-    "csso": "^4.0",
+    "csso": "^4.2.0",
     "eslint": "^7.2",
     "finalhandler": "^1.1.1",
     "fs-extra": "^8.1",
     "glob": "^7.1",
-    "google-closure-compiler": "20200719.0.0",
+    "google-closure-compiler": "20210106.0.0",
     "livereload": "^0.9.0",
-    "nib": "^1.1.2",
-    "node-sprite-generator": "^0.10.2",
+    "nib": "stylus/nib#8291e5d20e400e04892a0b1261e2a81773d07fb4",
+    "node-sprite-generator": "selaux/node-sprite-generator#0a794ba1d73739693b559f4e42354a51fb84d6c8",
     "node-static": "^0.7.11",
     "npm": "^6.14.0",
-    "stylus": "^0.54.0",
+    "stylus": "^0.54.8",
     "watch": "^1.0.2"
   },
   "scripts": {

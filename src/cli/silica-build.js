@@ -16,7 +16,7 @@ program
   .option('-i --ignore [pattern]', 'RegExp pattern of files/folders to ignore. (Tests are ignored by default)')
   .option('-a --additional [path]', 'Directory of additional JS imports relative to the src directory')
   .option('-m --source-map [bool]', 'Create a source map (default = false)')
-  .option('-o --optimization-level [int]', 'Optimization level (0 = debug+simple, 1=simple, 2=advanced)')
+  .option('-o --optimization-level [int]', 'Optimization level (0 = bundle, 1=simple, 2=advanced)')
   .option('-n --node <modules>', 'Comma separated list of node modules package.json paths to include')
   .option('-c --compression-level [int]', 'Compression level (0 = none, 1 = gzip, 2 = brotli (default))')
   .parse(process.argv)

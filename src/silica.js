@@ -56,9 +56,10 @@ window["Silica"] = {
     "noStopPropagation",
     "noPreventDefault",
     "siO2TemplateId",
-    "siO2Directive"
+    "siO2Directive",
+    "with",
   ]),
-  version: "0.61.0",
+  version: "0.62.0",
 
   // Set the root context
   setContext(contextName) {
@@ -741,14 +742,14 @@ window["Silica"] = {
           element,
           ...models,
           parameter,
-          evnt
+          evnt,
         ]);
       } else if (Silica.context[actionName] != null) {
         return Silica.context[actionName].apply(Silica.ctx, [
           element,
           ...models,
           parameter,
-          evnt
+          evnt,
         ]);
       } else {
         return console.error(
@@ -983,7 +984,7 @@ window["Silica"] = {
   },
 
   compilers: Compilers,
-  watchers: Watchers
+  watchers: Watchers,
 };
 
 let pq = Silica.processQueue;

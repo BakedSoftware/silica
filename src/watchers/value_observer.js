@@ -24,8 +24,8 @@ class ValueObserver {
     this.mapping = new Map();
     this.liveNodes = new Set();
     this.hiddenNodes = new Set();
-    this.visibilityObserver = new IO(entries => {
-      entries.forEach(entry => {
+    this.visibilityObserver = new IO((entries) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           this.liveNodes.add(entry.target);
           this.hiddenNodes.delete(entry.target);
@@ -50,23 +50,25 @@ class ValueObserver {
     }
 
     var clone = new obj.constructor();
-    for (var i in obj) {
-      if (obj[i] != null && typeof obj[i] === "object") {
-        clone[i] = this.clone(obj[i]);
-      } else {
-        clone[i] = obj[i];
+    for (var key in obj) {
+      if (!key.startsWith("_")) {
+        if (obj[key] != null && typeof obj[key] === "object") {
+          clone[key] = this.clone(obj[key]);
+        } else {
+          clone[key] = obj[key];
+        }
       }
     }
     return clone;
   }
 
   removeSubTree(tree) {
-    this.hiddenNodes.forEach(node => {
+    this.hiddenNodes.forEach((node) => {
       if (Silica.isChildOf(node, tree)) {
         this.deregister(node);
       }
     });
-    this.liveNodes.forEach(node => {
+    this.liveNodes.forEach((node) => {
       if (Silica.isChildOf(node, tree)) {
         this.deregister(node);
       }
@@ -113,7 +115,7 @@ class ValueObserver {
       packet = {
         value: value,
         actors: new Set([actor]),
-        params: paramKeys
+        params: paramKeys,
       };
       map.set(property, packet);
     } else {
@@ -126,7 +128,7 @@ class ValueObserver {
   }
 
   applyChanges(scope = null) {
-    this.hiddenNodes.forEach(node => {
+    this.hiddenNodes.forEach((node) => {
       if (!scope || node === scope || Silica.isChildOf(node, scope)) {
         let mapping = this.mapping.get(node);
         if (mapping) {
@@ -148,7 +150,7 @@ class ValueObserver {
       }
     });
 
-    this.liveNodes.forEach(node => {
+    this.liveNodes.forEach((node) => {
       if (!scope || node === scope || Silica.isChildOf(node, scope)) {
         let mapping = this.mapping.get(node);
         if (mapping) {

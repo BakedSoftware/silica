@@ -557,7 +557,7 @@ function module$contents$compilers$with_With($ctx$jscomp$8_nodes$$) {
   $ctx$jscomp$8_nodes$$ = Silica.query(this, "[data-with]");
   for (var $i$$ = $ctx$jscomp$8_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
     let $node$$ = $ctx$jscomp$8_nodes$$[$i$$];
-    var $components_target$$ = $node$$.dataset["with"].split("as");
+    var $components_target$$ = $node$$.dataset["with"].split(" as ");
     if (2 != $components_target$$.length) {
       throw Error(`With used with invalid property: ${$node$$.dataset["with"]}`);
     }
@@ -923,7 +923,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 (0,module$exports$hax.init)();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src srcset siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive with".split(" ")), 
-version:"0.62.0", setContext($contextName$$) {
+version:"0.62.1", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

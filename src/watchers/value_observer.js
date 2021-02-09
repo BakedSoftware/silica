@@ -99,7 +99,7 @@ class ValueObserver {
     }
   }
 
-  register(node, property, actor) {
+  register(node, property, actor, set = true) {
     let [filtered, raw, paramKeys] = Silica.getFilteredValue(node, property);
     let value = this.clone(raw);
     let map = this.mapping.get(node);
@@ -113,7 +113,7 @@ class ValueObserver {
     let packet = map.get(property);
     if (!packet) {
       packet = {
-        value: value,
+        value: set ? value : null,
         actors: new Set([actor]),
         params: paramKeys,
       };
@@ -121,7 +121,7 @@ class ValueObserver {
     } else {
       packet.actors.add(actor);
     }
-    actor.call(node, null, filtered);
+    actor.call(node, null, set ? filtered : null);
     // TODO: Add listener for DOM removal and deregister
 
     return filtered;

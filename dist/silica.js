@@ -490,7 +490,7 @@ function module$contents$compilers$src_SrcUpdater($_$$, $value$$) {
 function module$contents$compilers$src_Src($ctx$jscomp$6_nodes$$, $node$jscomp$13_value$$) {
   $ctx$jscomp$6_nodes$$ = Silica.query(this, "[data-src]");
   for (let $i$$ = $ctx$jscomp$6_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$jscomp$13_value$$ = $ctx$jscomp$6_nodes$$[$i$$], Silica.observer.register($node$jscomp$13_value$$, $node$jscomp$13_value$$.dataset.src, module$contents$compilers$src_SrcUpdater);
+    $node$jscomp$13_value$$ = $ctx$jscomp$6_nodes$$[$i$$], Silica.observer.register($node$jscomp$13_value$$, $node$jscomp$13_value$$.dataset.src, module$contents$compilers$src_SrcUpdater, !1);
   }
 }
 var module$exports$compilers$src = module$contents$compilers$src_Src;
@@ -508,7 +508,7 @@ function module$contents$compilers$srcset_SrcSetUpdater($_$$, $value$$) {
 function module$contents$compilers$srcset_SrcSet($ctx$jscomp$7_nodes$$, $node$jscomp$15_value$$) {
   $ctx$jscomp$7_nodes$$ = Silica.query(this, "[data-srcset]");
   for (let $i$$ = $ctx$jscomp$7_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$jscomp$15_value$$ = $ctx$jscomp$7_nodes$$[$i$$], Silica.observer.register($node$jscomp$15_value$$, $node$jscomp$15_value$$.dataset.srcset, module$contents$compilers$srcset_SrcSetUpdater);
+    $node$jscomp$15_value$$ = $ctx$jscomp$7_nodes$$[$i$$], Silica.observer.register($node$jscomp$15_value$$, $node$jscomp$15_value$$.dataset.srcset, module$contents$compilers$srcset_SrcSetUpdater, !1);
   }
 }
 var module$exports$compilers$srcset = module$contents$compilers$srcset_SrcSet;
@@ -888,12 +888,12 @@ class module$exports$watchers$observer {
     let $map$$ = this.mapping.get($node$$);
     $map$$ && ($property$$ || $actor$$ || (this.liveNodes.delete($node$$), this.hiddenNodes.delete($node$$), this.mapping.delete($node$$)), ($node$$ = $map$$.get($property$$)) && $node$$.actors.delete($actor$$));
   }
-  register($node$$, $property$$, $actor$$) {
+  register($node$$, $property$$, $actor$$, $set$$ = !0) {
     let [$filtered$$, $raw$$, $paramKeys$$] = Silica.getFilteredValue($node$$, $property$$), $value$$ = this.clone($raw$$), $map$$ = this.mapping.get($node$$);
     $map$$ || ($map$$ = new Map, this.mapping.set($node$$, $map$$), this.visibilityObserver.observe($node$$));
     let $packet$$ = $map$$.get($property$$);
-    $packet$$ ? $packet$$.actors.add($actor$$) : ($packet$$ = {value:$value$$, actors:new Set([$actor$$]), params:$paramKeys$$, }, $map$$.set($property$$, $packet$$));
-    $actor$$.call($node$$, null, $filtered$$);
+    $packet$$ ? $packet$$.actors.add($actor$$) : ($packet$$ = {value:$set$$ ? $value$$ : null, actors:new Set([$actor$$]), params:$paramKeys$$, }, $map$$.set($property$$, $packet$$));
+    $actor$$.call($node$$, null, $set$$ ? $filtered$$ : null);
     return $filtered$$;
   }
   applyChanges($scope$$ = null) {
@@ -923,7 +923,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 (0,module$exports$hax.init)();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src srcset siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive with".split(" ")), 
-version:"0.62.1", setContext($contextName$$) {
+version:"0.63.0", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

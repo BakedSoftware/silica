@@ -485,12 +485,12 @@ function module$contents$compilers$src_defaultSrcForNode($node$$) {
   }
 }
 function module$contents$compilers$src_SrcUpdater($_$$, $value$$) {
-  $value$$ !== this.src && this.setAttribute("src", $value$$ || module$contents$compilers$src_defaultSrcForNode(this));
+  $value$$ !== this.src && ($value$$ ? this.setAttribute("src", $value$$) : this.removeAttribute("src"));
 }
 function module$contents$compilers$src_Src($ctx$jscomp$6_nodes$$, $node$jscomp$13_value$$) {
   $ctx$jscomp$6_nodes$$ = Silica.query(this, "[data-src]");
   for (let $i$$ = $ctx$jscomp$6_nodes$$.length - 1; 0 <= $i$$; --$i$$) {
-    $node$jscomp$13_value$$ = $ctx$jscomp$6_nodes$$[$i$$], Silica.observer.register($node$jscomp$13_value$$, $node$jscomp$13_value$$.dataset.src, module$contents$compilers$src_SrcUpdater, !1);
+    $node$jscomp$13_value$$ = $ctx$jscomp$6_nodes$$[$i$$], Silica.observer.register($node$jscomp$13_value$$, $node$jscomp$13_value$$.dataset.src, module$contents$compilers$src_SrcUpdater);
   }
 }
 var module$exports$compilers$src = module$contents$compilers$src_Src;
@@ -512,13 +512,16 @@ function module$contents$compilers$srcset_SrcSet($ctx$jscomp$7_nodes$$, $node$js
   }
 }
 var module$exports$compilers$srcset = module$contents$compilers$srcset_SrcSet;
-let module$contents$compilers$generic_attributeMappings = {innerhtml:"innerHTML", innerHtml:"innerHTML", innerText:"innerText", disabled:"disabled"};
+let module$contents$compilers$generic_attributeMappings = {innerhtml:"innerHTML", innerHtml:"innerHTML", innerText:"innerText", disabled:"disabled", };
 function module$contents$compilers$generic_AttributeFilter() {
 }
 module$contents$compilers$generic_AttributeFilter.prototype.acceptNode = function($node$$) {
-  return Object.keys($node$$.dataset).some(function($key$$) {
-    return !$key$$.startsWith("on");
-  }) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+  for (let $key$$ in $node$$.dataset) {
+    if (!Silica.ignoredAttributes.has($key$$) && !$key$$.startsWith("on")) {
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  }
+  return NodeFilter.FILTER_REJECT;
 };
 function module$contents$compilers$generic_createUpdater($attribute$$) {
   return function($_$$, $value$$) {
@@ -527,7 +530,7 @@ function module$contents$compilers$generic_createUpdater($attribute$$) {
 }
 function module$contents$compilers$generic_Generic() {
   for (var $nodes$$ = document.createNodeIterator(this, NodeFilter.SHOW_ELEMENT, new module$contents$compilers$generic_AttributeFilter), $node$$; $node$$ = $nodes$$.nextNode();) {
-    for (let $key$$ of Object.keys($node$$.dataset)) {
+    for (let $key$$ in $node$$.dataset) {
       Silica.ignoredAttributes.has($key$$) || (!$key$$.startsWith("on") || 2 < $key$$.length && (90 < $key$$.charCodeAt(2) || 65 > $key$$.charCodeAt(2))) && Silica.observer.register($node$$, $node$$.dataset[$key$$], module$contents$compilers$generic_createUpdater($key$$));
     }
   }
@@ -923,7 +926,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 (0,module$exports$hax.init)();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src srcset siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive with".split(" ")), 
-version:"0.63.0", setContext($contextName$$) {
+version:"0.64.0", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

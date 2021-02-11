@@ -12,7 +12,11 @@ function defaultSrcForNode(node) {
 /** @this Element */
 function SrcUpdater(_, value) {
   if (value !== this.src) {
-    this.setAttribute("src", value || defaultSrcForNode(this));
+    if (!value) {
+      this.removeAttribute("src");
+    } else {
+      this.setAttribute("src", value);
+    }
   }
 }
 
@@ -23,7 +27,7 @@ function Src(ctx, value) {
   for (let i = nodes.length - 1; i >= 0; --i) {
     node = nodes[i];
     let property = node.dataset["src"];
-    Silica.observer.register(node, property, SrcUpdater, false);
+    Silica.observer.register(node, property, SrcUpdater);
   }
 }
 

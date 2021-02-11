@@ -325,7 +325,7 @@ const moduleRegex = /goog\.module\((?:'|")(.*?)(?:'|")\)/;
 
 // Build debug version
 flags["assume_function_wrapper"] = true;
-flags["language_out"] = "STABLE";
+flags["language_out"] = "ECMASCRIPT_2017";
 flags["language_in"] = "ES_NEXT";
 flags["compilation_level"] =
   program.optimizationLevel === 2 ? "ADVANCED" : "SIMPLE";

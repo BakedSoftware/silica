@@ -60,7 +60,7 @@ window["Silica"] = {
     "siO2Directive",
     "with",
   ]),
-  version: "0.65.0",
+  version: "0.65.1",
 
   // Set the root context
   setContext(contextName) {
@@ -697,7 +697,7 @@ window["Silica"] = {
     var scope = null,
       trap_to,
       trapped_scope,
-      waitForAnimationFrame = !!element.dataset["noAnimationFrame"];
+      waitForAnimationFrame = !element.dataset["noAnimationFrame"];
     if ((trap_to = element.dataset["trap"]) != null) {
       if (trap_to.toLowerCase() === "true") {
         scope = element;

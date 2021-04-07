@@ -926,7 +926,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 (0,module$exports$hax.init)();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src srcset siO2HardClass noStopPropagation noPreventDefault noAnimationFrame siO2TemplateId siO2Directive with".split(" ")), 
-version:"0.65.0", setContext($contextName$$) {
+version:"0.65.1", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {
@@ -1254,7 +1254,7 @@ version:"0.65.0", setContext($contextName$$) {
   if (Silica.isInDOM($element$$) && ($element$$ === $evnt$$.target || "click" !== $act$$ || "SELECT" !== $evnt$$.target.nodeName && "INPUT" !== $evnt$$.target.nodeName)) {
     $element$$.dataset.noPreventDefault || $evnt$$.preventDefault();
     $element$$.dataset.noStopPropagation || $evnt$$.stopPropagation();
-    var $scope$$ = null, $trap_to$$, $trapped_scope$$, $waitForAnimationFrame$$ = !!$element$$.dataset.noAnimationFrame;
+    var $scope$$ = null, $trap_to$$, $trapped_scope$$, $waitForAnimationFrame$$ = !$element$$.dataset.noAnimationFrame;
     if (null != ($trap_to$$ = $element$$.dataset.trap)) {
       if ("true" === $trap_to$$.toLowerCase()) {
         $scope$$ = $element$$;

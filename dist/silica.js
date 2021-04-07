@@ -925,8 +925,8 @@ class module$exports$watchers$observer {
 }
 ;var module$exports$silica = {};
 (0,module$exports$hax.init)();
-window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src srcset siO2HardClass noStopPropagation noPreventDefault siO2TemplateId siO2Directive with".split(" ")), 
-version:"0.64.1", setContext($contextName$$) {
+window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src srcset siO2HardClass noStopPropagation noPreventDefault noAnimationFrame siO2TemplateId siO2Directive with".split(" ")), 
+version:"0.65.0", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {
@@ -1049,11 +1049,11 @@ version:"0.64.1", setContext($contextName$$) {
     Silica.flush(document, !1, {});
   }, 20));
   return Silica;
-}, apply($func$$, $element$$ = document) {
+}, apply($func$$, $element$$ = document, $waitForAnimationFrame$$ = !0) {
   if (Silica.isInApply) {
     return $func$$.call(), Silica;
   }
-  window.requestAnimationFrame(() => {
+  let $mutation$$ = () => {
     var $k$$, $additional_oldVal$$, $val$$, $_len1_watcher$$;
     Silica.isInApply = !0;
     try {
@@ -1106,7 +1106,8 @@ version:"0.64.1", setContext($contextName$$) {
         $defers$$[$i$$].call();
       }
     });
-  });
+  };
+  $waitForAnimationFrame$$ ? window.requestAnimationFrame($mutation$$) : $mutation$$();
   return Silica;
 }, getPropByString($obj$$, $context$jscomp$10_descriptor$$, $params$$) {
   if (!$context$jscomp$10_descriptor$$ || 0 === $context$jscomp$10_descriptor$$.length) {
@@ -1253,7 +1254,7 @@ version:"0.64.1", setContext($contextName$$) {
   if (Silica.isInDOM($element$$) && ($element$$ === $evnt$$.target || "click" !== $act$$ || "SELECT" !== $evnt$$.target.nodeName && "INPUT" !== $evnt$$.target.nodeName)) {
     $element$$.dataset.noPreventDefault || $evnt$$.preventDefault();
     $element$$.dataset.noStopPropagation || $evnt$$.stopPropagation();
-    var $scope$$ = null, $trap_to$$, $trapped_scope$$;
+    var $scope$$ = null, $trap_to$$, $trapped_scope$$, $waitForAnimationFrame$$ = !!$element$$.dataset.noAnimationFrame;
     if (null != ($trap_to$$ = $element$$.dataset.trap)) {
       if ("true" === $trap_to$$.toLowerCase()) {
         $scope$$ = $element$$;
@@ -1287,7 +1288,7 @@ version:"0.64.1", setContext($contextName$$) {
       }
       $element$$.dataset.parameter && ($parameter$$ = $element$$.dataset.parameter);
       return "undefined" !== typeof $ctx$$[$actionName_idx$$] ? $ctx$$[$actionName_idx$$].apply($ctx$$, [$element$$, ...$models$$, $parameter$$, $evnt$$, ]) : null != Silica.context[$actionName_idx$$] ? Silica.context[$actionName_idx$$].apply(Silica.ctx, [$element$$, ...$models$$, $parameter$$, $evnt$$, ]) : console.error("Unknown action '" + $actionName_idx$$ + "' for " + $element$$.outerHTML + " in " + $ctx$$.constructor.name);
-    }, $scope$$);
+    }, $scope$$, $waitForAnimationFrame$$);
   }
 }, getFilteredValue($filterOptions_raw$$, $propString$jscomp$3_value$$, $elideFilterIf_filter$$, $paramsKeys$$ = null) {
   var $filterKey_needsShift$$;

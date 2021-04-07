@@ -55,11 +55,12 @@ window["Silica"] = {
     "siO2HardClass",
     "noStopPropagation",
     "noPreventDefault",
+    "noAnimationFrame",
     "siO2TemplateId",
     "siO2Directive",
     "with",
   ]),
-  version: "0.64.1",
+  version: "0.65.0",
 
   // Set the root context
   setContext(contextName) {
@@ -296,13 +297,13 @@ window["Silica"] = {
     return Silica;
   },
 
-  apply(func, element = document) {
+  apply(func, element = document, waitForAnimationFrame = true) {
     if (Silica.isInApply) {
       func.call();
       return Silica;
     }
 
-    window.requestAnimationFrame(() => {
+    let mutation = () => {
       var changed, changes, finalChanges, k, oldVal, v, val, _j, _len, _len1;
       // Mark we are about to execute the function
       // If the function to execute triggers another apply, the flag is checked
@@ -390,7 +391,12 @@ window["Silica"] = {
           }
         });
       }
-    });
+    };
+    if (waitForAnimationFrame) {
+      window.requestAnimationFrame(mutation);
+    } else {
+      mutation();
+    }
     return Silica;
   },
 
@@ -690,7 +696,8 @@ window["Silica"] = {
     }
     var scope = null,
       trap_to,
-      trapped_scope;
+      trapped_scope,
+      waitForAnimationFrame = !!element.dataset["noAnimationFrame"];
     if ((trap_to = element.dataset["trap"]) != null) {
       if (trap_to.toLowerCase() === "true") {
         scope = element;
@@ -705,63 +712,67 @@ window["Silica"] = {
       }
     }
     //Silica.enqueue(function () {
-    Silica.apply(function () {
-      var action,
-        ctx,
-        objects,
-        parameter,
-        actionName,
-        models = [];
-      ctx = Silica.getContext(element);
-      action = element.dataset[act];
-      var idx = action.indexOf("(");
-      if (idx > 0) {
-        actionName = action.substr(0, idx);
-        models = action
-          .substr(actionName.length)
-          .match(/((?:\w|\.)+)(?:\(?([\w\.]+)\))?/g);
-        if (models) {
-          for (let i = 0; i < models.length; i++) {
-            models[i] = Silica.getPropByString(ctx, models[i]);
+    Silica.apply(
+      function () {
+        var action,
+          ctx,
+          objects,
+          parameter,
+          actionName,
+          models = [];
+        ctx = Silica.getContext(element);
+        action = element.dataset[act];
+        var idx = action.indexOf("(");
+        if (idx > 0) {
+          actionName = action.substr(0, idx);
+          models = action
+            .substr(actionName.length)
+            .match(/((?:\w|\.)+)(?:\(?([\w\.]+)\))?/g);
+          if (models) {
+            for (let i = 0; i < models.length; i++) {
+              models[i] = Silica.getPropByString(ctx, models[i]);
+            }
+          } else {
+            models = [];
           }
         } else {
-          models = [];
+          actionName = action;
         }
-      } else {
-        actionName = action;
-      }
-      while (!ctx[actionName] && ctx.$ctrl) {
-        ctx = ctx.$ctrl;
-      }
-      if (element.dataset["parameter"]) {
-        parameter = element.dataset["parameter"];
-      }
+        while (!ctx[actionName] && ctx.$ctrl) {
+          ctx = ctx.$ctrl;
+        }
+        if (element.dataset["parameter"]) {
+          parameter = element.dataset["parameter"];
+        }
 
-      if (typeof ctx[actionName] !== "undefined") {
-        return ctx[actionName].apply(ctx, [
-          element,
-          ...models,
-          parameter,
-          evnt,
-        ]);
-      } else if (Silica.context[actionName] != null) {
-        return Silica.context[actionName].apply(Silica.ctx, [
-          element,
-          ...models,
-          parameter,
-          evnt,
-        ]);
-      } else {
-        return console.error(
-          "Unknown action '" +
-            actionName +
-            "' for " +
-            element.outerHTML +
-            " in " +
-            ctx.constructor.name
-        );
-      }
-    }, scope);
+        if (typeof ctx[actionName] !== "undefined") {
+          return ctx[actionName].apply(ctx, [
+            element,
+            ...models,
+            parameter,
+            evnt,
+          ]);
+        } else if (Silica.context[actionName] != null) {
+          return Silica.context[actionName].apply(Silica.ctx, [
+            element,
+            ...models,
+            parameter,
+            evnt,
+          ]);
+        } else {
+          return console.error(
+            "Unknown action '" +
+              actionName +
+              "' for " +
+              element.outerHTML +
+              " in " +
+              ctx.constructor.name
+          );
+        }
+      },
+      scope,
+      waitForAnimationFrame
+    );
   },
   getFilteredValue(raw, propString, elideFilterIf, paramsKeys = null) {
     var filter, filterKey, filterOptions, value, needsShift;

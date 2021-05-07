@@ -893,7 +893,7 @@ class module$exports$watchers$observer {
   }
   register($node$$, $property$$, $actor$$, $set$$ = !0) {
     let [$filtered$$, $raw$$, $paramKeys$$] = Silica.getFilteredValue($node$$, $property$$), $value$$ = this.clone($raw$$), $map$$ = this.mapping.get($node$$);
-    $map$$ || ($map$$ = new Map, this.mapping.set($node$$, $map$$), this.visibilityObserver.observe($node$$));
+    $map$$ || ($map$$ = new Map, this.mapping.set($node$$, $map$$), "OPTION" === $node$$.nodeName ? this.liveNodes.add($node$$) : this.visibilityObserver.observe($node$$));
     let $packet$$ = $map$$.get($property$$);
     $packet$$ ? $packet$$.actors.add($actor$$) : ($packet$$ = {value:$set$$ ? $value$$ : null, actors:new Set([$actor$$]), params:$paramKeys$$, }, $map$$.set($property$$, $packet$$));
     $actor$$.call($node$$, null, $set$$ ? $filtered$$ : null);
@@ -926,7 +926,7 @@ class module$exports$watchers$observer {
 ;var module$exports$silica = {};
 (0,module$exports$hax.init)();
 window.Silica = {context:window, contextName:"", directives:{}, components:{}, filters:{}, router:null, _ifs:{}, _shws:{}, _watch:{}, _repeat_templates:{}, _template_id:1, _isReady:!1, _appRoot:null, _defers:[], _includeCache:{}, _clickOutElements:new Set, _queue:[], usePushState:!0, observer:new module$exports$watchers$observer, ignoredAttributes:new Set("filter class show if model include controller parameter repeat trap repeatNotNested onClickOutside onScrollFinished siO2IncludedUrl src srcset siO2HardClass noStopPropagation noPreventDefault noAnimationFrame siO2TemplateId siO2Directive with".split(" ")), 
-version:"0.65.1", setContext($contextName$$) {
+version:"0.65.2", setContext($contextName$$) {
   this.contextName = $contextName$$;
   this.context = window[$contextName$$];
 }, ignore($keys$$) {

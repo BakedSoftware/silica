@@ -107,7 +107,11 @@ class ValueObserver {
     if (!map) {
       map = new Map();
       this.mapping.set(node, map);
-      this.visibilityObserver.observe(node);
+      if (node.nodeName === "OPTION") {
+        this.liveNodes.add(node);
+      } else {
+        this.visibilityObserver.observe(node);
+      }
     }
 
     let packet = map.get(property);

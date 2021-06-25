@@ -49,17 +49,21 @@ class ValueObserver {
       return obj;
     }
 
-    var clone = new obj.constructor();
-    for (var key in obj) {
-      if (!key.startsWith("_")) {
-        if (obj[key] != null && typeof obj[key] === "object") {
-          clone[key] = this.clone(obj[key]);
-        } else {
-          clone[key] = obj[key];
+    try {
+      var clone = new obj.constructor();
+      for (var key in obj) {
+        if (!key.startsWith("_")) {
+          if (obj[key] != null && typeof obj[key] === "object") {
+            clone[key] = this.clone(obj[key]);
+          } else {
+            clone[key] = obj[key];
+          }
         }
       }
+      return clone;
+    } catch (e) {
+      throw new Error(`Error while cloning object: ${JSON.stringify(obj)} - msg: ${e.message}`);
     }
-    return clone;
   }
 
   removeSubTree(tree) {
